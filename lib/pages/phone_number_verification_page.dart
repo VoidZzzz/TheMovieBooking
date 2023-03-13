@@ -1,6 +1,7 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:the_movie_booking/pages/location_page.dart';
+import 'package:the_movie_booking/authentication/data/models/auth_model.dart';
+import 'package:the_movie_booking/authentication/data/models/auth_model_impl.dart';
 import 'package:the_movie_booking/pages/otp_verification_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/dimens.dart';
@@ -23,6 +24,9 @@ class _PhoneNumberVerificationPageState
     extends State<PhoneNumberVerificationPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String selectedCode = PHNUMBER_VERIFY_PAGE_MM_CODE_TEXT;
+  String userPhone = '';
+
+  AuthModel authModel = AuthModelImpl();
 
   @override
   Widget build(BuildContext context) {
@@ -53,14 +57,23 @@ class _PhoneNumberVerificationPageState
                 PHNUMBER_VERIFY_PAGE_TITLE_TEXT,
                 () {
                   bool isValid = _formKey.currentState!.validate();
+                  ///
                   if (isValid) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return const OTPVerificationPage();
-                        },
-                      ),
-                    );
+                    authModel.getOTP(userPhone).then((response) {
+                     if(response.code == 200){
+                       Navigator.of(context).push(
+                         MaterialPageRoute(
+                           builder: (context) {
+                             return OTPVerificationPage(userPhone: userPhone,);
+                           },
+                         ),
+                       );
+                     } else{
+                       debugPrint('====================> error ${response.message}');
+                     }
+                    }).catchError( (error){
+                      debugPrint('====================> error $error');
+                    });
                   }
                 },
               ),
@@ -104,9 +117,13 @@ class _PhoneNumberVerificationPageState
         const SizedBox(
           width: MARGIN_SMALL_10X,
         ),
-        const SizedBox(
+        SizedBox(
           width: MARGIN_XLARGE_250X,
-          child: TextFieldView(),
+          child: TextFieldView(onChanged: (phone){
+            setState(() {
+              userPhone = phone;
+            });
+          },),
         ),
       ],
     );
@@ -156,13 +173,17 @@ class CountryCodeView extends StatelessWidget {
 }
 
 class TextFieldView extends StatelessWidget {
-  const TextFieldView({
-    Key? key,
+  Function(String) onChanged;
+  TextFieldView({
+    Key? key,required this.onChanged,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onChanged: (phone){
+        onChanged(phone);
+      },
       keyboardType: TextInputType.number,
       style: const TextStyle(color: WHITE_GREY_COLOR),
       validator: (str) {

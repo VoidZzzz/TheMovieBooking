@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:the_movie_booking/authentication/data/models/auth_model.dart';
+import 'package:the_movie_booking/authentication/data/models/auth_model_impl.dart';
 import 'package:the_movie_booking/pages/location_page.dart';
 import 'package:the_movie_booking/pages/phone_number_verification_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
@@ -12,7 +14,8 @@ import 'package:the_movie_booking/widgets/title_text.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OTPVerificationPage extends StatefulWidget {
-  const OTPVerificationPage({Key? key}) : super(key: key);
+  final String userPhone;
+  const OTPVerificationPage({Key? key,required this.userPhone,}) : super(key: key);
 
   @override
   State<OTPVerificationPage> createState() => _OTPVerificationPageState();
@@ -20,6 +23,9 @@ class OTPVerificationPage extends StatefulWidget {
 
 class _OTPVerificationPageState extends State<OTPVerificationPage> {
   bool isComplete = false;
+  String otp = '';
+
+  AuthModel authModel = AuthModelImpl();
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +79,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
                       onChanged: (text) {
                         if (text.length == 6) {
                           setState(() {
+                            otp = text;
                             isComplete = true;
                           });
                         } else {
@@ -93,12 +100,22 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
               isComplete ? APP_COLOR_SECONDARY_COLOR : GREY_COLOR,
               OTP_CONFIRM_PAGE_OTP_CONFIRM_TEXT,
               () {
+                ///
                 if (isComplete) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const LocationPage(),
-                    ),
-                  );
+                  authModel.getSignInWithPhone(widget.userPhone, otp).then((response) {
+                    if(response.code == 201){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const LocationPage(),
+                        ),
+                      );
+                    } else{
+                      debugPrint('=================> ${response.message}');
+                    }
+                  }).catchError((error){
+                    debugPrint('error ====================> $error');
+                  });
+
                 }
               },
             ),
