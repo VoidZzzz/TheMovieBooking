@@ -32,18 +32,23 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
     "https://pbs.twimg.com/media/Ff3zJ8uacAEuYag.jpg"
   ];
   bool isShow = false;
+  bool isShowSuggestion = false;
 
   @override
   void initState() {
     super.initState();
     if (widget.appBarIndex == 0) {
-      setState(() {
-        isShow = false;
-      });
+      setState(
+        () {
+          isShow = false;
+        },
+      );
     } else {
-      setState(() {
-        isShow = true;
-      });
+      setState(
+        () {
+          isShow = true;
+        },
+      );
     }
   }
 
@@ -54,8 +59,13 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
         automaticallyImplyLeading: false,
         elevation: MARGIN_SMALLEST,
         backgroundColor: APP_COLOR_PRIMARY_COLOR,
-        title: const SearchPagesAppBarTitleView(
+        title: SearchPagesAppBarTitleView(
           text: MOVIE_SEARCH_PAGE_SEARCH_FIELD_TEXT,
+          onSubmitted: () {
+            setState(() {
+              isShowSuggestion = true;
+            });
+          },
         ),
       ),
       body: SingleChildScrollView(
@@ -86,42 +96,24 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
             const SizedBox(
               height: MARGIN_MEDIUM_20X,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: MARGIN_SMALL_8X),
-              child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: (widget.appBarIndex == 0)
-                    ? nowShowingSearchList.length
-                    : comingSoonSearchList.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisExtent: MARGIN_XLARGE_350X, crossAxisCount: 2),
-                itemBuilder: (context, index) {
-                  return (widget.appBarIndex == 0)
-                      ? NowShowingMoviePosterView(
-                          nowShowingMoviesList: nowShowingSearchList,
-                          index: index,
-                          onTapNowShowingMovie: () =>
-                              Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const MovieDetailsPage(isVisible: false),
-                            ),
-                          ),
-                        )
-                      : ComingSoonMoviePosterView(
-                      comingSoonMoviesList: comingSoonSearchList,
-                          onTapComingSoonMovie: () =>
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const MovieDetailsPage(isVisible: true),
-                                ),
-                              ),
-                          index: index);
-                },
-              ),
-            )
+            isShowSuggestion
+                ? MovieSuggestionView(
+                    widget: widget,
+                    nowShowingSearchList: nowShowingSearchList,
+                    comingSoonSearchList: comingSoonSearchList,
+                    widgetTwo: widget)
+                : SizedBox(
+                    height: 400,
+                    child: Center(
+                      child: Text(
+                        "Empty",
+                        style: GoogleFonts.inter(
+                            fontSize: TEXT_LARGE_20X,
+                            color: WHITE_COLOR,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  )
           ],
         ),
       ),
@@ -129,24 +121,54 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
   }
 }
 
-class SearchFieldView extends StatelessWidget {
-  const SearchFieldView({Key? key, required this.text}) : super(key: key);
+class MovieSuggestionView extends StatelessWidget {
+  const MovieSuggestionView({
+    Key? key,
+    required this.widget,
+    required this.nowShowingSearchList,
+    required this.comingSoonSearchList,
+    required this.widgetTwo,
+  }) : super(key: key);
 
-  final String text;
+  final MovieSearchPage widget;
+  final List<String> nowShowingSearchList;
+  final List<String> comingSoonSearchList;
+  final MovieSearchPage widgetTwo;
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      cursorColor: WHITE_COLOR,
-      autofocus: true,
-      style: GoogleFonts.inter(color: WHITE_COLOR, fontWeight: FontWeight.w400),
-      decoration: InputDecoration(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_20X),
-        border: InputBorder.none,
-        hintText: text,
-        hintStyle:
-            GoogleFonts.inter(color: GREY_COLOR, fontWeight: FontWeight.w400),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: MARGIN_SMALL_8X),
+      child: GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: (widget.appBarIndex == 0)
+            ? nowShowingSearchList.length
+            : comingSoonSearchList.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            mainAxisExtent: MARGIN_XLARGE_350X, crossAxisCount: 2),
+        itemBuilder: (context, index) {
+          return (widget.appBarIndex == 0)
+              ? NowShowingMoviePosterView(
+                  nowShowingMoviesList: nowShowingSearchList,
+                  index: index,
+                  onTapNowShowingMovie: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const MovieDetailsPage(isVisible: false),
+                    ),
+                  ),
+                )
+              : ComingSoonMoviePosterView(
+                  comingSoonMoviesList: comingSoonSearchList,
+                  onTapComingSoonMovie: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const MovieDetailsPage(isVisible: true),
+                        ),
+                      ),
+                  index: index);
+        },
       ),
     );
   }

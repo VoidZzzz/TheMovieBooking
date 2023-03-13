@@ -11,7 +11,6 @@ import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/dimens.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/resources/strings.dart';
-
 import '../search_pages/movie_search_page.dart';
 import '../widgets/IMDBRatingView.dart';
 import '../widgets/MovieTypesView.dart';

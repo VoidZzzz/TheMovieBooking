@@ -217,7 +217,7 @@ class FacilityContentsView extends StatelessWidget {
       runSpacing: MARGIN_SMALL_10X,
       spacing: -MARGIN_SMALL_10X,
       children: const [
-        FacilityButtonView(imageURL: PARKING_IMAGE, text: PARKING_IMAGE),
+        FacilityButtonView(imageURL: PARKING_IMAGE, text: CINEMA_DETAILS_PAGE_PARKING_TEXT),
         FacilityButtonView(
             imageURL: CART_ITEM_COUNTS_IMAGE, text: CINEMA_DETAILS_PAGE_ONLINE_FOOD_TEXT),
         FacilityButtonView(

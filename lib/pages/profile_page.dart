@@ -108,10 +108,7 @@ class GradientView extends StatelessWidget {
           gradient: LinearGradient(
             end: Alignment.topCenter,
             begin: Alignment.bottomCenter,
-            colors: [
-              APP_COLOR_PRIMARY_COLOR,
-              Colors.transparent
-            ],
+            colors: [APP_COLOR_PRIMARY_COLOR, Colors.transparent],
           ),
         ),
       ),
@@ -127,14 +124,11 @@ class LoginSignupButtonView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height:
-          MARGIN_MEDIUM_35X + MARGIN_SMALL_1X,
+      height: MARGIN_MEDIUM_35X + MARGIN_SMALL_1X,
       width: MARGIN_XLARGE_200X,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(
-              MARGIN_SMALL_8X),
-          border: Border.all(
-              color: APP_COLOR_SECONDARY_COLOR),
+          borderRadius: BorderRadius.circular(MARGIN_SMALL_8X),
+          border: Border.all(color: APP_COLOR_SECONDARY_COLOR),
           color: LIGHT_GREEN_COLOR),
       child: Center(
         child: Text(
@@ -157,8 +151,7 @@ class AvatarIconView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      maxRadius:
-          MARGIN_MEDIUM_40X + MARGIN_SMALL_5X,
+      maxRadius: MARGIN_MEDIUM_40X + MARGIN_SMALL_5X,
       backgroundColor: Colors.transparent,
       child: Image.asset(
         PROFILE_ICON_IMAGE,

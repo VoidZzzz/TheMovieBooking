@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:the_movie_booking/pages/cinema_details_page.dart';
 import 'package:the_movie_booking/pages/cinema_page.dart';
 import 'package:the_movie_booking/pages/cinema_selection_page.dart';
+import 'package:the_movie_booking/pages/test.dart';
 import 'package:the_movie_booking/pages/unused_home_page.dart';
 import 'package:the_movie_booking/pages/location_page.dart';
 import 'package:the_movie_booking/pages/bottom_navigation_bar_home_page.dart';

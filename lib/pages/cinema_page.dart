@@ -37,9 +37,6 @@ class _CinemaPageState extends State<CinemaPage> {
           backgroundColor: APP_COLOR_PRIMARY_COLOR,
           title: Row(
             children: [
-              const AppBarBackArrow(
-                iconSize: MARGIN_MEDIUM_25X,
-              ),
               const Spacer(),
               InkWell(
                 onTap: () => Navigator.of(context).push(

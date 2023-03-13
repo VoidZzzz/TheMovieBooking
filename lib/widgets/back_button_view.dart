@@ -7,10 +7,17 @@ class BackButtonView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Icon(
-      Icons.keyboard_arrow_left,
-      color: WHITE_COLOR,
-      size: MARGIN_MEDIUM_35X,
+    return InkWell(
+      onTap: () {
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: const Icon(
+        Icons.keyboard_arrow_left,
+        color: WHITE_COLOR,
+        size: MARGIN_MEDIUM_35X,
+      ),
     );
   }
 }

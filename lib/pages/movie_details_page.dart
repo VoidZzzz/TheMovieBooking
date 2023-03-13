@@ -4,6 +4,7 @@ import 'package:the_movie_booking/pages/cinema_selection_page.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/video_players/asset_video_player.dart';
 import 'package:the_movie_booking/video_players/network_video_player_movie.dart';
+import 'package:the_movie_booking/widgets/app_bar_back_arrow.dart';
 import 'package:the_movie_booking/widgets/censor_date_duration_box.dart';
 import '../resources/colors.dart';
 import '../resources/dimens.dart';
@@ -177,7 +178,6 @@ class DetailsPageBottomView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MARGIN_XLARGE_675X,
       child: Padding(
         padding: const EdgeInsets.symmetric(
             horizontal: MARGIN_MEDIUM_15X + MARGIN_SMALL_2X),
@@ -204,7 +204,8 @@ class DetailsPageBottomView extends StatelessWidget {
             const SizedBox(
               height: MARGIN_XLARGE_200X - MARGIN_MEDIUM_20X,
               child: MovieCastListView(),
-            )
+            ),
+            const SizedBox(height: MARGIN_MEDIUM_30X),
           ],
         ),
       ),

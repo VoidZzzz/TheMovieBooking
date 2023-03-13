@@ -7,6 +7,7 @@ import 'package:the_movie_booking/pages/tickets_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/dimens.dart';
 import 'package:the_movie_booking/resources/images.dart';
+import 'package:the_movie_booking/resources/strings.dart';
 
 class BottomNaviBarHomePage extends StatefulWidget {
   const BottomNaviBarHomePage({Key? key}) : super(key: key);
@@ -18,7 +19,9 @@ class BottomNaviBarHomePage extends StatefulWidget {
 class _BottomNaviBarHomePageState extends State<BottomNaviBarHomePage> {
   int currentIndex = 0;
   final List<Widget> _body = const [
-    HomePage(cityName: 'Yangon',),
+    HomePage(
+      cityName: 'Yangon',
+    ),
     CinemaPage(),
     TicketPage(),
     ProfilePage(),
@@ -47,28 +50,28 @@ class _BottomNaviBarHomePageState extends State<BottomNaviBarHomePage> {
                 imageURL: NAVIGATION_PLAY_ICON_IMAGE,
                 currentIndex: currentIndex,
                 fixedIndex: 0),
-            label: "Movies",
+            label: NAVIGATION_BAR_MOVIE_TEXT,
           ),
           BottomNavigationBarItem(
             icon: NavigationBarItem(
                 imageURL: NAVIGATION_CINEMA_ICON_IMAGE,
                 currentIndex: currentIndex,
                 fixedIndex: 1),
-            label: "Cinema",
+            label: NAVIGATION_BAR_CINEMA_TEXT,
           ),
           BottomNavigationBarItem(
             icon: NavigationBarItem(
                 imageURL: NAVIGATION_TICKET_ICON_IMAGE,
                 currentIndex: currentIndex,
                 fixedIndex: 2),
-            label: "Tickets",
+            label: NAVIGATION_BAR_TICKETS_TEXT,
           ),
           BottomNavigationBarItem(
             icon: NavigationBarItem(
                 imageURL: NAVIGATION_PROFILE_ICON_IMAGE,
                 currentIndex: currentIndex,
                 fixedIndex: 3),
-            label: "Profile",
+            label: NAVIGATION_BAR_PROFILE_TEXT,
           ),
         ],
       ),
@@ -93,7 +96,7 @@ class NavigationBarItem extends StatelessWidget {
       height: MARGIN_MEDIUM_25X,
       width: MARGIN_MEDIUM_25X,
       child: Image.asset(imageURL,
-          fit: BoxFit.cover,
+          fit: BoxFit.fitWidth,
           color: currentIndex == fixedIndex
               ? APP_COLOR_SECONDARY_COLOR
               : LIGHT_GREY_COLOR),

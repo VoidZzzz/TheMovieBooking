@@ -28,6 +28,7 @@ class _CinemaSearchPageState extends State<CinemaSearchPage> {
     "Thamada Cinema",
     "ShaeSung Cinema"
   ];
+  bool isShowSuggestion = false;
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +37,22 @@ class _CinemaSearchPageState extends State<CinemaSearchPage> {
         backgroundColor: APP_COLOR_PRIMARY_COLOR,
         elevation: MARGIN_SMALLEST,
         automaticallyImplyLeading: false,
-        title: const SearchPagesAppBarTitleView(text: CINEMA_SEARCH_PAGE_SEARCH_FIELD_TEXT,),
+        title: SearchPagesAppBarTitleView(
+          text: CINEMA_SEARCH_PAGE_SEARCH_FIELD_TEXT,
+          onSubmitted: () {
+            setState(() {
+              isShowSuggestion = true;
+            });
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_15X),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_15X),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -117,19 +126,32 @@ class _CinemaSearchPageState extends State<CinemaSearchPage> {
                 ],
               ),
             ),
-            CinemaListView(
-              cinemaList: cinemaList,
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const SeatPlanPage(),
-                ),
-              ),
-              onTapDetails: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => CinemaDetailsPage(),
-                ),
-              ),
-            ),
+            isShowSuggestion
+                ? CinemaListView(
+                    cinemaList: cinemaList,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const SeatPlanPage(),
+                      ),
+                    ),
+                    onTapDetails: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CinemaDetailsPage(),
+                      ),
+                    ),
+                  )
+                : SizedBox(
+                    height: 300,
+                    child: Center(
+                      child: Text(
+                        "Empty",
+                        style: GoogleFonts.inter(
+                            fontSize: TEXT_LARGE_20X,
+                            color: WHITE_COLOR,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),
@@ -163,8 +185,7 @@ class PriceRangeTitleTextView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       CINEMA_SEARCH_PAGE_PRICE_RANGE_TEXT,
-      style: GoogleFonts.inter(
-          fontWeight: FontWeight.w600, color: WHITE_COLOR),
+      style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: WHITE_COLOR),
     );
   }
 }

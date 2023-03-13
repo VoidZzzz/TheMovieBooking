@@ -23,7 +23,6 @@ import '../widgets/now_showing_movie_poster_view.dart';
 
 class HomePage extends StatefulWidget {
   final String cityName;
-
   const HomePage({super.key, required this.cityName});
 
   @override

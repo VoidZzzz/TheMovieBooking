@@ -139,6 +139,12 @@ const PROFILE_PAGE_PAYMENT_TEXT = "Payment";
 const PROFILE_PAGE_HELP_TEXT = "Help and Support";
 const PROFILE_PAGE_LOG_OUT_TEXT = "Logout";
 
+/// Navigation bar home page
+const NAVIGATION_BAR_MOVIE_TEXT = "Movies";
+const NAVIGATION_BAR_CINEMA_TEXT = "Cinema";
+const NAVIGATION_BAR_TICKETS_TEXT = "Tickets";
+const NAVIGATION_BAR_PROFILE_TEXT = "Profile";
+
 /// Widgets
 const VOUCHER_PAGE_DIALOG_CLOSE_TEXT = "Close";
 const VOUCHER_PAGE_TICKET_CANCELLATION_RULE_4 = "No Cancellation within 20 mins of show start time.";
