@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/pages/ticket_confirmation_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/images.dart';
@@ -8,10 +9,40 @@ import 'package:the_movie_booking/widgets/app_bar_back_arrow.dart';
 import 'package:the_movie_booking/widgets/app_default_button_large.dart';
 import 'package:the_movie_booking/widgets/title_text.dart';
 
+import '../authentication/data/data_vos/payment_vo.dart';
+import '../authentication/data/models/the_movie_booking_model.dart';
 import '../resources/dimens.dart';
 
-class PaymentPage extends StatelessWidget {
+class PaymentPage extends StatefulWidget {
   const PaymentPage({Key? key}) : super(key: key);
+
+  @override
+  State<PaymentPage> createState() => _PaymentPageState();
+}
+
+class _PaymentPageState extends State<PaymentPage> {
+  /// Network variable
+  final TheMovieBookingModel _movieBookingModel = TheMovieBookingModelImpl();
+  List<PaymentVO>? paymentList;
+  String? userToken;
+
+  @override
+  void initState() {
+    /// get userToken from Network
+    setState(() {
+      userToken = _movieBookingModel.getUserDataFromDatabase()?.token;
+    });
+
+    /// get Payment from Network
+    _movieBookingModel
+        .getPaymentTypes("Bearer $userToken")
+        .then((paymentResponse) {
+      setState(() {
+        paymentList = paymentResponse.data;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +78,7 @@ class PaymentPage extends StatelessWidget {
                       builder: (context) => const TicketConfirmationPage(),
                     ),
                   ),
+                  paymentList: paymentList,
                 )
               ],
             ),
@@ -142,7 +174,7 @@ class TextFormFieldView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      autofocus: true,
+      autofocus: false,
       style: GoogleFonts.inter(fontWeight: FontWeight.w700, color: GREY_COLOR),
       cursorColor: GREY_COLOR,
       decoration: InputDecoration(
@@ -190,64 +222,86 @@ class PaymentTitleText extends StatelessWidget {
 
 class PaymentListView extends StatelessWidget {
   final Function onTap;
+  final List<PaymentVO>? paymentList;
 
-  const PaymentListView({super.key, required this.onTap});
+  const PaymentListView(
+      {super.key, required this.onTap, required this.paymentList});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       // color: Colors.white,
       height: MARGIN_XLARGE_400X + MARGIN_MEDIUM_50X,
-      child: ListView.builder(
-          itemCount: 6,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                onTap();
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: MARGIN_SMALL_6X, horizontal: MARGIN_SMALL_2X),
-                child: Container(
-                    height: MARGIN_MEDIUM_50X,
-                    width: MARGIN_XLARGE_250X,
-                    decoration: BoxDecoration(
-                      color: APP_COLOR_PRIMARY_COLOR,
-                      borderRadius: BorderRadius.circular(MARGIN_SMALL_8X),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: PAYMENT_METHODS_BORDER_COLOR,
-                            spreadRadius: MARGIN_SMALL_2X,
-                            blurRadius: MARGIN_SMALL_1X)
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: MARGIN_SMALL_10X),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            height: MARGIN_MEDIUM_30X,
-                            width: MARGIN_MEDIUM_30X,
-                            child: Image.asset(GIFT_VOUCHER_IMAGE),
+      child: (paymentList != null)
+          ? ListView.builder(
+              itemCount: paymentList?.length ?? 0,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    onTap();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: MARGIN_SMALL_6X, horizontal: MARGIN_SMALL_2X),
+                    child: Container(
+                        height: MARGIN_MEDIUM_50X,
+                        width: MARGIN_XLARGE_250X,
+                        decoration: BoxDecoration(
+                          color: APP_COLOR_PRIMARY_COLOR,
+                          borderRadius: BorderRadius.circular(MARGIN_SMALL_8X),
+                          boxShadow: const [
+                            BoxShadow(
+                                color: PAYMENT_METHODS_BORDER_COLOR,
+                                spreadRadius: MARGIN_SMALL_2X,
+                                blurRadius: MARGIN_SMALL_1X)
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: MARGIN_SMALL_10X),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                height: MARGIN_MEDIUM_30X,
+                                width: MARGIN_MEDIUM_30X,
+                                child: (paymentList?[index].icon != null)
+                                    ? Image.network(
+                                        paymentList?[index].icon ?? "")
+                                    : const LoadingView(),
+                              ),
+                              const SizedBox(width: MARGIN_SMALL_10X),
+                              Text(paymentList?[index].title ?? "",
+                                  style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w700,
+                                      color: WHITE_COLOR)),
+                              const Spacer(),
+                              const Icon(
+                                Icons.keyboard_arrow_right,
+                                color: WHITE_COLOR,
+                                size: MARGIN_MEDIUM_25X,
+                              )
+                            ],
                           ),
-                          const SizedBox(width: MARGIN_SMALL_10X),
-                          Text(PAYMENT_PAGE_GIFT_VOUCHER_TEXT,
-                              style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.w700,
-                                  color: WHITE_COLOR)),
-                          const Spacer(),
-                          const Icon(
-                            Icons.keyboard_arrow_right,
-                            color: WHITE_COLOR,
-                            size: MARGIN_MEDIUM_25X,
-                          )
-                        ],
-                      ),
-                    )),
-              ),
-            );
-          }),
+                        )),
+                  ),
+                );
+              })
+          : const LoadingView()
     );
+  }
+}
+
+class LoadingView extends StatelessWidget {
+  const LoadingView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+        child: CircularProgressIndicator(
+          color: APP_COLOR_SECONDARY_COLOR,
+        ),
+      );
   }
 }

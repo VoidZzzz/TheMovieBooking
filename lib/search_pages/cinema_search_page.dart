@@ -128,17 +128,18 @@ class _CinemaSearchPageState extends State<CinemaSearchPage> {
             ),
             isShowSuggestion
                 ? CinemaListView(
-                    cinemaList: cinemaList,
-                    onTap: () => Navigator.of(context).push(
+                    cinemaAndShowTimeList: [],
+                    onTapCinema: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => const SeatPlanPage(),
                       ),
                     ),
-                    onTapDetails: () => Navigator.of(context).push(
+                    onTapDetails: (index) => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => CinemaDetailsPage(),
                       ),
                     ),
+                    onTapExpanded: (index) {},
                   )
                 : SizedBox(
                     height: 300,

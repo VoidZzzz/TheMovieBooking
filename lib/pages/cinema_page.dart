@@ -61,8 +61,7 @@ class _CinemaPageState extends State<CinemaPage> {
 
         /// Body
         body: CinemaListView(
-          cinemaList: cinemaList,
-          onTap: () {
+          onTapCinema: () {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) {
@@ -71,7 +70,7 @@ class _CinemaPageState extends State<CinemaPage> {
               ),
             );
           },
-          onTapDetails: () {
+          onTapDetails: (index) {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) {
@@ -80,6 +79,8 @@ class _CinemaPageState extends State<CinemaPage> {
               ),
             );
           },
+          cinemaAndShowTimeList: [],
+          onTapExpanded: (index) {},
         ),
       ),
     );

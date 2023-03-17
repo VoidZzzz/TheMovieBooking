@@ -1,13 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
+import 'package:the_movie_booking/pages/bottom_navigation_bar_home_page.dart';
+import 'package:the_movie_booking/pages/phone_number_verification_page.dart';
+import 'package:the_movie_booking/pages/splash_screen_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/strings.dart';
 
+import '../authentication/data/data_vos/payment_vo.dart';
 import '../resources/dimens.dart';
 import '../resources/images.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final TheMovieBookingModel _movieBookingModel = TheMovieBookingModelImpl();
+  String? userToken;
+  List<PaymentVO>? paymentTypesList;
+  int listViewIndex = 0;
+
+  @override
+  void initState() {
+    /// get User token from database
+    setState(() {
+      userToken = _movieBookingModel.getUserDataFromDatabase()?.token ?? "";
+      print("=============================> USER TOKEN $userToken");
+    });
+
+    /// get Payment Types from Network
+    _movieBookingModel.getPaymentTypes("Bearer $userToken").then((paymentTypesResponse) {
+      paymentTypesList = paymentTypesResponse.data ?? [];
+      print("==========================================> PAYMENT TYPES LIST $paymentTypesList");
+    });
+
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +94,86 @@ class ProfilePage extends StatelessWidget {
                   ],
                 ),
               ),
-              CategoryListView(itemList: itemList)
+              CategoryListView(
+                itemList: itemList,
+                onTap: (index) {
+                  if (index == 6) {
+                    _logoutAlertDialog(context);
+                  }
+                },
+              )
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Future<dynamic> _logoutAlertDialog(BuildContext context) => showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          backgroundColor: APP_COLOR_PRIMARY_COLOR,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(MARGIN_SMALL_5X),
+          ),
+          title: const Text(PROFILE_PAGE_LOG_OUT_DIALOG_TITLE_TEXT),
+          titleTextStyle: const TextStyle(
+              color: WHITE_COLOR,
+              fontSize: TEXT_LARGE_18X,
+              fontWeight: FontWeight.w600),
+          content: Text(
+            PROFILE_PAGE_LOG_OUT_DIALOG_CONTENT_TEXT,
+            style: GoogleFonts.dmSans(color: WHITE_COLOR),
+          ),
+          actions: [
+            InkWell(
+              onTap: () => _navigatorPop(context),
+              child: SizedBox(
+                width: MARGIN_LARGE_80X,
+                height: MARGIN_MEDIUM_40X,
+                child: Center(
+                  child: Text(
+                    PROFILE_PAGE_LOG_OUT_DIALOG_CANCEL_TEXT,
+                    style: GoogleFonts.dmSans(
+                        color: WHITE_COLOR, fontSize: TEXT_LARGE_16X),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: MARGIN_MEDIUM_20X),
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _movieBookingModel.userLogout("Bearer $userToken").then((logOutResponse) {
+                    if(logOutResponse.code == 200){
+                      _movieBookingModel.clearUserData();
+                      _navigateToSplashScreen(context);
+                    }
+                  }).catchError((error) {debugPrint("===========================================> Error Message $error");});
+                });
+              },
+              child: SizedBox(
+                width: MARGIN_LARGE_80X,
+                height: MARGIN_MEDIUM_40X,
+                child: Center(
+                  child: Text(
+                    PROFILE_PAGE_LOG_OUT_DIALOG_CONFIRM_TEXT,
+                    style: GoogleFonts.dmSans(
+                        color: WHITE_COLOR, fontSize: TEXT_LARGE_16X),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+
+  void _navigatorPop(BuildContext context) => Navigator.of(context).pop();
+
+  Future<dynamic> _navigateToSplashScreen(BuildContext context) {
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => SplashScreenPage(),
       ),
     );
   }
@@ -73,10 +183,11 @@ class CategoryListView extends StatelessWidget {
   const CategoryListView({
     Key? key,
     required this.itemList,
+    required this.onTap,
   }) : super(key: key);
 
   final List<CardItem> itemList;
-
+  final Function(int) onTap;
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -86,6 +197,7 @@ class CategoryListView extends StatelessWidget {
         itemBuilder: (context, index) {
           return buildCard(
             itemList: itemList[index],
+            onTap: () => onTap(index),
           );
         },
       ),
@@ -175,43 +287,49 @@ class BackGroundImageView extends StatelessWidget {
   }
 }
 
-Widget buildCard({required CardItem itemList}) => Padding(
+Widget buildCard({required CardItem itemList, required Function onTap}) =>
+    Padding(
       padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_20X),
-      child: Container(
-        height: MARGIN_LARGE_70X,
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom:
-                BorderSide(color: FAINT_WHITE_COLOR, width: MARGIN_SMALL_1X),
+      child: InkWell(
+        onTap: () {
+          onTap();
+        },
+        child: Container(
+          height: MARGIN_LARGE_70X,
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom:
+                  BorderSide(color: FAINT_WHITE_COLOR, width: MARGIN_SMALL_1X),
+            ),
           ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              height: MARGIN_MEDIUM_20X,
-              width: MARGIN_MEDIUM_25X,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Image.asset(itemList.imageUrl,
-                    color: WHITE_COLOR, fit: BoxFit.fitHeight),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                height: MARGIN_MEDIUM_20X,
+                width: MARGIN_MEDIUM_25X,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Image.asset(itemList.imageUrl,
+                      color: WHITE_COLOR, fit: BoxFit.fitHeight),
+                ),
               ),
-            ),
-            const SizedBox(width: MARGIN_SMALL_10X),
-            Text(
-              itemList.text,
-              style: GoogleFonts.inter(
-                  color: WHITE_COLOR,
-                  fontWeight: FontWeight.w600,
-                  fontSize: TEXT_LARGE_16X + MARGIN_SMALL_1X),
-            ),
-            const Spacer(),
-            const Icon(
-              Icons.keyboard_arrow_right,
-              color: GREY_COLOR,
-              size: MARGIN_MEDIUM_30X,
-            )
-          ],
+              const SizedBox(width: MARGIN_SMALL_10X),
+              Text(
+                itemList.text,
+                style: GoogleFonts.inter(
+                    color: WHITE_COLOR,
+                    fontWeight: FontWeight.w600,
+                    fontSize: TEXT_LARGE_16X + MARGIN_SMALL_1X),
+              ),
+              const Spacer(),
+              const Icon(
+                Icons.keyboard_arrow_right,
+                color: GREY_COLOR,
+                size: MARGIN_MEDIUM_30X,
+              )
+            ],
+          ),
         ),
       ),
     );

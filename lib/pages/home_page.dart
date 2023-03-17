@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:the_movie_booking/authentication/network/api_constants.dart';
 import 'package:the_movie_booking/pages/cinema_page.dart';
 import 'package:the_movie_booking/pages/movie_details_page.dart';
 import 'package:the_movie_booking/pages/profile_page.dart';
@@ -11,6 +13,10 @@ import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/dimens.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/resources/strings.dart';
+import '../authentication/data/data_vos/banner_vo.dart';
+import '../authentication/data/data_vos/movie_vo.dart';
+import '../authentication/data/models/the_movie_booking_model.dart';
+import '../authentication/data/models/the_movie_booking_model_impl.dart';
 import '../search_pages/movie_search_page.dart';
 import '../widgets/IMDBRatingView.dart';
 import '../widgets/MovieTypesView.dart';
@@ -23,6 +29,7 @@ import '../widgets/now_showing_movie_poster_view.dart';
 
 class HomePage extends StatefulWidget {
   final String cityName;
+
   const HomePage({super.key, required this.cityName});
 
   @override
@@ -35,35 +42,38 @@ class HomePageState extends State<HomePage>
   int currentIndex = 0;
   int activeDots = 0;
 
-  final List<String> urlImages = [
-    DISCOUNT_KFC_IMAGE,
-    DISCOUNT_LOTERRIA_IMAGE,
-    DISCOUNT_POP_CORN_IMAGE,
-    DISCOUNT_TEA_IMAGE,
-  ];
+  List<BannerVO>? bannerList;
+  List<MovieVO>? comingSoonMoviesList;
+  List<MovieVO>? nowShowingMoviesList;
 
-  final List<String> nowShowingMoviesList = [
-    "https://amc-theatres-res.cloudinary.com/v1579118595/amc-cdn/production/2/movies/13700/13679/Poster/p_800x1200_AMC_Avatar_110219.jpg",
-    "https://cdn.shopify.com/s/files/1/0549/5835/8762/products/C_391.jpg?v=1642175845",
-    "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/a58a7719-0dcf-4e0b-b7bb-d2b725dbbb8e/dffeqg5-ddc23aed-cdfe-4758-a5b6-aeaec1fa7854.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2E1OGE3NzE5LTBkY2YtNGUwYi1iN2JiLWQyYjcyNWRiYmI4ZVwvZGZmZXFnNS1kZGMyM2FlZC1jZGZlLTQ3NTgtYTViNi1hZWFlYzFmYTc4NTQucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.jJmX5aGgCFso7OaKligbAFEDLaCN-zb4v9NDoLUBCIU",
-    "https://images.fandango.com/ImageRenderer/820/0/redesign/static/img/default_poster.png/0/images/masterrepository/fandango/229092/AliceDarling_2000x3000.jpg",
-    "https://m.media-amazon.com/images/M/MV5BZDc4MzVkNzYtZTRiZC00ODYwLWJjZmMtMDIyNjQ1M2M1OGM2XkEyXkFqcGdeQXVyMDA4NzMyOA@@._V1_FMjpg_UX1000_.jpg",
-    "https://dx35vtwkllhj9.cloudfront.net/paramountpictures/babylon/images/regions/au/onesheet.jpg",
-    "https://resizing.flixster.com/2TwYzc7hklVW2s4fN1ypuyYWMj0=/ems.cHJkLWVtcy1hc3NldHMvdHZzZXJpZXMvYjBiZTZiODMtODQ1OC00MDY3LTkzNTItZjZlMzQ5ZGM1MzEwLmpwZw==",
-    "https://i.etsystatic.com/26602916/r/il/7ea2b2/4460747145/il_1080xN.4460747145_ofb3.jpg",
-    "https://mlpnk72yciwc.i.optimole.com/cqhiHLc.IIZS~2ef73/w:auto/h:auto/q:75/https://bleedingcool.com/wp-content/uploads/2022/05/suzume_no_tojimari-351688185-large.jpg",
-    "https://m.media-amazon.com/images/M/MV5BYmM2OTgzMjAtNTYxOS00ZjdlLWIzZmQtZDAwNmNiZGQ5NTQ4XkEyXkFqcGdeQXVyNjU0NTkwMDQ@._V1_FMjpg_UX1000_.jpg",
-  ];
-
-  final List<String> comingSoonMoviesList = [
-    "https://pbs.twimg.com/media/FnfZD_nWAAI9fGF?format=jpg&name=4096x4096",
-    "https://pbs.twimg.com/media/FaggTeiUIAAYpBZ.jpg:large",
-    "https://pbs.twimg.com/media/Ff3zJ8uacAEuYag.jpg",
-    "https://1.bp.blogspot.com/-FtxAKJ5Wkl4/XQraPQJy75I/AAAAAAAAidM/kWzl1uw62b4zVXvU74cJLFY7AMT46v2MgCLcBGAs/s1600/60619562_2340197119375103_555434379128602624_n.jpg"
-  ];
+  TheMovieBookingModel theMovieBookingModel = TheMovieBookingModelImpl();
 
   @override
   void initState() {
+    theMovieBookingModel.getBanners().then((banners) {
+      bannerList = banners.data;
+    }).catchError((error) {
+      debugPrint("================================> $error");
+    });
+
+    theMovieBookingModel.getNowShowingMovies(STATUS_CURRENT).then((movieList) {
+      setState(() {
+        nowShowingMoviesList = movieList.data;
+      });
+    }).catchError((error) {
+      debugPrint("================================> $error");
+    });
+
+    theMovieBookingModel
+        .getComingSoonMovies(STATUS_COMING_SOON)
+        .then((movieList) {
+      setState(() {
+        comingSoonMoviesList = movieList.data;
+      });
+    }).catchError((error) {
+      debugPrint("================================> $error");
+    });
+
     controller = TabController(length: 2, vsync: this);
     controller.addListener(
       () {
@@ -102,9 +112,9 @@ class HomePageState extends State<HomePage>
                       tabBarIndex: currentIndex,
                     ),
                     CarouselSlider.builder(
-                      itemCount: urlImages.length,
+                      itemCount: (bannerList == null) ? 1 : bannerList?.length,
                       itemBuilder: (context, index, i) {
-                        final urlImage = urlImages[index];
+                        final urlImage = bannerList?[index];
                         return buildImage(urlImage, index);
                       },
                       options: CarouselOptions(
@@ -115,7 +125,7 @@ class HomePageState extends State<HomePage>
                     ),
                     const SizedBox(height: MARGIN_MEDIUM_18X),
                     HomeScreenBannerDotsView(
-                        urlImages: urlImages, activeDots: activeDots),
+                        bannerList: bannerList ?? [], activeDots: activeDots),
                     const SizedBox(height: MARGIN_MEDIUM_20X),
                     Padding(
                       padding: const EdgeInsets.symmetric(
@@ -136,16 +146,23 @@ class HomePageState extends State<HomePage>
     );
   }
 
-  Widget buildImage(String urlImage, int index) => Container(
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(BORDER_CIRCULAR_RADIUS)),
-        height: MARGIN_LARGE_170X,
-        width: MARGIN_XLARGE_370X,
-        child: HomeScreenBannerSectionView(
-          urlImage: urlImage,
-        ),
-      );
+  Widget buildImage(BannerVO? urlImage, int index) => (urlImage != null)
+      ? Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(BORDER_CIRCULAR_RADIUS),
+          ),
+          height: MARGIN_LARGE_170X,
+          width: MARGIN_XLARGE_370X,
+          child: HomeScreenBannerSectionView(
+            urlImage: urlImage,
+          ),
+        )
+      : const Center(
+          child: CircularProgressIndicator(
+            color: APP_COLOR_SECONDARY_COLOR,
+          ),
+        );
 }
 
 class BodyTabBarView extends StatelessWidget {
@@ -157,8 +174,8 @@ class BodyTabBarView extends StatelessWidget {
   }) : super(key: key);
 
   final TabController controller;
-  final List<String> nowShowingMoviesList;
-  final List<String> comingSoonMoviesList;
+  final List<MovieVO>? nowShowingMoviesList;
+  final List<MovieVO>? comingSoonMoviesList;
 
   @override
   Widget build(BuildContext context) {
@@ -167,18 +184,22 @@ class BodyTabBarView extends StatelessWidget {
       children: [
         NowShowingTabBarView(
           nowShowingMoviesList: nowShowingMoviesList,
-          onTapNowShowingMovie: () => Navigator.of(context).push(
+          onTapNowShowingMovie: (movieId) => Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const MovieDetailsPage(isVisible: false),
+              builder: (context) => MovieDetailsPage(
+                isVisible: false,
+                movieId: movieId ?? 1,
+              ),
             ),
           ),
         ),
         ComingSoonTabBarView(
           comingSoonMoviesList,
-          () => Navigator.of(context).push(
+          (movieId) => Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const MovieDetailsPage(
+              builder: (context) => MovieDetailsPage(
                 isVisible: true,
+                movieId: movieId ?? 1,
               ),
             ),
           ),
@@ -191,6 +212,7 @@ class BodyTabBarView extends StatelessWidget {
 class AppBarView extends StatelessWidget {
   final String cityName;
   final int tabBarIndex;
+
   const AppBarView(
       {super.key, required this.cityName, required this.tabBarIndex});
 
@@ -205,15 +227,15 @@ class AppBarView extends StatelessWidget {
         AppBarCityNameView(cityName),
         const Spacer(),
         GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => MovieSearchPage(
-                  appBarIndex: tabBarIndex,
-                ),
-              ),
-            );
-          },
+          // onTap: () {
+          //   Navigator.of(context).push(
+          //     MaterialPageRoute(
+          //       builder: (context) => MovieSearchPage(
+          //         appBarIndex: tabBarIndex,
+          //       ),
+          //     ),
+          //   );
+          // },
           child: const AppBarImageIconView(SEARCH_ICON_IMAGE),
         ),
         const SizedBox(width: MARGIN_MEDIUM_30X),
@@ -282,28 +304,37 @@ class ComingSoonTabBarView extends StatelessWidget {
       this.comingSoonMoviesList, this.onTapComingSoonMovie,
       {super.key});
 
-  final Function onTapComingSoonMovie;
-  final List<String> comingSoonMoviesList;
+  final Function(int?) onTapComingSoonMovie;
+  final List<MovieVO>? comingSoonMoviesList;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: comingSoonMoviesList.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            mainAxisExtent: MARGIN_XLARGE_350X, crossAxisCount: 2),
-        itemBuilder: (context, index) {
-          return ComingSoonMoviePosterView(
-            onTapComingSoonMovie: onTapComingSoonMovie,
-            comingSoonMoviesList: comingSoonMoviesList,
-            index: index,
+    return (comingSoonMoviesList != null)
+        ? Padding(
+            padding: const EdgeInsets.symmetric(horizontal: MARGIN_SMALL_8X),
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: comingSoonMoviesList?.length ?? 0,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  mainAxisExtent: MARGIN_XLARGE_350X, crossAxisCount: 2),
+              itemBuilder: (context, index) {
+                return InkWell(
+                  onTap: () =>
+                      onTapComingSoonMovie(comingSoonMoviesList?[index].id),
+                  child: ComingSoonMoviePosterView(
+                    comingSoonMoviesList: comingSoonMoviesList,
+                    index: index,
+                  ),
+                );
+              },
+            ),
+          )
+        : const Center(
+            child: CircularProgressIndicator(
+              color: APP_COLOR_SECONDARY_COLOR,
+            ),
           );
-        },
-      ),
-    );
   }
 }
 
@@ -314,27 +345,36 @@ class NowShowingTabBarView extends StatelessWidget {
       required this.onTapNowShowingMovie})
       : super(key: key);
 
-  final List<String> nowShowingMoviesList;
-  final Function onTapNowShowingMovie;
+  final List<MovieVO>? nowShowingMoviesList;
+  final Function(int?) onTapNowShowingMovie;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: nowShowingMoviesList.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              mainAxisExtent: MARGIN_XLARGE_350X, crossAxisCount: 2),
-          itemBuilder: (context, index) {
-            return NowShowingMoviePosterView(
-              onTapNowShowingMovie: onTapNowShowingMovie,
-              nowShowingMoviesList: nowShowingMoviesList,
-              index: index,
-            );
-          }),
-    );
+    return (nowShowingMoviesList != null)
+        ? Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: nowShowingMoviesList?.length ?? 0,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    mainAxisExtent: MARGIN_XLARGE_350X, crossAxisCount: 2),
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () =>
+                        onTapNowShowingMovie(nowShowingMoviesList?[index].id),
+                    child: NowShowingMoviePosterView(
+                      nowShowingMoviesList: nowShowingMoviesList,
+                      index: index,
+                    ),
+                  );
+                }),
+          )
+        : const Center(
+            child: CircularProgressIndicator(
+              color: APP_COLOR_SECONDARY_COLOR,
+            ),
+          );
   }
 }
 
@@ -376,17 +416,17 @@ class UnknownTextView extends StatelessWidget {
 class HomeScreenBannerDotsView extends StatelessWidget {
   const HomeScreenBannerDotsView({
     Key? key,
-    required this.urlImages,
+    required this.bannerList,
     required this.activeDots,
   }) : super(key: key);
 
-  final List<String> urlImages;
+  final List<BannerVO> bannerList;
   final int activeDots;
 
   @override
   Widget build(BuildContext context) {
     return DotsIndicator(
-      dotsCount: urlImages.length,
+      dotsCount: (bannerList.isNotEmpty) ? bannerList.length ?? 1 : 1,
       position: activeDots.toDouble(),
       decorator: const DotsDecorator(
           color: HOME_SCREEN_BANNER_DOTS_INACTIVE_COLOR,
@@ -434,7 +474,7 @@ class HomeScreenAppBarView extends StatelessWidget {
 }
 
 class HomeScreenBannerSectionView extends StatelessWidget {
-  final String urlImage;
+  final BannerVO? urlImage;
 
   const HomeScreenBannerSectionView({
     Key? key,
@@ -447,7 +487,7 @@ class HomeScreenBannerSectionView extends StatelessWidget {
       children: [
         Positioned.fill(
           child: HomeScreenDiscountBannerBackgroundImage(
-            urlImage: urlImage,
+            urlImage: urlImage?.url ?? "",
           ),
         ),
         const Positioned.fill(
@@ -528,9 +568,19 @@ class HomeScreenDiscountBannerBackgroundImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      urlImage,
+    return CachedNetworkImage(
       fit: BoxFit.cover,
+      imageUrl: urlImage,
+      placeholder: (context, url) => const Center(
+        child: SizedBox(
+          height: MARGIN_MEDIUM_40X,
+          width: MARGIN_MEDIUM_40X,
+          child: CircularProgressIndicator(
+            color: APP_COLOR_SECONDARY_COLOR,
+          ),
+        ),
+      ),
+      errorWidget: (context, url, error) => const Icon(Icons.error),
     );
   }
 }

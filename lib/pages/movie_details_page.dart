@@ -1,11 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:the_movie_booking/authentication/network/api_constants.dart';
 import 'package:the_movie_booking/pages/cinema_selection_page.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/video_players/asset_video_player.dart';
 import 'package:the_movie_booking/video_players/network_video_player_movie.dart';
 import 'package:the_movie_booking/widgets/app_bar_back_arrow.dart';
 import 'package:the_movie_booking/widgets/censor_date_duration_box.dart';
+import '../authentication/data/data_vos/cast_vo.dart';
+import '../authentication/data/data_vos/movie_vo.dart';
+import '../authentication/data/models/the_movie_booking_model.dart';
+import '../authentication/data/models/the_movie_booking_model_impl.dart';
+import '../authentication/network/response/get_movie_details_response.dart';
 import '../resources/colors.dart';
 import '../resources/dimens.dart';
 import '../resources/strings.dart';
@@ -20,10 +27,34 @@ import '../widgets/share_button_view.dart';
 import '../widgets/subtitle_text.dart';
 import '../widgets/title_text.dart';
 
-class MovieDetailsPage extends StatelessWidget {
+class MovieDetailsPage extends StatefulWidget {
   final bool isVisible;
+  final int movieId;
 
-  const MovieDetailsPage({super.key, required this.isVisible});
+  const MovieDetailsPage(
+      {super.key, required this.isVisible, required this.movieId});
+
+  @override
+  State<MovieDetailsPage> createState() => _MovieDetailsPageState();
+}
+
+class _MovieDetailsPageState extends State<MovieDetailsPage> {
+  TheMovieBookingModel theMovieBookingModel = TheMovieBookingModelImpl();
+  MovieVO? movieDetail;
+
+  @override
+  void initState() {
+    theMovieBookingModel.getMovieDetails(widget.movieId).then((movieDetails) {
+      setState(() {
+        movieDetail = movieDetails.data;
+        debugPrint(
+            "Details =========================================> ${movieDetails.data?.originalTitle}");
+      });
+    }).catchError((error) {
+      debugPrint("Details Error ==========================> $error");
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +66,16 @@ class MovieDetailsPage extends StatelessWidget {
             children: [
               SizedBox(
                 height: MediaQuery.of(context).size.height * MARGIN_XSMALL,
-                child: DetailsPageTopView(),
+                child: DetailsPageTopView(
+                  movieDetails: movieDetail,
+                ),
               ),
               Align(
                 alignment: Alignment.bottomCenter,
-                child: DetailsPageBottomView(isVisible: isVisible),
+                child: DetailsPageBottomView(
+                  isVisible: widget.isVisible,
+                  movieDetails: movieDetail,
+                ),
               )
             ],
           ),
@@ -77,8 +113,9 @@ class FloatingActionButtonView extends StatelessWidget {
 
 class DetailsPageTopView extends StatelessWidget {
   final List<String> genreList = ["Action", "Adventure", "Thriller"];
+  final MovieVO? movieDetails;
 
-  DetailsPageTopView({super.key});
+  DetailsPageTopView({super.key, required this.movieDetails});
 
   @override
   Widget build(BuildContext context) {
@@ -88,15 +125,20 @@ class DetailsPageTopView extends StatelessWidget {
           alignment: Alignment.topCenter,
           child: MovieBackgroundView(),
         ),
-        const Positioned(
+        Positioned(
           left: MARGIN_MEDIUM_15X,
           top: MARGIN_XLARGE_200X + MARGIN_MEDIUM_20X,
-          child: MoviePosterView(),
+          child: MoviePosterView(
+            movieDetails: movieDetails,
+          ),
         ),
         Positioned(
           right: MARGIN_MEDIUM_20X,
           top: MARGIN_XLARGE_250X,
-          child: MovieDescriptionView(genreList: genreList),
+          child: MovieDescriptionView(
+            genreList: movieDetails?.genres ?? [],
+            movieDetails: movieDetails,
+          ),
         ),
       ],
     );
@@ -104,12 +146,12 @@ class DetailsPageTopView extends StatelessWidget {
 }
 
 class MovieDescriptionView extends StatelessWidget {
-  const MovieDescriptionView({
-    Key? key,
-    required this.genreList,
-  }) : super(key: key);
+  const MovieDescriptionView(
+      {Key? key, required this.genreList, required this.movieDetails})
+      : super(key: key);
 
   final List<String> genreList;
+  final MovieVO? movieDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -122,13 +164,15 @@ class MovieDescriptionView extends StatelessWidget {
         children: [
           const SizedBox(height: MARGIN_SMALL_10X),
           Row(
-            children: const [
-              MovieNameView(MARGIN_MEDIUM_15X, "John Wick 4"),
-              SizedBox(
+            children: [
+              MovieNameView(
+                  MARGIN_MEDIUM_15X, movieDetails?.originalTitle ?? ""),
+              const SizedBox(
                 width: MARGIN_MEDIUM_20X,
               ),
-              IMDBView(),
-              IMDBRatingView(TEXT_MEDIUM, "9.1")
+              const IMDBView(),
+              IMDBRatingView(
+                  TEXT_MEDIUM, movieDetails?.rating?.toStringAsFixed(1) ?? "")
             ],
           ),
           const SizedBox(height: MARGIN_MEDIUM_17X),
@@ -172,8 +216,10 @@ class MovieDescriptionView extends StatelessWidget {
 
 class DetailsPageBottomView extends StatelessWidget {
   final bool isVisible;
+  final MovieVO? movieDetails;
 
-  const DetailsPageBottomView({super.key, required this.isVisible});
+  const DetailsPageBottomView(
+      {super.key, required this.isVisible, required this.movieDetails});
 
   @override
   Widget build(BuildContext context) {
@@ -184,11 +230,15 @@ class DetailsPageBottomView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CensorRatingReleaseDateAndDurationView(),
+            CensorRatingReleaseDateAndDurationView(
+              movieDetails: movieDetails,
+            ),
             const SizedBox(height: MARGIN_MEDIUM_20X),
             const TitleText(NOW_SHOWING_MOVIE_DETAILS_SCREEN_TITLE_TEXT),
             const SizedBox(height: MARGIN_SMALL_10X),
-            const StoryLineTextView(),
+            StoryLineTextView(
+              movieDetails: movieDetails,
+            ),
             Visibility(
               visible: isVisible,
               child: Column(
@@ -201,11 +251,17 @@ class DetailsPageBottomView extends StatelessWidget {
             const SizedBox(height: MARGIN_SMALL_10X),
             const TitleText(NOW_SHOWING_MOVIS_DETAILS_SCREEN_CAST_TEXT),
             const SizedBox(height: MARGIN_MEDIUM_20X),
-            const SizedBox(
+            SizedBox(
               height: MARGIN_XLARGE_200X - MARGIN_MEDIUM_20X,
-              child: MovieCastListView(),
+              child: (movieDetails != null)
+                  ? MovieCastListView(
+                      movieDetails: movieDetails,
+                    )
+                  : const Center(
+                      child: CircularProgressIndicator(),
+                    ),
             ),
-            const SizedBox(height: MARGIN_MEDIUM_30X),
+            const SizedBox(height: MARGIN_MEDIUM_50X),
           ],
         ),
       ),
@@ -243,19 +299,23 @@ class MovieBackgroundView extends StatelessWidget {
 }
 
 class MoviePosterView extends StatelessWidget {
-  const MoviePosterView({
-    Key? key,
-  }) : super(key: key);
+  final MovieVO? movieDetails;
+
+  const MoviePosterView({super.key, required this.movieDetails});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: MARGIN_LARGE_175X,
       width: MARGIN_LARGE_140X,
-      child: Image.network(
-        "https://pbs.twimg.com/media/FnfZD_nWAAI9fGF?format=jpg&name=4096x4096",
-        fit: BoxFit.cover,
-      ),
+      child: (movieDetails != null)
+          ? CachedNetworkImage(
+              imageUrl: "$IMAGE_BASE_URL${movieDetails?.posterPath ?? ""}",
+              fit: BoxFit.cover,
+            )
+          : const Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 }
@@ -275,9 +335,10 @@ class BackGroundImageView extends StatelessWidget {
 }
 
 class MovieCastListView extends StatelessWidget {
-  const MovieCastListView({
-    Key? key,
-  }) : super(key: key);
+  const MovieCastListView({Key? key, required this.movieDetails})
+      : super(key: key);
+
+  final MovieVO? movieDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -286,7 +347,7 @@ class MovieCastListView extends StatelessWidget {
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
-        itemCount: 5,
+        itemCount: movieDetails?.casts?.length,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.only(right: MARGIN_SMALL_10X),
@@ -294,10 +355,14 @@ class MovieCastListView extends StatelessWidget {
               width: MARGIN_LARGE_110X,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
-                  CastImageView(),
-                  SizedBox(height: MARGIN_SMALL_10X),
-                  CastNameView()
+                children: [
+                  CastImageView(
+                    castDetails: movieDetails?.casts?[index],
+                  ),
+                  const SizedBox(height: MARGIN_SMALL_10X),
+                  CastNameView(
+                    castDetails: movieDetails?.casts?[index],
+                  )
                 ],
               ),
             ),
@@ -309,9 +374,9 @@ class MovieCastListView extends StatelessWidget {
 }
 
 class CastImageView extends StatelessWidget {
-  const CastImageView({
-    Key? key,
-  }) : super(key: key);
+  const CastImageView({Key? key, required this.castDetails}) : super(key: key);
+
+  final CastVO? castDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -321,7 +386,7 @@ class CastImageView extends StatelessWidget {
       decoration:
           const BoxDecoration(shape: BoxShape.circle, color: Colors.blue),
       child: Image.network(
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Reuni%C3%A3o_com_o_ator_norte-americano_Keanu_Reeves_cropped_2_%2846806576944%29_%28cropped%29.jpg/1200px-Reuni%C3%A3o_com_o_ator_norte-americano_Keanu_Reeves_cropped_2_%2846806576944%29_%28cropped%29.jpg",
+        "$IMAGE_BASE_URL${castDetails?.profilePath ?? ""}",
         fit: BoxFit.cover,
       ),
     );
@@ -329,14 +394,14 @@ class CastImageView extends StatelessWidget {
 }
 
 class CastNameView extends StatelessWidget {
-  const CastNameView({
-    Key? key,
-  }) : super(key: key);
+  const CastNameView({Key? key, required this.castDetails}) : super(key: key);
+
+  final CastVO? castDetails;
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      "Keanu Reeves",
+      castDetails?.name ?? "",
       maxLines: 2,
       textAlign: TextAlign.center,
       style: GoogleFonts.inter(
@@ -496,13 +561,14 @@ class NotifyBoxReleasingTextView extends StatelessWidget {
 }
 
 class StoryLineTextView extends StatelessWidget {
-  const StoryLineTextView({
-    Key? key,
-  }) : super(key: key);
+  const StoryLineTextView({Key? key, required this.movieDetails})
+      : super(key: key);
+
+  final MovieVO? movieDetails;
 
   @override
   Widget build(BuildContext context) {
-    return Text(COMING_SOON_MOVIS_DEtAILS_SCREEN_STORYLINE_TEXT,
+    return Text(movieDetails?.overview ?? "",
         style: GoogleFonts.inter(
             fontSize: TEXT_MEDIUM,
             fontWeight: FontWeight.w500,
@@ -510,28 +576,43 @@ class StoryLineTextView extends StatelessWidget {
   }
 }
 
-class CensorRatingReleaseDateAndDurationView extends StatelessWidget {
-  const CensorRatingReleaseDateAndDurationView({
-    Key? key,
-  }) : super(key: key);
+class CensorRatingReleaseDateAndDurationView extends StatefulWidget {
+  const CensorRatingReleaseDateAndDurationView(
+      {Key? key, required this.movieDetails})
+      : super(key: key);
+
+  final MovieVO? movieDetails;
+
+  @override
+  State<CensorRatingReleaseDateAndDurationView> createState() =>
+      _CensorRatingReleaseDateAndDurationViewState();
+}
+
+class _CensorRatingReleaseDateAndDurationViewState
+    extends State<CensorRatingReleaseDateAndDurationView> {
+  String getTimeString(int duration) {
+    final int hour = duration ~/ 60;
+    final int minutes = duration % 60;
+    return '${hour.toString().padLeft(1, "0")}hr ${minutes.toString().padLeft(2, "0")}min';
+  }
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: const [
-        CensorDateDurationBox(
+      children: [
+        const CensorDateDurationBox(
             titleText: NOW_SHOWING_MOVIS_DEtAILS_SCREEN_RATING_TEXT,
             subTitleText: "U/A",
             boxWidth: MARGIN_LARGE_100X),
         CensorDateDurationBox(
             titleText: NOW_SHOWING_MOVIS_DEtAILS_SCREEN_RELEASE_DATE_TEXT,
-            subTitleText: "May 8th 2023",
+            subTitleText: widget.movieDetails?.releaseDate ?? "",
             boxWidth: MARGIN_LARGE_115X),
         CensorDateDurationBox(
             titleText: NOW_SHOWING_MOVIS_DEtAILS_SCREEN_DURATION_TEXT,
-            subTitleText: "3hr 10mins",
-            boxWidth: MARGIN_LARGE_86X),
+            subTitleText: getTimeString(widget.movieDetails?.runtime ?? 1),
+            boxWidth: MARGIN_LARGE_86X + 4),
       ],
     );
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:the_movie_booking/authentication/data/data_vos/cinema_details_vo.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/resources/strings.dart';
@@ -7,12 +9,21 @@ import 'package:the_movie_booking/video_players/network_video_player_movie.dart'
 import 'package:the_movie_booking/widgets/app_bar_back_arrow.dart';
 import 'package:the_movie_booking/widgets/location_page_location_box.dart';
 import 'package:the_movie_booking/widgets/title_text_large.dart';
+import '../authentication/data/data_vos/cinema_vo.dart';
+import '../authentication/data/models/the_movie_booking_model.dart';
 import '../resources/dimens.dart';
 import '../video_players/network_video_player_cinema.dart';
 import '../widgets/play_button_view.dart';
 import '../widgets/title_text_xlarge.dart';
 
-class CinemaDetailsPage extends StatelessWidget {
+class CinemaDetailsPage extends StatefulWidget {
+  const CinemaDetailsPage({super.key});
+
+  @override
+  State<CinemaDetailsPage> createState() => _CinemaDetailsPageState();
+}
+
+class _CinemaDetailsPageState extends State<CinemaDetailsPage> {
   final List<String> safetyList = [
     "Thermal Scanning",
     "Contactless Security Check",
@@ -23,7 +34,25 @@ class CinemaDetailsPage extends StatelessWidget {
     "Deep Cleaning Of Rest Room"
   ];
 
-  CinemaDetailsPage({super.key});
+  /// Network variable
+  final TheMovieBookingModel _movieBookingModel = TheMovieBookingModelImpl();
+  String latestTime =
+      "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().second}";
+  List<CinemaDetailsVO>? cinemaDetailsList;
+
+  @override
+  void initState() {
+    _movieBookingModel.getCinemas("2023-03-17 17:01:17").then((response) {
+      setState(() {
+        cinemaDetailsList = response.data ?? [];
+        print(
+            "==============================================> CINEMA DETAILS LIST ${cinemaDetailsList?[1].name}");
+      });
+    }).catchError((error) {
+      print("========================================================> $error");
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +126,8 @@ class AppBarActionView extends StatelessWidget {
       width: MARGIN_MEDIUM_50X,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            horizontal: MARGIN_SMALL_10X, vertical: MARGIN_MEDIUM_12X + MARGIN_SMALL_1X),
+            horizontal: MARGIN_SMALL_10X,
+            vertical: MARGIN_MEDIUM_12X + MARGIN_SMALL_1X),
         child: Image.asset(
           STAR_IMAGE,
           fit: BoxFit.fill,
@@ -217,13 +247,17 @@ class FacilityContentsView extends StatelessWidget {
       runSpacing: MARGIN_SMALL_10X,
       spacing: -MARGIN_SMALL_10X,
       children: const [
-        FacilityButtonView(imageURL: PARKING_IMAGE, text: CINEMA_DETAILS_PAGE_PARKING_TEXT),
         FacilityButtonView(
-            imageURL: CART_ITEM_COUNTS_IMAGE, text: CINEMA_DETAILS_PAGE_ONLINE_FOOD_TEXT),
+            imageURL: PARKING_IMAGE, text: CINEMA_DETAILS_PAGE_PARKING_TEXT),
         FacilityButtonView(
-            imageURL: WHEEL_CHAIR_IMAGE, text: CINEMA_DETAILS_PAGE_WHEEL_CHAIR_TEXT),
+            imageURL: CART_ITEM_COUNTS_IMAGE,
+            text: CINEMA_DETAILS_PAGE_ONLINE_FOOD_TEXT),
         FacilityButtonView(
-            imageURL: TICKET_CANCEL_IMAGE, text: CINEMA_DETAILS_PAGE_TICKET_CANCELLATION_TEXT),
+            imageURL: WHEEL_CHAIR_IMAGE,
+            text: CINEMA_DETAILS_PAGE_WHEEL_CHAIR_TEXT),
+        FacilityButtonView(
+            imageURL: TICKET_CANCEL_IMAGE,
+            text: CINEMA_DETAILS_PAGE_TICKET_CANCELLATION_TEXT),
       ],
     );
   }
@@ -282,21 +316,21 @@ class SafetyContentsChipView extends StatelessWidget {
       children: safetyList
           .map(
             (chips) => Padding(
-          padding: const EdgeInsets.only(right: MARGIN_SMALL_5X),
-          child: Chip(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(MARGIN_SMALL_4X),
+              padding: const EdgeInsets.only(right: MARGIN_SMALL_5X),
+              child: Chip(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(MARGIN_SMALL_4X),
+                ),
+                labelPadding: const EdgeInsets.symmetric(
+                    horizontal: MARGIN_SMALL_4X, vertical: -MARGIN_SMALL_2X),
+                backgroundColor: APP_COLOR_SECONDARY_COLOR,
+                label: Text(
+                  chips,
+                  style: GoogleFonts.inter(fontWeight: FontWeight.w500),
+                ),
+              ),
             ),
-            labelPadding: const EdgeInsets.symmetric(
-                horizontal: MARGIN_SMALL_4X, vertical: -MARGIN_SMALL_2X),
-            backgroundColor: APP_COLOR_SECONDARY_COLOR,
-            label: Text(
-              chips,
-              style: GoogleFonts.inter(fontWeight: FontWeight.w500),
-            ),
-          ),
-        ),
-      )
+          )
           .toList(),
     );
   }
@@ -312,7 +346,9 @@ class SafetyTextTitleView extends StatelessWidget {
     return Text(
       CINEMA_DETAILS_PAGE_SAFETY_TEXT,
       style: GoogleFonts.dmSans(
-          color: WHITE_COLOR, fontWeight: FontWeight.w600, fontSize: TEXT_LARGE_18X),
+          color: WHITE_COLOR,
+          fontWeight: FontWeight.w600,
+          fontSize: TEXT_LARGE_18X),
     );
   }
 }

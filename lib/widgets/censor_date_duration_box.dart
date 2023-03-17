@@ -45,6 +45,7 @@ class CensorDateDurationBox extends StatelessWidget {
                 fontWeight: FontWeight.w700,
                 fontSize: TEXT_SMALL_12X,
                 color: WHITE_COLOR),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(
             height: MARGIN_SMALL_10X,
@@ -55,6 +56,7 @@ class CensorDateDurationBox extends StatelessWidget {
                 fontWeight: FontWeight.w700,
                 fontSize: TEXT_MEDIUM,
                 color: WHITE_COLOR),
+            textAlign: TextAlign.center,
           )
         ],
       ),

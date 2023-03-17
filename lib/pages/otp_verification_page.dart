@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:the_movie_booking/authentication/data/models/auth_model.dart';
-import 'package:the_movie_booking/authentication/data/models/auth_model_impl.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/pages/location_page.dart';
 import 'package:the_movie_booking/pages/phone_number_verification_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
@@ -12,10 +12,15 @@ import 'package:the_movie_booking/widgets/app_logo_view.dart';
 import 'package:the_movie_booking/widgets/subtitle_text.dart';
 import 'package:the_movie_booking/widgets/title_text.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 class OTPVerificationPage extends StatefulWidget {
   final String userPhone;
-  const OTPVerificationPage({Key? key,required this.userPhone,}) : super(key: key);
+
+  const OTPVerificationPage({
+    Key? key,
+    required this.userPhone,
+  }) : super(key: key);
 
   @override
   State<OTPVerificationPage> createState() => _OTPVerificationPageState();
@@ -24,8 +29,9 @@ class OTPVerificationPage extends StatefulWidget {
 class _OTPVerificationPageState extends State<OTPVerificationPage> {
   bool isComplete = false;
   String otp = '';
+  String? otpResponse;
 
-  AuthModel authModel = AuthModelImpl();
+  TheMovieBookingModel authModel = TheMovieBookingModelImpl();
 
   @override
   Widget build(BuildContext context) {
@@ -102,20 +108,25 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
               () {
                 ///
                 if (isComplete) {
-                  authModel.getSignInWithPhone(widget.userPhone, otp).then((response) {
-                    if(response.code == 201){
+                  authModel
+                      .getSignInWithPhone(widget.userPhone, otp)
+                      .then((otp) {
+                    setState(() {
+                      otpResponse = otp.message;
+                    });
+                    if (otp.code == 201) {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => const LocationPage(),
                         ),
                       );
-                    } else{
-                      debugPrint('=================> ${response.message}');
+                    } else {
+                      debugPrint('=================> ${otp.message}');
+                      DialogView(context);
                     }
-                  }).catchError((error){
+                  }).catchError((error) {
                     debugPrint('error ====================> $error');
                   });
-
                 }
               },
             ),
@@ -125,6 +136,39 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
         ),
       ),
     );
+  }
+
+  Future<dynamic> DialogView(BuildContext context) {
+    return AwesomeDialog(
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+      context: context,
+      dialogType: DialogType.error,
+      animType: AnimType.leftSlide,
+      title: PHNUMBER_VERIFY_PAGE_WRONG_OTP_DIALOG_HEADER_TEXT,
+      titleTextStyle: GoogleFonts.dmSans(
+          fontWeight: FontWeight.w800, fontSize: TEXT_LARGE_22X),
+      desc: PHNUMBER_VERIFY_PAGE_WRONG_OTP_DIALOG_DES_TEXT,
+      btnOk: InkWell(
+        onTap: () {
+          Navigator.of(context).pop();
+        },
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MARGIN_MEDIUM_40X,
+          decoration: BoxDecoration(
+            color: Colors.red,
+            borderRadius: BorderRadius.circular(MARGIN_SMALL_10X),
+          ),
+          child: Center(
+            child: Text(
+              PHNUMBER_VERIFY_PAGE_WRONG_OTP_DIALOG_OK_TEXT,
+              style: GoogleFonts.dmSans(
+                  fontWeight: FontWeight.w600, fontSize: TEXT_LARGE_16X),
+            ),
+          ),
+        ),
+      ),
+    ).show();
   }
 }
 

@@ -6,8 +6,12 @@ import 'package:the_movie_booking/widgets/app_bar_city_name_view.dart';
 import 'package:the_movie_booking/widgets/app_bar_image_icon_view.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/widgets/cinema_listview.dart';
+import '../authentication/data/data_vos/cinema_vo.dart';
+import '../authentication/data/models/the_movie_booking_model.dart';
+import '../authentication/data/models/the_movie_booking_model_impl.dart';
 import '../resources/dimens.dart';
 import '../resources/strings.dart';
+import 'package:intl/intl.dart';
 
 class CinemaSelectionPage extends StatefulWidget {
   const CinemaSelectionPage({Key? key}) : super(key: key);
@@ -17,13 +21,14 @@ class CinemaSelectionPage extends StatefulWidget {
 }
 
 class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
+
+  /// UI variables
   bool isExpand = false;
   List<String> cinemaList = [
     'JCGV : Junction City',
     'JCGV : City Mall',
     'Mingalar Cinema Gold Class'
   ];
-
   List<String> months = [
     '',
     'Jan',
@@ -39,25 +44,69 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
     'Nov',
     'Dec'
   ];
+  List<bool> isSelectedDateList = [
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ];
   List<String> weekdays = ['', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
   List<String> cinemaType = ['2D', '3D', '3D IMAX', '3D DBOX'];
-
   List<DateTime> twoWeeks = [];
   var today = DateTime.now();
 
   void dateList() {
     var start = today;
     for (int i = 0; i < 14; i++) {
-      twoWeeks.add(start.add(Duration(days: i)));
+      twoWeeks.add(
+        start.add(
+          Duration(days: i),
+        ),
+      );
     }
-    print('$twoWeeks');
-    print('weekday ${today.weekday} month ${today.month} day ${today.day}');
-    print(today);
   }
+
+  /// Network Variables
+  TheMovieBookingModel theMovieBookingModel = TheMovieBookingModelImpl();
+  String userToken = "";
+  List<CinemaVO>? cinemaAndShowTimeList;
+  String selectedDateForApi = "";
+  String defaultDateForApi =
+      "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}";
 
   @override
   void initState() {
     dateList();
+
+    /// getToken From Database
+    setState(() {
+      userToken = theMovieBookingModel.getUserDataFromDatabase()?.token ?? "";
+    });
+
+    /// getCinemaAndShowTime by Default
+    theMovieBookingModel
+        .getCinemaAndShowTimeByDate(defaultDateForApi, 'Bearer $userToken')
+        .then((cinemaAndShowTime) {
+      setState(() {
+        cinemaAndShowTimeList = cinemaAndShowTime.data;
+      });
+      debugPrint(
+          "CinemaAndShowTime===================================>${cinemaAndShowTime.data?.first.cinema}");
+      debugPrint(
+          "CinemaAndShowTime===================================>${cinemaAndShowTimeList?.length}");
+    }).catchError((error) {
+      debugPrint("Error ========================> $error");
+    });
     super.initState();
   }
 
@@ -87,31 +136,104 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
             const SizedBox(
               height: MARGIN_SMALL_10X,
             ),
-            DateListView(list: twoWeeks, weekday: weekdays, months: months),
+            DateListView(
+              list: twoWeeks,
+              weekday: weekdays,
+              months: months,
+              onTapSelectedDate: (selectedDate, index) {
+                setState(() {
+                  for (int i = 0; i < isSelectedDateList.length; i++) {
+                    isSelectedDateList[i] = false;
+                  }
+                  isSelectedDateList[index] = true;
+                  selectedDateForApi =
+                      "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+                  print(
+                      '=================================> SELECTED DATE = $selectedDateForApi');
+
+                  /// getCinemaAndShowTime On User Action
+                  theMovieBookingModel
+                      .getCinemaAndShowTimeByDate(
+                          selectedDateForApi, 'Bearer $userToken')
+                      .then((cinemaAndShowTime) {
+                    setState(() {
+                      cinemaAndShowTimeList = cinemaAndShowTime.data;
+                    });
+                    debugPrint(
+                        "===================================> CINEMA AND SHOWTIME ON USER ACTION  ${cinemaAndShowTime.data?.first.cinema}");
+                    debugPrint(
+                        "===================================> CINEMA LENGTH ON USER ACTION   ${cinemaAndShowTimeList?.length}");
+                  }).catchError((error) {
+                    debugPrint("Error ========================> $error");
+                  });
+                });
+              },
+              isSelectedDateList: isSelectedDateList,
+            ),
             CinemaTypeView(cinemaType: cinemaType),
             const CinemaAvailabilityBar(),
-            CinemaListView(
-              cinemaList: cinemaList,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return const SeatPlanPage();
+            (cinemaAndShowTimeList != null)
+                ? CinemaListView(
+                    cinemaAndShowTimeList: cinemaAndShowTimeList ?? [],
+                    onTapCinema: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return const SeatPlanPage();
+                          },
+                        ),
+                      );
                     },
-                  ),
-                );
-              },
-              onTapDetails: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return CinemaDetailsPage();
+                    onTapDetails: (index) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return CinemaDetailsPage();
+                          },
+                        ),
+                      );
                     },
-                  ),
-                );
-              },
-            ),
+                    onTapExpanded: (index) {
+                      setState(() {
+                        // assign false to all index expect selected index
+                        // excepted selected index to expand one at a time
+                        for (int i = 0;
+                            i < cinemaAndShowTimeList!.length;
+                            i++) {
+                          if (i != index) {
+                            cinemaAndShowTimeList?[i].isExpanded = false;
+                          }
+                        }
+
+                        // toggle true false for selected index
+                        cinemaAndShowTimeList?[index].isExpanded =
+                            cinemaAndShowTimeList?[index].isExpanded == true
+                                ? false
+                                : true; //
+                        // debugPrint('------------------------${cinemaAndShowTimeList?[index].isExpanded}');
+                      });
+                    },
+                  )
+                : const CircularLoadingView(),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class CircularLoadingView extends StatelessWidget {
+  const CircularLoadingView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      height: MARGIN_XLARGE_300X,
+      child: Center(
+        child: CircularProgressIndicator(
+          color: APP_COLOR_SECONDARY_COLOR,
         ),
       ),
     );
@@ -140,8 +262,8 @@ class CinemaTypeView extends StatelessWidget {
                     vertical: MARGIN_SMALL_4X, horizontal: MARGIN_MEDIUM_15X),
                 decoration: BoxDecoration(
                   color: APP_COLOR_PRIMARY_COLOR,
-                  borderRadius: const BorderRadius.all(
-                      Radius.circular(MARGIN_SMALL_5X)),
+                  borderRadius:
+                      const BorderRadius.all(Radius.circular(MARGIN_SMALL_5X)),
                   border: Border.all(
                     color: Colors.white,
                     width: MARGIN_SMALL_1X,
@@ -186,36 +308,23 @@ class DateListView extends StatefulWidget {
   final List<DateTime> list;
   final List<String> weekday;
   final List<String> months;
+  final Function(DateTime, int) onTapSelectedDate;
+  final List<bool> isSelectedDateList;
 
-  const DateListView({
-    Key? key,
-    required this.list,
-    required this.weekday,
-    required this.months,
-  }) : super(key: key);
+  const DateListView(
+      {Key? key,
+      required this.list,
+      required this.weekday,
+      required this.months,
+      required this.onTapSelectedDate,
+      required this.isSelectedDateList})
+      : super(key: key);
 
   @override
   State<DateListView> createState() => _DateListViewState();
 }
 
 class _DateListViewState extends State<DateListView> {
-  List<bool> isSelectedDate = [
-    true,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ];
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -225,23 +334,15 @@ class _DateListViewState extends State<DateListView> {
           itemCount: widget.list.length,
           itemBuilder: (context, index) {
             return GestureDetector(
-              onTap: () {
-                setState(() {
-                  for (int i = 0; i < isSelectedDate.length; i++) {
-                    isSelectedDate[i] = false;
-                  }
-                  isSelectedDate[index] = true;
-                });
-              },
+              onTap: () => widget.onTapSelectedDate(widget.list[index], index),
               child: Container(
                 decoration: BoxDecoration(
-                  color: isSelectedDate[index]
+                  color: widget.isSelectedDateList[index]
                       ? APP_COLOR_SECONDARY_COLOR
                       : GREY_COLOR,
                   borderRadius: BorderRadius.circular(MARGIN_SMALL_5X),
                 ),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: MARGIN_SMALL_8X),
+                margin: const EdgeInsets.symmetric(horizontal: MARGIN_SMALL_8X),
                 width: MARGIN_LARGE_70X,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

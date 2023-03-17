@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
+import 'package:the_movie_booking/authentication/persistence/daos/user_data_dao.dart';
+import 'package:the_movie_booking/pages/bottom_navigation_bar_home_page.dart';
+import 'package:the_movie_booking/pages/home_page.dart';
 import 'package:the_movie_booking/pages/phone_number_verification_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/dimens.dart';
 import 'package:the_movie_booking/resources/strings.dart';
 import 'package:the_movie_booking/widgets/app_logo_view.dart';
+
+import '../authentication/data/data_vos/color_vo.dart';
 
 class SplashScreenPage extends StatefulWidget {
   @override
@@ -12,20 +19,60 @@ class SplashScreenPage extends StatefulWidget {
 }
 
 class _SplashScreenPageState extends State<SplashScreenPage> {
+  TheMovieBookingModel theMovieBookingModel = TheMovieBookingModelImpl();
+  List<ColorVO>? colorList;
+
   @override
   void initState() {
+    /// Network
+    /// check userToken
+    debugPrint(
+        ' ===============================> USER TOKEN = ${theMovieBookingModel.getUserDataFromDatabase()?.token} ');
+
+    /// getCities
+    theMovieBookingModel
+        .getCities()
+        .then((response) => {
+              debugPrint(
+                  "======================================> CITIES LENGTH = ${response.data?.length}")
+            })
+        .catchError((error) {
+      debugPrint(error.toString());
+    });
+
+    /// getConfig
+    theMovieBookingModel.getConfigurations().then((config) {
+      debugPrint(
+          "=========================================> CONFIG COLOR VO ${config.data?[1].value.toString()}");
+      // setState(() {
+        colorList = config.data?[1].value;
+     // });
+      debugPrint(colorList.toString());
+    }).catchError((error) {
+      debugPrint("============================> ${error.toString()}");
+    });
+
     super.initState();
-    _navigateToHomeScreen();
+    _navigateToNextScreen();
   }
 
-  _navigateToHomeScreen() async {
-    await Future.delayed(const Duration(seconds: 5), () {});
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PhoneNumberVerificationPage(),
-      ),
-    );
+  _navigateToNextScreen() async {
+    await Future.delayed(const Duration(seconds: 1), () {});
+    if (theMovieBookingModel.getUserDataFromDatabase()?.token == null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PhoneNumberVerificationPage(),
+        ),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const BottomNaviBarHomePage(),
+        ),
+      );
+    }
   }
 
   @override
@@ -81,7 +128,9 @@ class SplashScreenTitle extends StatelessWidget {
         Text(
           SPLASH_SCREEN_PAGE_TITLE_TEXT,
           style: GoogleFonts.inter(
-              color: Colors.grey, fontSize: TEXT_LARGE_18X, fontWeight: FontWeight.w600),
+              color: Colors.grey,
+              fontSize: TEXT_LARGE_18X,
+              fontWeight: FontWeight.w600),
         )
       ],
     );

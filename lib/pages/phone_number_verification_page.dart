@@ -1,7 +1,7 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:the_movie_booking/authentication/data/models/auth_model.dart';
-import 'package:the_movie_booking/authentication/data/models/auth_model_impl.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/pages/otp_verification_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/dimens.dart';
@@ -26,7 +26,7 @@ class _PhoneNumberVerificationPageState
   String selectedCode = PHNUMBER_VERIFY_PAGE_MM_CODE_TEXT;
   String userPhone = '';
 
-  AuthModel authModel = AuthModelImpl();
+  TheMovieBookingModel theMovieBookingModel = TheMovieBookingModelImpl();
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +57,8 @@ class _PhoneNumberVerificationPageState
                 PHNUMBER_VERIFY_PAGE_TITLE_TEXT,
                 () {
                   bool isValid = _formKey.currentState!.validate();
-                  ///
                   if (isValid) {
-                    authModel.getOTP(userPhone).then((response) {
+                    theMovieBookingModel.getOTP(userPhone).then((response) {
                      if(response.code == 200){
                        Navigator.of(context).push(
                          MaterialPageRoute(

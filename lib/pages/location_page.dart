@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:the_movie_booking/pages/unused_home_page.dart';
+import 'package:the_movie_booking/authentication/data/data_vos/cities_vo.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/pages/bottom_navigation_bar_home_page.dart';
 import 'package:the_movie_booking/resources/dimens.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/resources/strings.dart';
+import '../authentication/data/models/the_movie_booking_model.dart';
 import '../resources/colors.dart';
 import 'package:drop_shadow/drop_shadow.dart';
 
@@ -18,13 +20,24 @@ class LocationPage extends StatefulWidget {
 }
 
 class _LocationPageState extends State<LocationPage> {
-  List<String> citiesList = [
-    "Yangon",
-    "Mandalay",
-    "Naypyidaw",
-    "Bago",
-    "Mawlamyine"
-  ];
+  TheMovieBookingModel theMovieBookingModel = TheMovieBookingModelImpl();
+
+  List<CitiesVO> citiesList = [];
+
+  @override
+  void initState() {
+    /// GetCities From Database
+    theMovieBookingModel.getCitiesFromDatabase().then((cities) {
+      setState(() {
+        citiesList = cities ?? [];
+      });
+      debugPrint(
+          "======================================> ${cities?.length}");
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +61,13 @@ class _LocationPageState extends State<LocationPage> {
               const LocationScreenCitiesImageView(),
               const LocationScreenCitiesTitleView(),
               LocationScreenCityNamesListView(
-                  (city) => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => const BottomNaviBarHomePage(),
-                        ),
-                      ),
-                  citiesList),
+                      (city) => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const BottomNaviBarHomePage(),
+                            ),
+                          ),
+                      citiesList),
             ],
           ),
         ),
@@ -82,28 +97,29 @@ class LocationScreenTitleView extends StatelessWidget {
 }
 
 class LocationScreenCityNamesListView extends StatelessWidget {
-  const LocationScreenCityNamesListView(this.onTapCity, this.citiesList, {super.key});
+  const LocationScreenCityNamesListView(this.onTapCity, this.citiesList,
+      {super.key});
 
-  final List<String> citiesList;
+  final List<CitiesVO>? citiesList;
   final Function(String) onTapCity;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: citiesList.length,
+      itemCount: citiesList?.length,
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-            onTapCity(citiesList[index]);
+            onTapCity(citiesList?[index].name ?? "");
           },
           child: Padding(
             padding: const EdgeInsets.only(bottom: MARGIN_SMALL_2X),
             child: Container(
               decoration: const BoxDecoration(
                 border: Border(
-                  bottom:
-                      BorderSide(color: DARK_GREY_COLOR, width: MARGIN_SMALL_2X),
+                  bottom: BorderSide(
+                      color: DARK_GREY_COLOR, width: MARGIN_SMALL_2X),
                 ),
               ),
               padding: const EdgeInsets.only(
@@ -111,7 +127,7 @@ class LocationScreenCityNamesListView extends StatelessWidget {
               height: MARGIN_LARGE_60X,
               width: double.maxFinite,
               child: Text(
-                citiesList[index],
+                citiesList?[index].name ?? "",
                 style: GoogleFonts.inter(
                     fontWeight: FontWeight.w500,
                     fontSize: TEXT_LARGE_15X,
@@ -137,7 +153,8 @@ class LocationScreenCitiesTitleView extends StatelessWidget {
       height: MARGIN_MEDIUM_40X,
       width: double.maxFinite,
       child: Padding(
-        padding: const EdgeInsets.only(left: MARGIN_MEDIUM_20X, top: MARGIN_SMALL_10X),
+        padding: const EdgeInsets.only(
+            left: MARGIN_MEDIUM_20X, top: MARGIN_SMALL_10X),
         child: Text(
           LOCATION_PAGE_CITIES_TEXT,
           style: GoogleFonts.inter(
@@ -209,13 +226,16 @@ class LocationScreenSearchIconAndTextFieldView extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       style: GoogleFonts.inter(
-          fontWeight: FontWeight.w400, color: GREY_COLOR, fontSize: TEXT_MEDIUM),
+          fontWeight: FontWeight.w400,
+          color: GREY_COLOR,
+          fontSize: TEXT_MEDIUM),
       textAlign: TextAlign.start,
       decoration: InputDecoration(
         //focused border
         focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.black),
-            borderRadius: BorderRadius.circular(MARGIN_SMALL_8X),),
+          borderSide: const BorderSide(color: Colors.black),
+          borderRadius: BorderRadius.circular(MARGIN_SMALL_8X),
+        ),
         contentPadding: const EdgeInsets.only(top: MARGIN_MEDIUM_15X),
         prefixIcon: Padding(
           padding: const EdgeInsets.all(MARGIN_MEDIUM_16X),
