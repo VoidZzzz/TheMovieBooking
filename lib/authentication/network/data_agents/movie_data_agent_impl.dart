@@ -7,6 +7,7 @@ import 'package:the_movie_booking/authentication/network/response/get_config_res
 import 'package:the_movie_booking/authentication/network/response/get_movie_details_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_movies_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_payment_types_response.dart';
+import 'package:the_movie_booking/authentication/network/response/get_seating_plan_by_showtime_response.dart';
 import 'package:the_movie_booking/authentication/network/response/logout_response.dart';
 import 'package:the_movie_booking/authentication/network/the_movie_booking_api.dart';
 import 'package:the_movie_booking/authentication/network/data_agents/movie_data_agent.dart';
@@ -87,5 +88,11 @@ class MovieDataAgentImpl extends MovieDataAgent {
   @override
   Future<GetCinemaResponse> getCinemas(String latestTime) {
     return mApi.getCinemas(latestTime);
+  }
+
+  @override
+  Future<GetSeatingPlanByShowTimeResponse> getSeatingPlan(String cinemaDayTimeSlotId, String bookingDate, String token) {
+    return mApi.getSeatingPlanByShowTime(
+        token, cinemaDayTimeSlotId.toString(), bookingDate);
   }
 }

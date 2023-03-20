@@ -5,6 +5,7 @@ import 'package:the_movie_booking/authentication/network/response/get_cinema_res
 import 'package:the_movie_booking/authentication/network/response/get_config_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_otp_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_payment_types_response.dart';
+import 'package:the_movie_booking/authentication/network/response/get_seating_plan_by_showtime_response.dart';
 import 'package:the_movie_booking/authentication/network/response/sign_in_with_phone_response.dart';
 
 import '../../network/response/get_banners_response.dart';
@@ -12,6 +13,7 @@ import '../../network/response/get_cities_response.dart';
 import '../../network/response/get_movie_details_response.dart';
 import '../../network/response/get_movies_response.dart';
 import '../../network/response/logout_response.dart';
+import '../data_vos/seat_vo.dart';
 
 abstract class TheMovieBookingModel {
   Future<GetOTPResponse> getOTP(String phone);
@@ -41,8 +43,11 @@ abstract class TheMovieBookingModel {
 
   Future<GetCinemaResponse> getCinemas(String latestTime);
 
+  Future<List<List<SeatVO>?>> getSeatingPlan(String token, String cinemaDayTimeSlotId, String bookingDate);
+
   /// Database
   UserVO? getUserDataFromDatabase();
  Future<List<CitiesVO>?> getCitiesFromDatabase();
+
  void clearUserData();
 }

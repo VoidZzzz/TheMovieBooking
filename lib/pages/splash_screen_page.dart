@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_api_model.dart';
 import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
 import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/authentication/persistence/daos/user_data_dao.dart';
@@ -12,24 +13,27 @@ import 'package:the_movie_booking/resources/strings.dart';
 import 'package:the_movie_booking/widgets/app_logo_view.dart';
 
 import '../authentication/data/data_vos/color_vo.dart';
+import '../authentication/data/models/the_movie_api_model_impl.dart';
 
 class SplashScreenPage extends StatefulWidget {
+  const SplashScreenPage({super.key});
+
   @override
   State<SplashScreenPage> createState() => _SplashScreenPageState();
 }
 
 class _SplashScreenPageState extends State<SplashScreenPage> {
   TheMovieBookingModel theMovieBookingModel = TheMovieBookingModelImpl();
-  List<ColorVO>? colorList;
+  List<dynamic>? colorList;
+  String? colorHexCode;
 
   @override
   void initState() {
-    /// Network
-    /// check userToken
+    /// get userToken from Database
     debugPrint(
         ' ===============================> USER TOKEN = ${theMovieBookingModel.getUserDataFromDatabase()?.token} ');
 
-    /// getCities
+    /// getCities from Network
     theMovieBookingModel
         .getCities()
         .then((response) => {
@@ -40,14 +44,14 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       debugPrint(error.toString());
     });
 
-    /// getConfig
+    /// getConfig from Network
     theMovieBookingModel.getConfigurations().then((config) {
-      debugPrint(
-          "=========================================> CONFIG COLOR VO ${config.data?[1].value.toString()}");
+      // debugPrint(
+      //     "=========================================> CONFIG COLOR VO ${config.data?[1].value}");
       // setState(() {
-        colorList = config.data?[1].value;
-     // });
-      debugPrint(colorList.toString());
+      // colorList = config.data?[1].value;
+      // });
+      debugPrint("${config.data?[1].value.runtimeType == List<dynamic>}");
     }).catchError((error) {
       debugPrint("============================> ${error.toString()}");
     });

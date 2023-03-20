@@ -7,6 +7,7 @@ import '../response/get_movie_details_response.dart';
 import '../response/get_movies_response.dart';
 import '../response/get_otp_response.dart';
 import '../response/get_payment_types_response.dart';
+import '../response/get_seating_plan_by_showtime_response.dart';
 import '../response/logout_response.dart';
 import '../response/sign_in_with_phone_response.dart';
 
@@ -37,5 +38,7 @@ abstract class MovieDataAgent {
   Future<GetPaymentTypesResponse> getPaymentTypes(String token);
 
   Future<GetCinemaResponse> getCinemas(String latestTime);
+
+  Future<GetSeatingPlanByShowTimeResponse> getSeatingPlan(String cinemaDayTimeSlotId, String bookingDate, String token);
 
 }

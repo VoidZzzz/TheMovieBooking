@@ -1,127 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/pages/snack_shop_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/resources/strings.dart';
 import 'package:the_movie_booking/widgets/app_secondary_button.dart';
 
+import '../authentication/data/data_vos/seat_vo.dart';
 import '../resources/dimens.dart';
 import '../widgets/app_bar_back_arrow.dart';
 
 class SeatPlanPage extends StatefulWidget {
-  const SeatPlanPage({Key? key}) : super(key: key);
+  const SeatPlanPage(
+      {Key? key, required this.bookingDate, required this.cinemaDayTimeSlotsId})
+      : super(key: key);
+
+  final String bookingDate;
+  final String cinemaDayTimeSlotsId;
 
   @override
   State<SeatPlanPage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<SeatPlanPage> {
-  List<String> normalSeatList = [
-    'A',
-    'TAKEN',
-    'AVAILABLE',
-    'TAKEN',
-    'AVAILABLE',
-    '',
-    '',
-    'AVAILABLE',
-    'TAKEN',
-    'TAKEN',
-    'AVAILABLE',
-    'A',
-    'B',
-    'AVAILABLE',
-    'AVAILABLE',
-    'TAKEN',
-    'TAKEN',
-    '',
-    '',
-    'TAKEN',
-    'AVAILABLE',
-    'AVAILABLE',
-    'TAKEN',
-    'B',
-  ];
-  List<String> executiveSeatList = [
-    'C',
-    'AVAILABLE',
-    'TAKEN',
-    'TAKEN',
-    'TAKEN',
-    '',
-    '',
-    'AVAILABLE',
-    'TAKEN',
-    'TAKEN',
-    'AVAILABLE',
-    'C',
-    'D',
-    'AVAILABLE',
-    'AVAILABLE',
-    'TAKEN',
-    'AVAILABLE',
-    '',
-    '',
-    'TAKEN',
-    'AVAILABLE',
-    'AVAILABLE',
-    'TAKEN',
-    'D',
-  ];
-  List<String> premiumSeatList = [
-    'E',
-    'TAKEN',
-    'TAKEN',
-    'TAKEN',
-    'AVAILABLE',
-    '',
-    '',
-    'AVAILABLE',
-    'TAKEN',
-    'TAKEN',
-    'AVAILABLE',
-    'E',
-    'F',
-    'TAKEN',
-    'AVAILABLE',
-    'TAKEN',
-    'TAKEN',
-    '',
-    '',
-    'TAKEN',
-    'AVAILABLE',
-    'TAKEN',
-    'TAKEN',
-    'F',
-  ];
-  List<String> goldSeatList = [
-    'G',
-    'TAKEN',
-    '',
-    'AVAILABLE',
-    'TAKEN',
-    'AVAILABLE',
-    'TAKEN',
-    'TAKEN',
-    '',
-    'TAKEN',
-    'G',
-    'H',
-    'AVAILABLE',
-    '',
-    'TAKEN',
-    'AVAILABLE',
-    'TAKEN',
-    'TAKEN',
-    'AVAILABLE',
-    '',
-    'TAKEN',
-    'H',
-  ];
-
   int totalTicket = 0;
   int totalAmount = 0;
+
+  final TheMovieBookingModelImpl _theMovieBookingModelImpl =
+      TheMovieBookingModelImpl();
+  late String userToken;
+  List<List<SeatVO>?>? seatPlan;
+
+  @override
+  void initState() {
+    userToken =
+        _theMovieBookingModelImpl.getUserDataFromDatabase()?.token ?? "";
+    _theMovieBookingModelImpl
+        .getSeatingPlan("Bearer $userToken", widget.cinemaDayTimeSlotsId ?? "",
+            widget.bookingDate ?? "")
+        .then((response) {
+      setState(() {
+        seatPlan = response ?? [];
+        debugPrint(
+            "=============================================> SEAT ${seatPlan?[0]?[1].seatName}");
+      });
+    }).catchError((error) {
+      debugPrint(
+          "Error======================================> ${error.toString()}");
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,103 +64,136 @@ class _MyHomePageState extends State<SeatPlanPage> {
       body: Column(
         children: [
           const TheaterAndScreenView(),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: 8,
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return const SeatTypeTextView(
-                  text: SEAT_PLAN_PAGE_NORMAL_CLASS_TEXT,
-                );
-              } else if (index == 2) {
-                return const SeatTypeTextView(
-                  text: SEAT_PLAN_PAGE_EXECUTIVE_CLASS_TEXT,
-                );
-              } else if (index == 4) {
-                return const SeatTypeTextView(
-                  text: SEAT_PLAN_PAGE_PREMIUM_CLASS_TEXT,
-                );
-              } else if (index == 6) {
-                return const SeatTypeTextView(
-                  text: SEAT_PLAN_PAGE_GOLD_CLASS_TEXT,
-                );
-              } else if (index == 1) {
-                return SeatPlanGridView(
-                    seatList: normalSeatList,
-                    onSelect: (index) {
-                      if (normalSeatList[index] == 'SELECTION') {
-                        setState(() {
-                          normalSeatList[index] = 'AVAILABLE';
-                          totalTicket -= 1;
-                          totalAmount -= 4500;
-                        });
-                      } else if (normalSeatList[index] == 'AVAILABLE') {
-                        setState(() {
-                          normalSeatList[index] = 'SELECTION';
-                          totalTicket += 1;
-                          totalAmount += 4500;
-                        });
-                      }
-                    });
-              } else if (index == 3) {
-                return SeatPlanGridView(
-                    seatList: executiveSeatList,
-                    onSelect: (index) {
-                      if (executiveSeatList[index] == 'SELECTION') {
-                        setState(() {
-                          executiveSeatList[index] = 'AVAILABLE';
-                          totalTicket -= 1;
-                          totalAmount -= 6500;
-                        });
-                      } else if (executiveSeatList[index] == 'AVAILABLE') {
-                        setState(() {
-                          executiveSeatList[index] = 'SELECTION';
-                          totalTicket += 1;
-                          totalAmount += 6500;
-                        });
-                      }
-                    });
-              } else if (index == 5) {
-                return SeatPlanGridView(
-                    seatList: premiumSeatList,
-                    onSelect: (index) {
-                      if (premiumSeatList[index] == 'SELECTION') {
-                        setState(() {
-                          premiumSeatList[index] = 'AVAILABLE';
-                          totalTicket -= 1;
-                          totalAmount -= 8500;
-                        });
-                      } else if (premiumSeatList[index] == 'AVAILABLE') {
-                        setState(() {
-                          premiumSeatList[index] = 'SELECTION';
-                          totalTicket += 1;
-                          totalAmount += 8500;
-                        });
-                      }
-                    });
-              } else if (index == 7) {
-                return CoupleSeatPlanGridView(
-                    seatList: goldSeatList,
-                    onSelect: (index) {
-                      if (goldSeatList[index] == 'SELECTION') {
-                        setState(() {
-                          goldSeatList[index] = 'AVAILABLE';
-                          totalTicket -= 1;
-                          totalAmount -= 10000;
-                        });
-                      } else if (goldSeatList[index] == 'AVAILABLE') {
-                        setState(() {
-                          goldSeatList[index] = 'SELECTION';
-                          totalTicket += 1;
-                          totalAmount += 10000;
-                        });
-                      }
-                    });
-              } else {
-                return Container();
-              }
-            },
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                SEAT_PLAN_PAGE_NORMAL_CLASS_TEXT,
+                style: GoogleFonts.dmSans(
+                    fontSize: TEXT_LARGE_16X,
+                    color: GREY_COLOR,
+                    fontWeight: FontWeight.w400),
+              ),
+              (seatPlan != null)
+                  ? SeatPlanView(seatPlan: seatPlan ?? [], onTappedSeat: (int? listViewIndex, int? gridViewIndex) {
+                setState(() {
+                  seatPlan?[listViewIndex!]?[gridViewIndex!].isSelected =
+                  (seatPlan?[listViewIndex]?[gridViewIndex].isSelected ==
+                      false)
+                      ? true
+                      : false;
+                  totalTicket ++;
+                  totalAmount = (2500 * (totalTicket * (seatPlan?[listViewIndex ?? 0]?[gridViewIndex ?? 0].price ?? 0)));
+                });
+              },)
+                  : const SizedBox(
+                      height: 440,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: APP_COLOR_SECONDARY_COLOR,
+                        ),
+                      ),
+                    ),
+            ],
           ),
+
+          // ListView.builder(
+          //   shrinkWrap: true,
+          //   itemCount: 8,
+          //   itemBuilder: (context, index) {
+          //     if (index == 0) {
+          //       return const SeatTypeTextView(
+          //         text: SEAT_PLAN_PAGE_NORMAL_CLASS_TEXT,
+          //       );
+          //     } else if (index == 2) {
+          //       return const SeatTypeTextView(
+          //         text: SEAT_PLAN_PAGE_EXECUTIVE_CLASS_TEXT,
+          //       );
+          //     } else if (index == 4) {
+          //       return const SeatTypeTextView(
+          //         text: SEAT_PLAN_PAGE_PREMIUM_CLASS_TEXT,
+          //       );
+          //     } else if (index == 6) {
+          //       return const SeatTypeTextView(
+          //         text: SEAT_PLAN_PAGE_GOLD_CLASS_TEXT,
+          //       );
+          //     } else if (index == 1) {
+          //       return SeatPlanGridView(
+          //           seatList: normalSeatList,
+          //           onSelect: (index) {
+          //             if (normalSeatList[index] == 'SELECTION') {
+          //               setState(() {
+          //                 normalSeatList[index] = 'AVAILABLE';
+          //                 totalTicket -= 1;
+          //                 totalAmount -= 4500;
+          //               });
+          //             } else if (normalSeatList[index] == 'AVAILABLE') {
+          //               setState(() {
+          //                 normalSeatList[index] = 'SELECTION';
+          //                 totalTicket += 1;
+          //                 totalAmount += 4500;
+          //               });
+          //             }
+          //           });
+          //     } else if (index == 3) {
+          //       return SeatPlanGridView(
+          //           seatList: executiveSeatList,
+          //           onSelect: (index) {
+          //             if (executiveSeatList[index] == 'SELECTION') {
+          //               setState(() {
+          //                 executiveSeatList[index] = 'AVAILABLE';
+          //                 totalTicket -= 1;
+          //                 totalAmount -= 6500;
+          //               });
+          //             } else if (executiveSeatList[index] == 'AVAILABLE') {
+          //               setState(() {
+          //                 executiveSeatList[index] = 'SELECTION';
+          //                 totalTicket += 1;
+          //                 totalAmount += 6500;
+          //               });
+          //             }
+          //           });
+          //     } else if (index == 5) {
+          //       return SeatPlanGridView(
+          //           seatList: premiumSeatList,
+          //           onSelect: (index) {
+          //             if (premiumSeatList[index] == 'SELECTION') {
+          //               setState(() {
+          //                 premiumSeatList[index] = 'AVAILABLE';
+          //                 totalTicket -= 1;
+          //                 totalAmount -= 8500;
+          //               });
+          //             } else if (premiumSeatList[index] == 'AVAILABLE') {
+          //               setState(() {
+          //                 premiumSeatList[index] = 'SELECTION';
+          //                 totalTicket += 1;
+          //                 totalAmount += 8500;
+          //               });
+          //             }
+          //           });
+          //     } else if (index == 7) {
+          //       return CoupleSeatPlanGridView(
+          //           seatList: goldSeatList,
+          //           onSelect: (index) {
+          //             if (goldSeatList[index] == 'SELECTION') {
+          //               setState(() {
+          //                 goldSeatList[index] = 'AVAILABLE';
+          //                 totalTicket -= 1;
+          //                 totalAmount -= 10000;
+          //               });
+          //             } else if (goldSeatList[index] == 'AVAILABLE') {
+          //               setState(() {
+          //                 goldSeatList[index] = 'SELECTION';
+          //                 totalTicket += 1;
+          //                 totalAmount += 10000;
+          //               });
+          //             }
+          //           });
+          //     } else {
+          //       return Container();
+          //     }
+          //   },
+          // ),
           const SeatTypeView(),
           const SizedBox(
             height: MARGIN_MEDIUM_40X,
@@ -251,6 +213,106 @@ class _MyHomePageState extends State<SeatPlanPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class SeatPlanView extends StatefulWidget {
+  final List<List<SeatVO>?>? seatPlan;
+  final Function(int? listViewIndex, int? gridViewIndex) onTappedSeat;
+  const SeatPlanView({super.key, required this.seatPlan,required this.onTappedSeat});
+
+  @override
+  State<SeatPlanView> createState() => _SeatPlanViewState();
+}
+
+class _SeatPlanViewState extends State<SeatPlanView> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: widget.seatPlan?.length ?? 0,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2.0),
+              child: SeatRowView(
+                seatPlanForEachRow: widget.seatPlan?[index] ?? [],
+                onTappedSeat: (gridIndex)=> widget.onTappedSeat(index, gridIndex),
+              ),
+            );
+          }),
+    );
+  }
+}
+
+class SeatRowView extends StatefulWidget {
+  final List<SeatVO>? seatPlanForEachRow;
+  final Function(int?) onTappedSeat;
+  const SeatRowView(
+      {Key? key, required this.seatPlanForEachRow, required this.onTappedSeat})
+      : super(key: key);
+
+  @override
+  State<SeatRowView> createState() => _SeatRowViewState();
+}
+
+class _SeatRowViewState extends State<SeatRowView> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3.2),
+      child: GridView.builder(
+          shrinkWrap: true,
+          itemCount: widget.seatPlanForEachRow?.length ?? 0,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 18,
+              mainAxisExtent: 21,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+              childAspectRatio: 1),
+          itemBuilder: (context, index) {
+            if (widget.seatPlanForEachRow?[index].type == "text") {
+              return Center(
+                child: Text(
+                  widget.seatPlanForEachRow?[index].symbol ?? "",
+                  style: GoogleFonts.inter(
+                      fontSize: TEXT_SMALL_12X,
+                      color: WHITE_COLOR,
+                      fontWeight: FontWeight.w500),
+                ),
+              );
+            } else if (widget.seatPlanForEachRow?[index].type == "available") {
+              return SizedBox(
+                child: InkWell(
+                  onTap: () => widget.onTappedSeat(index),
+                  child: Image.asset(
+                    "images/whiteChair.png",
+                    fit: BoxFit.cover,
+                    color:
+                        (widget.seatPlanForEachRow?[index].isSelected == true)
+                            ? APP_COLOR_SECONDARY_COLOR
+                            : WHITE_COLOR,
+                  ),
+                ),
+              );
+            } else if (widget.seatPlanForEachRow?[index].type == "taken") {
+              return SizedBox(
+                child: Image.asset("images/blackChair.png"),
+              );
+            } else if (widget.seatPlanForEachRow?[index].type == "space") {
+              return const SizedBox();
+            } else {
+              return Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Container(
+                  color: APP_COLOR_SECONDARY_COLOR,
+                ),
+              );
+            }
+          }),
     );
   }
 }
@@ -402,7 +464,7 @@ class CoupleSeatPlanGridView extends StatelessWidget {
                   : seatList[index] == 'TAKEN'
                       ? Image.asset(
                           COUPLE_SEAT_IMAGE,
-                            color: GREY_COLOR,
+                          color: GREY_COLOR,
                         )
                       : seatList[index] == 'SELECTION'
                           ? Image.asset(

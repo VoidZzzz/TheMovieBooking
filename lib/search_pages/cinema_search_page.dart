@@ -131,7 +131,7 @@ class _CinemaSearchPageState extends State<CinemaSearchPage> {
                     cinemaAndShowTimeList: [],
                     onTapCinema: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const SeatPlanPage(),
+                        builder: (context) => const SeatPlanPage(bookingDate: '', cinemaDayTimeSlotsId: '',),
                       ),
                     ),
                     onTapDetails: (index) => Navigator.of(context).push(

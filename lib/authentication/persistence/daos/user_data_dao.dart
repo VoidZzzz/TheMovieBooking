@@ -14,7 +14,7 @@ class UserDataDao{
 
   void saveUserData(SignInWithPhoneResponse response) async {
     UserVO userVO = UserVO(response.data, response.token);
-    getUserDataBox().put('user', userVO);
+    await getUserDataBox().put('user', userVO);
   }
 
   UserVO? getUserData() {

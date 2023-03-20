@@ -179,7 +179,7 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return const SeatPlanPage();
+                            return SeatPlanPage(bookingDate: (selectedDateForApi.isEmpty)? defaultDateForApi : selectedDateForApi, cinemaDayTimeSlotsId: "22",);
                           },
                         ),
                       );
@@ -188,7 +188,7 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return CinemaDetailsPage();
+                            return const CinemaDetailsPage();
                           },
                         ),
                       );

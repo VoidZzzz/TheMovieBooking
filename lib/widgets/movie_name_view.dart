@@ -14,6 +14,8 @@ class MovieNameView extends StatelessWidget {
       child: Text(
         movieName,
         overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.start,
+          maxLines: 2,
         style: GoogleFonts.inter(
             fontSize: movieNameFontSize,
             fontWeight: FontWeight.w500,

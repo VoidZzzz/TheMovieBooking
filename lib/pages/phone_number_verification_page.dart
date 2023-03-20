@@ -22,10 +22,12 @@ class PhoneNumberVerificationPage extends StatefulWidget {
 
 class _PhoneNumberVerificationPageState
     extends State<PhoneNumberVerificationPage> {
+  /// Ui Variables
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String selectedCode = PHNUMBER_VERIFY_PAGE_MM_CODE_TEXT;
   String userPhone = '';
 
+  /// Api Variables
   TheMovieBookingModel theMovieBookingModel = TheMovieBookingModelImpl();
 
   @override
@@ -58,19 +60,23 @@ class _PhoneNumberVerificationPageState
                 () {
                   bool isValid = _formKey.currentState!.validate();
                   if (isValid) {
+                    /// get OTP
                     theMovieBookingModel.getOTP(userPhone).then((response) {
-                     if(response.code == 200){
-                       Navigator.of(context).push(
-                         MaterialPageRoute(
-                           builder: (context) {
-                             return OTPVerificationPage(userPhone: userPhone,);
-                           },
-                         ),
-                       );
-                     } else{
-                       debugPrint('====================> error ${response.message}');
-                     }
-                    }).catchError( (error){
+                      if (response.code == 200) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return OTPVerificationPage(
+                                userPhone: userPhone,
+                              );
+                            },
+                          ),
+                        );
+                      } else {
+                        debugPrint(
+                            '====================> error ${response.message}');
+                      }
+                    }).catchError((error) {
                       debugPrint('====================> error $error');
                     });
                   }
@@ -118,11 +124,13 @@ class _PhoneNumberVerificationPageState
         ),
         SizedBox(
           width: MARGIN_XLARGE_250X,
-          child: TextFieldView(onChanged: (phone){
-            setState(() {
-              userPhone = phone;
-            });
-          },),
+          child: TextFieldView(
+            onChanged: (phone) {
+              setState(() {
+                userPhone = phone;
+              });
+            },
+          ),
         ),
       ],
     );
@@ -174,13 +182,14 @@ class CountryCodeView extends StatelessWidget {
 class TextFieldView extends StatelessWidget {
   Function(String) onChanged;
   TextFieldView({
-    Key? key,required this.onChanged,
+    Key? key,
+    required this.onChanged,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      onChanged: (phone){
+      onChanged: (phone) {
         onChanged(phone);
       },
       keyboardType: TextInputType.number,

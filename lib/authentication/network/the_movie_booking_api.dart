@@ -10,6 +10,7 @@ import 'package:the_movie_booking/authentication/network/response/get_movie_deta
 import 'package:the_movie_booking/authentication/network/response/get_movies_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_otp_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_payment_types_response.dart';
+import 'package:the_movie_booking/authentication/network/response/get_seating_plan_by_showtime_response.dart';
 import 'package:the_movie_booking/authentication/network/response/logout_response.dart';
 import 'package:the_movie_booking/authentication/network/response/sign_in_with_phone_response.dart';
 
@@ -74,5 +75,12 @@ abstract class TheMovieBookingApi {
   Future<GetCinemaResponse> getCinemas(
       @Query(PARAM_LATEST_TIME) String latestTime,
       );
+
+  @GET(ENDPOINT_SEATING_PLAN)
+  Future<GetSeatingPlanByShowTimeResponse> getSeatingPlanByShowTime(
+      @Header(HEADER_KEY_AUTORIZATION) String token,
+      @Query(PARAM_TIMESLOT_ID) String cinemaDayTimeSlotId,
+      @Query(PARAM_BOOKING_DATE) String bookingDate,
+      ); 
 
 }

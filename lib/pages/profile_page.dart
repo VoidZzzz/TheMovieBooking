@@ -36,7 +36,6 @@ class _ProfilePageState extends State<ProfilePage> {
     /// get Payment Types from Network
     _movieBookingModel.getPaymentTypes("Bearer $userToken").then((paymentTypesResponse) {
       paymentTypesList = paymentTypesResponse.data ?? [];
-      print("==========================================> PAYMENT TYPES LIST $paymentTypesList");
     });
 
     super.initState();

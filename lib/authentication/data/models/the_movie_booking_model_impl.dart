@@ -1,6 +1,4 @@
-import 'package:the_movie_booking/authentication/data/data_vos/cinema_color_config_vo.dart';
 import 'package:the_movie_booking/authentication/data/data_vos/cities_vo.dart';
-import 'package:the_movie_booking/authentication/data/data_vos/color_vo.dart';
 import 'package:the_movie_booking/authentication/data/data_vos/user_vo.dart';
 import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
 import 'package:the_movie_booking/authentication/network/data_agents/movie_data_agent.dart';
@@ -19,9 +17,11 @@ import 'package:the_movie_booking/authentication/network/response/sign_in_with_p
 import 'package:the_movie_booking/authentication/persistence/daos/city_dao.dart';
 import 'package:the_movie_booking/authentication/persistence/daos/user_data_dao.dart';
 
-class TheMovieBookingModelImpl extends TheMovieBookingModel{
+import '../data_vos/seat_vo.dart';
 
-  static final TheMovieBookingModelImpl _singleton = TheMovieBookingModelImpl._internal();
+class TheMovieBookingModelImpl extends TheMovieBookingModel {
+  static final TheMovieBookingModelImpl _singleton =
+      TheMovieBookingModelImpl._internal();
 
   factory TheMovieBookingModelImpl() {
     return _singleton;
@@ -38,12 +38,14 @@ class TheMovieBookingModelImpl extends TheMovieBookingModel{
     return _dataAgent.getOTP(phone);
   }
 
+  /// Network
+
   @override
   Future<SignInWithPhoneResponse> getSignInWithPhone(String phone, String otp) {
     return _dataAgent.getSignInWithPhone(phone, otp).then((response) {
-     if(response.code == 201){
-       _userDataDao.saveUserData(response);
-     }
+      if (response.code == 201) {
+        _userDataDao.saveUserData(response);
+      }
       return response;
     });
   }
@@ -51,7 +53,7 @@ class TheMovieBookingModelImpl extends TheMovieBookingModel{
   @override
   Future<GetCitiesResponse> getCities() {
     return _dataAgent.getCities().then((response) {
-      if(response.code == 200){
+      if (response.code == 200) {
         _cityDao.saveAllCities(response.data ?? []);
       }
       return response;
@@ -79,18 +81,9 @@ class TheMovieBookingModelImpl extends TheMovieBookingModel{
   }
 
   @override
-  Future<GetCinemaAndShowTimeByDateResponse> getCinemaAndShowTimeByDate(String date, String token) {
+  Future<GetCinemaAndShowTimeByDateResponse> getCinemaAndShowTimeByDate(
+      String date, String token) {
     return _dataAgent.getCinemaAndShowTimeByDate(date, token);
-  }
-
-  @override
-  UserVO? getUserDataFromDatabase() {
-    return _userDataDao.getUserData();
-  }
-
-  @override
-  Future<List<CitiesVO>?> getCitiesFromDatabase() {
-    return Future.value(_cityDao.getAllCities());
   }
 
   @override
@@ -100,7 +93,7 @@ class TheMovieBookingModelImpl extends TheMovieBookingModel{
 
   @override
   Future<GetConfigResponse> getConfigurations() {
-     return _dataAgent.getConfigurations();
+    return _dataAgent.getConfigurations();
   }
 
   @override
@@ -117,5 +110,33 @@ class TheMovieBookingModelImpl extends TheMovieBookingModel{
   Future<GetCinemaResponse> getCinemas(String latestTime) {
     return _dataAgent.getCinemas(latestTime);
   }
-  
+
+  /// Database
+
+  @override
+  UserVO? getUserDataFromDatabase() {
+    return _userDataDao.getUserData();
+  }
+
+  @override
+  Future<List<CitiesVO>?> getCitiesFromDatabase() {
+    return Future.value(_cityDao.getAllCities());
+  }
+
+  @override
+  Future<List<List<SeatVO>?>> getSeatingPlan(
+      String token, String cinemaDayTimeSlotId, String bookingDate) {
+   return _dataAgent
+        .getSeatingPlan(cinemaDayTimeSlotId.toString(), bookingDate, token)
+        .then((seatResponse) {
+      for (int i = 0; i < seatResponse.data.length; i++) {
+        seatResponse.data[i]?.insert(4, SeatVO(4, 'space', '', '', 0));
+        seatResponse.data[i]?.insert(5, SeatVO(5, 'space', '', '', 0));
+        seatResponse.data[i]?.insert(10, SeatVO(10, 'space', '', '', 0));
+        seatResponse.data[i]?.insert(11, SeatVO(11, 'space', '', '', 0));
+      }
+      return seatResponse.data;
+    });
+
+  }
 }

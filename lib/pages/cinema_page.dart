@@ -65,7 +65,7 @@ class _CinemaPageState extends State<CinemaPage> {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) {
-                  return const SeatPlanPage();
+                  return const SeatPlanPage(bookingDate: '', cinemaDayTimeSlotsId: '',);
                 },
               ),
             );

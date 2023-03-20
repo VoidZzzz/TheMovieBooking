@@ -27,6 +27,7 @@ import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/search_pages/cinema_search_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
+import 'package:the_movie_booking/video_players/youtube_video_player_movie_details.dart';
 
 import 'authentication/data/data_vos/cities_vo.dart';
 import 'authentication/network/response/sign_in_with_phone_response.dart';
@@ -56,7 +57,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: APP_COLOR_PRIMARY_COLOR),
       debugShowCheckedModeBanner: false,
-      home: SplashScreenPage()
+      home: const CinemaSelectionPage()
     );
   }
 }

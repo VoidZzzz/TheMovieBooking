@@ -1,15 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_api_model.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_api_model_impl.dart';
 import 'package:the_movie_booking/authentication/network/api_constants.dart';
 import 'package:the_movie_booking/pages/cinema_selection_page.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/video_players/asset_video_player.dart';
 import 'package:the_movie_booking/video_players/network_video_player_movie.dart';
+import 'package:the_movie_booking/video_players/youtube_video_player_movie_details.dart';
 import 'package:the_movie_booking/widgets/app_bar_back_arrow.dart';
 import 'package:the_movie_booking/widgets/censor_date_duration_box.dart';
 import '../authentication/data/data_vos/cast_vo.dart';
 import '../authentication/data/data_vos/movie_vo.dart';
+import '../authentication/data/data_vos/video_vo.dart';
 import '../authentication/data/models/the_movie_booking_model.dart';
 import '../authentication/data/models/the_movie_booking_model_impl.dart';
 import '../authentication/network/response/get_movie_details_response.dart';
@@ -40,19 +44,30 @@ class MovieDetailsPage extends StatefulWidget {
 
 class _MovieDetailsPageState extends State<MovieDetailsPage> {
   TheMovieBookingModel theMovieBookingModel = TheMovieBookingModelImpl();
+  TheMovieApiModel theMovieApiModel = TheMovieApiModelImpl();
   MovieVO? movieDetail;
+  List<VideoVO>? videoList;
 
   @override
   void initState() {
+
+    /// Get MovieDetails from Network
     theMovieBookingModel.getMovieDetails(widget.movieId).then((movieDetails) {
       setState(() {
         movieDetail = movieDetails.data;
-        debugPrint(
-            "Details =========================================> ${movieDetails.data?.originalTitle}");
       });
     }).catchError((error) {
       debugPrint("Details Error ==========================> $error");
     });
+
+    /// Get Movie Trailer Response from Network
+    theMovieApiModel.getMovieTrailers(widget.movieId).then((response) {
+      setState(() {
+        videoList = response.results ?? [];
+      });
+      // debugPrint("===========================> TRAILER VIDEO KEY ${videoList?.last.key}");
+    }).catchError((error){debugPrint("==========================> TRAILER VIDEO ERROR $error");});
+
     super.initState();
   }
 
@@ -67,7 +82,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * MARGIN_XSMALL,
                 child: DetailsPageTopView(
-                  movieDetails: movieDetail,
+                  movieDetails: movieDetail, movieId: widget.movieId,
                 ),
               ),
               Align(
@@ -114,27 +129,28 @@ class FloatingActionButtonView extends StatelessWidget {
 class DetailsPageTopView extends StatelessWidget {
   final List<String> genreList = ["Action", "Adventure", "Thriller"];
   final MovieVO? movieDetails;
+  final int? movieId;
 
-  DetailsPageTopView({super.key, required this.movieDetails});
+  DetailsPageTopView({super.key, required this.movieDetails, required this.movieId});
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        const Align(
+        Align(
           alignment: Alignment.topCenter,
-          child: MovieBackgroundView(),
+          child: MovieTrailerVideoView(movieId: movieId,),
         ),
         Positioned(
           left: MARGIN_MEDIUM_15X,
-          top: MARGIN_XLARGE_200X + MARGIN_MEDIUM_20X,
+          top: MARGIN_XLARGE_200X,
           child: MoviePosterView(
             movieDetails: movieDetails,
           ),
         ),
         Positioned(
           right: MARGIN_MEDIUM_20X,
-          top: MARGIN_XLARGE_250X,
+          top: MARGIN_XLARGE_240X - MARGIN_SMALL_10X,
           child: MovieDescriptionView(
             genreList: movieDetails?.genres ?? [],
             movieDetails: movieDetails,
@@ -156,7 +172,7 @@ class MovieDescriptionView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MARGIN_LARGE_100X + MARGIN_MEDIUM_50X,
+      height: MARGIN_LARGE_160X + MARGIN_SMALL_10X,
       width: MARGIN_XLARGE_200X + MARGIN_SMALL_10X,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,7 +184,7 @@ class MovieDescriptionView extends StatelessWidget {
               MovieNameView(
                   MARGIN_MEDIUM_15X, movieDetails?.originalTitle ?? ""),
               const SizedBox(
-                width: MARGIN_MEDIUM_20X,
+                width: MARGIN_MEDIUM_40X,
               ),
               const IMDBView(),
               IMDBRatingView(
@@ -248,9 +264,9 @@ class DetailsPageBottomView extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: MARGIN_SMALL_10X),
-            const TitleText(NOW_SHOWING_MOVIS_DETAILS_SCREEN_CAST_TEXT),
             const SizedBox(height: MARGIN_MEDIUM_20X),
+            const TitleText(NOW_SHOWING_MOVIS_DETAILS_SCREEN_CAST_TEXT),
+            const SizedBox(height: MARGIN_SMALL_10X),
             SizedBox(
               height: MARGIN_XLARGE_200X - MARGIN_MEDIUM_20X,
               child: (movieDetails != null)
@@ -258,7 +274,9 @@ class DetailsPageBottomView extends StatelessWidget {
                       movieDetails: movieDetails,
                     )
                   : const Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: APP_COLOR_SECONDARY_COLOR,
+                      ),
                     ),
             ),
             const SizedBox(height: MARGIN_MEDIUM_50X),
@@ -269,10 +287,13 @@ class DetailsPageBottomView extends StatelessWidget {
   }
 }
 
-class MovieBackgroundView extends StatelessWidget {
-  const MovieBackgroundView({
+class MovieTrailerVideoView extends StatelessWidget {
+  const MovieTrailerVideoView({
     Key? key,
+    required this.movieId
   }) : super(key: key);
+
+  final int? movieId;
 
   @override
   Widget build(BuildContext context) {
@@ -280,14 +301,14 @@ class MovieBackgroundView extends StatelessWidget {
       height: MARGIN_XLARGE_250X,
       width: double.maxFinite,
       child: Stack(
-        children: const [
-          NetworkVideoPlayerMovie(),
-          Positioned(
+        children: [
+          YouTubeVideoPlayerMovieDetails(movieID: movieId,),
+          const Positioned(
             left: MARGIN_SMALL_5X,
             top: MARGIN_SMALL_10X,
             child: BackButtonView(),
           ),
-          Positioned(
+          const Positioned(
             right: MARGIN_MEDIUM_15X,
             top: MARGIN_SMALL_10X,
             child: ShareButtonView(),
@@ -305,8 +326,10 @@ class MoviePosterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MARGIN_LARGE_175X,
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(MARGIN_SMALL_4X),),
+      height: MARGIN_XLARGE_200X,
       width: MARGIN_LARGE_140X,
       child: (movieDetails != null)
           ? CachedNetworkImage(
@@ -314,7 +337,9 @@ class MoviePosterView extends StatelessWidget {
               fit: BoxFit.cover,
             )
           : const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: APP_COLOR_SECONDARY_COLOR,
+              ),
             ),
     );
   }

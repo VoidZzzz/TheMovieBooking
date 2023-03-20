@@ -27,11 +27,20 @@ class OTPVerificationPage extends StatefulWidget {
 }
 
 class _OTPVerificationPageState extends State<OTPVerificationPage> {
+
+  /// Ui Variables
   bool isComplete = false;
   String otp = '';
   String? otpResponse;
 
-  TheMovieBookingModel authModel = TheMovieBookingModelImpl();
+  /// Api Variables
+  TheMovieBookingModel _movieBookingModel = TheMovieBookingModelImpl();
+
+  @override
+  void initState() {
+    debugPrint("====================================> USER PHONE NUMBER +95${widget.userPhone}");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,9 +115,9 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
               isComplete ? APP_COLOR_SECONDARY_COLOR : GREY_COLOR,
               OTP_CONFIRM_PAGE_OTP_CONFIRM_TEXT,
               () {
-                ///
+                /// Sign In with Phone
                 if (isComplete) {
-                  authModel
+                  _movieBookingModel
                       .getSignInWithPhone(widget.userPhone, otp)
                       .then((otp) {
                     setState(() {
@@ -122,7 +131,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
                       );
                     } else {
                       debugPrint('=================> ${otp.message}');
-                      DialogView(context);
+                      dialogView(context);
                     }
                   }).catchError((error) {
                     debugPrint('error ====================> $error');
@@ -138,7 +147,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
     );
   }
 
-  Future<dynamic> DialogView(BuildContext context) {
+  Future<dynamic> dialogView(BuildContext context) {
     return AwesomeDialog(
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
       context: context,
