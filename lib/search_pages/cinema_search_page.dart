@@ -128,10 +128,18 @@ class _CinemaSearchPageState extends State<CinemaSearchPage> {
             ),
             isShowSuggestion
                 ? CinemaListView(
-                    cinemaAndShowTimeList: [],
-                    onTapCinema: () => Navigator.of(context).push(
+                    cinemaAndShowTimeList: const [],
+                    onTapCinema: (str,listIndex,gridIndex) => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const SeatPlanPage(bookingDate: '', cinemaDayTimeSlotsId: '',),
+                        builder: (context) => const SeatPlanPage(
+                          bookingDate: '',
+                          cinemaDayTimeSlotsId: '',
+                          movieName: "John Wick",
+                          cinemaStatus: "",
+                          selectedTime: '',
+                          selectedDate: '',
+                          cinemaName: '',
+                        ),
                       ),
                     ),
                     onTapDetails: (index) => Navigator.of(context).push(

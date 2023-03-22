@@ -23,8 +23,10 @@ class SnackVO{
   @JsonKey(name: "image")
   String? image;
 
+  int? quantity = 0;
+
   SnackVO(this.id, this.name, this.description, this.price, this.categoryId,
-      this.image);
+      this.image,this.quantity);
 
   factory SnackVO.fromJson(Map<String, dynamic> json) => _$SnackVOFromJson(json);
 

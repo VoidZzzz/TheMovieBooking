@@ -47,6 +47,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
   TheMovieApiModel theMovieApiModel = TheMovieApiModelImpl();
   MovieVO? movieDetail;
   List<VideoVO>? videoList;
+  String? movieName;
 
   @override
   void initState() {
@@ -55,6 +56,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
     theMovieBookingModel.getMovieDetails(widget.movieId).then((movieDetails) {
       setState(() {
         movieDetail = movieDetails.data;
+        movieName = movieDetails.data?.originalTitle ?? "";
       });
     }).catchError((error) {
       debugPrint("Details Error ==========================> $error");
@@ -95,7 +97,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
             ],
           ),
         ),
-        floatingActionButton: const FloatingActionButtonView(),
+        floatingActionButton: FloatingActionButtonView(movieName: movieName ?? "",),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
@@ -105,7 +107,9 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
 class FloatingActionButtonView extends StatelessWidget {
   const FloatingActionButtonView({
     Key? key,
+    required this.movieName
   }) : super(key: key);
+  final String movieName;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +121,7 @@ class FloatingActionButtonView extends StatelessWidget {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {
-              return const CinemaSelectionPage();
+              return CinemaSelectionPage(movieName: movieName,);
             },
           ),
         );

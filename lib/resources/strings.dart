@@ -63,7 +63,7 @@ const CINEMA_SELECTION_PAGE_LONG_PRESS_OPTION_TEXT = "Long press on showing time
 
 /// Seat Plan Page
 const SEAT_PLAN_PAGE_SCREEN_TEXT = "SCREEN";
-const SEAT_PLAN_PAGE_NORMAL_CLASS_TEXT = "Normal (4500 ks)";
+const SEAT_PLAN_PAGE_NORMAL_CLASS_TEXT = "Normal Class";
 const SEAT_PLAN_PAGE_EXECUTIVE_CLASS_TEXT = "Executive (6500 ks)";
 const SEAT_PLAN_PAGE_PREMIUM_CLASS_TEXT = "Premium (8500 ks)";
 const SEAT_PLAN_PAGE_GOLD_CLASS_TEXT = "Gold (10000 ks)";

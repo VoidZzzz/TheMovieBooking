@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:the_movie_booking/resources/dimens.dart';
 import '../resources/colors.dart';
 
 class CinemaNameView extends StatelessWidget {
   const CinemaNameView({
     Key? key,
+    required this.cinemaName,
+    required this.cinemaStatus
   }) : super(key: key);
+
+  final String cinemaName;
+  final String cinemaStatus;
 
   @override
   Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(
         style: GoogleFonts.dmSans(
-            fontWeight: FontWeight.w400, color: APP_COLOR_SECONDARY_COLOR),
+            fontWeight: FontWeight.w400, fontSize: TEXT_LARGE_16X, color: APP_COLOR_SECONDARY_COLOR),
         children: [
-          const TextSpan(text: "JCGV : Junction City"),
+          TextSpan(text: cinemaName),
           TextSpan(
-            text: " (SCREEN 2)",
-            style: GoogleFonts.dmSans(color: WHITE_COLOR),
+            text: " (SCREEN $cinemaStatus)",
+            style: GoogleFonts.dmSans(color: WHITE_COLOR,fontSize: TEXT_MEDIUM),
           )
         ],
       ),

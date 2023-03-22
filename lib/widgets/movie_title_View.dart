@@ -6,12 +6,14 @@ import '../resources/colors.dart';
 class MovieTitleView extends StatelessWidget {
   const MovieTitleView({
     Key? key,
+    required this.movieName
   }) : super(key: key);
+  final String movieName;
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      "Avatar the way of water (3D) (U/A)",
+      "$movieName (3D) (U/A)",
       style: GoogleFonts.dmSans(
           color: WHITE_COLOR,
           fontWeight: FontWeight.w700,

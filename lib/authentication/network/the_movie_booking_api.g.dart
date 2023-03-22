@@ -286,10 +286,14 @@ class _TheMovieBookingApi implements TheMovieBookingApi {
   }
 
   @override
-  Future<GetCinemaResponse> getCinemas(latestTime) async {
+  Future<GetCinemaResponse> getCinemas(
+    token,
+    latestTime,
+  ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'latest_time': latestTime};
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<GetCinemaResponse>(Options(
@@ -336,6 +340,57 @@ class _TheMovieBookingApi implements TheMovieBookingApi {
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = GetSeatingPlanByShowTimeResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetSnacksResponse> getSnacks(
+    token,
+    categoryId,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'category_id': categoryId};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<GetSnacksResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/snacks',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetSnacksResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetSnackCategoryResponse> getSnackCategory(token) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetSnackCategoryResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/snack-categories',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetSnackCategoryResponse.fromJson(_result.data!);
     return value;
   }
 

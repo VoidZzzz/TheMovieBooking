@@ -4,6 +4,7 @@ import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/widgets/snack_shop_page_minus_button.dart';
 import 'package:the_movie_booking/widgets/snack_shopping_page_plus_button.dart';
 
+import '../authentication/data/data_vos/snack_vo.dart';
 import '../resources/colors.dart';
 import '../resources/dimens.dart';
 class PlusMinusAndItemCountsView extends StatelessWidget {
@@ -11,12 +12,14 @@ class PlusMinusAndItemCountsView extends StatelessWidget {
     Key? key,
     required this.onTapPlusButton,
     required this.onTapMinusButton,
-    required this.selectedItemCounts
+    required this.selectedItemCounts,
+    required this.itemCount
   }) : super(key: key);
 
   final Function onTapPlusButton;
   final Function onTapMinusButton;
   final int selectedItemCounts;
+  final int? itemCount;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,7 @@ class PlusMinusAndItemCountsView extends StatelessWidget {
           ),
           const SizedBox(width: MARGIN_MEDIUM_15X),
           Text(
-            selectedItemCounts.toString(),
+            itemCount.toString() ?? "",
             style: GoogleFonts.inter(
                 fontWeight: FontWeight.w700,
                 fontSize: TEXT_MEDIUM,

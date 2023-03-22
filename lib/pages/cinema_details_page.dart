@@ -42,15 +42,15 @@ class _CinemaDetailsPageState extends State<CinemaDetailsPage> {
 
   @override
   void initState() {
-    _movieBookingModel.getCinemas("2023-03-17 17:01:17").then((response) {
-      setState(() {
-        cinemaDetailsList = response.data ?? [];
-        print(
-            "==============================================> CINEMA DETAILS LIST ${cinemaDetailsList?[1].name}");
-      });
-    }).catchError((error) {
-      print("========================================================> $error");
-    });
+    // _movieBookingModel.getCinemas("2023-03-17 17:01:17", ).then((response) {
+    //   setState(() {
+    //     cinemaDetailsList = response.data ?? [];
+    //     print(
+    //         "==============================================> CINEMA DETAILS LIST ${cinemaDetailsList?[1].name}");
+    //   });
+    // }).catchError((error) {
+    //   print("========================================================> $error");
+    // });
     super.initState();
   }
 

@@ -122,7 +122,7 @@ class TicketDetailsView extends StatelessWidget {
                   SizedBox(height: MARGIN_SMALL_10X),
                   CinemaNameView(),
                   SizedBox(height: MARGIN_SMALL_10X),
-                  TicketCountView(),
+                  TicketCountView(ticketCounts: 2,),
                   SizedBox(height: MARGIN_SMALL_10X),
                   TicketNameView(),
                 ],
@@ -132,7 +132,7 @@ class TicketDetailsView extends StatelessWidget {
           const SizedBox(height: MARGIN_MEDIUM_35X),
           const DottedLineView(),
           const SizedBox(height: MARGIN_MEDIUM_20X),
-          const CalendarTimeAndLocationView()
+          const CalendarTimeAndLocationView(selectedDate: '', selectedTime: '',cinemaName: '',)
         ],
       ),
     );

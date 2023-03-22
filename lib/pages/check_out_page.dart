@@ -24,13 +24,42 @@ import '../widgets/voucher_page_ticket_name_and_amount_view.dart';
 import '../widgets/movie_title_View.dart';
 
 class CheckOutPage extends StatefulWidget {
-  const CheckOutPage({Key? key}) : super(key: key);
+  const CheckOutPage(
+      {Key? key,
+      required this.selectedSeatList,
+      required this.totalTicketsForSeat,
+      required this.totalAmountForSeat,
+      required this.movieName,
+      required this.selectedDate,
+      required this.cinemaName,
+      required this.cinemaStatus,
+      required this.selectedTime})
+      : super(key: key);
+
+  final int totalTicketsForSeat;
+  final int totalAmountForSeat;
+  final List<String> selectedSeatList;
+  final String movieName;
+  final String cinemaName;
+  final String cinemaStatus;
+  final String selectedDate;
+  final String selectedTime;
 
   @override
   State<CheckOutPage> createState() => _CheckOutPageState();
 }
 
 class _CheckOutPageState extends State<CheckOutPage> {
+  late int totalAmounts = 500 + widget.totalAmountForSeat;
+  late String seatNames = widget.selectedSeatList.join(", ");
+
+  @override
+  void initState() {
+    debugPrint(
+        "===================> ${widget.totalAmountForSeat}  ${widget.totalTicketsForSeat}  ${widget.selectedSeatList} ${widget.selectedDate} ${widget.selectedTime}");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,14 +76,24 @@ class _CheckOutPageState extends State<CheckOutPage> {
         child: Padding(
           padding: const EdgeInsets.all(MARGIN_MEDIUM_20X),
           child: Stack(
-            children: const [
-              TicketDetailsView(),
-              Positioned(
+            children: [
+              TicketDetailsView(
+                seatNames: seatNames,
+                totalTicketsForSeat: widget.totalTicketsForSeat,
+                totalAmountsForSeat: widget.totalAmountForSeat,
+                totalAmounts: totalAmounts,
+                movieName: widget.movieName,
+                selectedTime: widget.selectedTime,
+                cinemaStatus: widget.cinemaStatus,
+                cinemaName: widget.cinemaName,
+                selectedDate: widget.selectedDate,
+              ),
+              const Positioned(
                 bottom: MARGIN_XLARGE_200X - MARGIN_MEDIUM_15X,
                 left: MARGIN_SMALLEST,
                 child: LeftSemiCircleContainer(),
               ),
-              Positioned(
+              const Positioned(
                 bottom: MARGIN_XLARGE_200X - MARGIN_MEDIUM_15X,
                 right: MARGIN_SMALLEST,
                 child: RightSemiCircleContainer(),
@@ -79,9 +118,28 @@ class _CheckOutPageState extends State<CheckOutPage> {
 }
 
 class TicketDetailsView extends StatelessWidget {
-  const TicketDetailsView({
-    Key? key,
-  }) : super(key: key);
+  const TicketDetailsView(
+      {Key? key,
+      required this.seatNames,
+      required this.totalTicketsForSeat,
+      required this.totalAmountsForSeat,
+      required this.totalAmounts,
+      required this.movieName,
+      required this.selectedTime,
+      required this.cinemaStatus,
+      required this.cinemaName,
+      required this.selectedDate})
+      : super(key: key);
+
+  final int totalTicketsForSeat;
+  final int totalAmountsForSeat;
+  final String seatNames;
+  final int totalAmounts;
+  final String movieName;
+  final String cinemaName;
+  final String cinemaStatus;
+  final String selectedDate;
+  final String selectedTime;
 
   @override
   Widget build(BuildContext context) {
@@ -103,15 +161,29 @@ class TicketDetailsView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const MovieTitleView(),
+            MovieTitleView(
+              movieName: movieName,
+            ),
             const SizedBox(height: MARGIN_SMALL_10X),
-            const CinemaNameView(),
+            CinemaNameView(
+              cinemaName: cinemaName,
+              cinemaStatus: cinemaStatus,
+            ),
             const SizedBox(height: MARGIN_MEDIUM_20X),
-            const CalendarTimeAndLocationView(),
+            CalendarTimeAndLocationView(
+              selectedDate: selectedDate,
+              selectedTime: selectedTime,
+              cinemaName: cinemaName,
+            ),
             const SizedBox(height: MARGIN_SMALL_10X),
-            const TicketCountView(),
+            TicketCountView(
+              ticketCounts: totalTicketsForSeat,
+            ),
             const SizedBox(height: MARGIN_SMALL_10X),
-            const TicketNameAndAmountView(),
+            TicketNameAndAmountView(
+              totalAmountsForTickets: totalAmountsForSeat,
+              seatNames: seatNames,
+            ),
             const SizedBox(height: MARGIN_SMALL_10X),
             const Divider(color: LIGHT_GREY_COLOR, thickness: MARGIN_XSMALL),
             const SizedBox(height: MARGIN_MEDIUM_20X),
@@ -132,7 +204,9 @@ class TicketDetailsView extends StatelessWidget {
             const SizedBox(height: MARGIN_MEDIUM_25X),
             const Divider(color: LIGHT_GREY_COLOR, thickness: MARGIN_XSMALL),
             const SizedBox(height: MARGIN_MEDIUM_25X),
-            const TotalAmountView()
+            TotalAmountView(
+              totalAmounts: totalAmounts,
+            )
           ],
         ),
       ),
@@ -141,9 +215,9 @@ class TicketDetailsView extends StatelessWidget {
 }
 
 class TotalAmountView extends StatelessWidget {
-  const TotalAmountView({
-    Key? key,
-  }) : super(key: key);
+  const TotalAmountView({Key? key, required this.totalAmounts})
+      : super(key: key);
+  final int totalAmounts;
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +235,7 @@ class TotalAmountView extends StatelessWidget {
                 fontSize: TEXT_LARGE_18X),
           ),
           Text(
-            "22500Ks",
+            "${totalAmounts.toString()} Ks",
             style: GoogleFonts.inter(
                 fontWeight: FontWeight.w700,
                 color: APP_COLOR_SECONDARY_COLOR,

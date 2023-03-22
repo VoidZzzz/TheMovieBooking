@@ -7,7 +7,11 @@ import '../resources/colors.dart';
 class TicketNameAndAmountView extends StatelessWidget {
   const TicketNameAndAmountView({
     Key? key,
+    required this.totalAmountsForTickets,
+    required this.seatNames
   }) : super(key: key);
+  final int totalAmountsForTickets;
+  final String seatNames;
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +19,12 @@ class TicketNameAndAmountView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          "Gold-G8,G7",
+          (seatNames.isNotEmpty)?  seatNames: "-",
           style: GoogleFonts.dmSans(
               fontWeight: FontWeight.w700, fontSize: TEXT_LARGE_16X, color: WHITE_COLOR),
         ),
         Text(
-          "20000Ks",
+          (totalAmountsForTickets > 0)? "${totalAmountsForTickets.toString() } Ks": "-",
           style: GoogleFonts.dmSans(
               fontWeight: FontWeight.w700, fontSize: TEXT_LARGE_16X, color: WHITE_COLOR),
         )

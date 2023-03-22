@@ -13,19 +13,32 @@ import '../widgets/app_bar_back_arrow.dart';
 
 class SeatPlanPage extends StatefulWidget {
   const SeatPlanPage(
-      {Key? key, required this.bookingDate, required this.cinemaDayTimeSlotsId})
+      {Key? key,
+      required this.bookingDate,
+      required this.cinemaDayTimeSlotsId,
+      required this.movieName,
+      required this.selectedTime,
+      required this.selectedDate,
+      required this.cinemaStatus,
+      required this.cinemaName})
       : super(key: key);
 
   final String bookingDate;
   final String cinemaDayTimeSlotsId;
+  final String movieName;
+  final String cinemaName;
+  final String cinemaStatus;
+  final String selectedDate;
+  final String selectedTime;
 
   @override
   State<SeatPlanPage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<SeatPlanPage> {
-  int totalTicket = 0;
-  int totalAmount = 0;
+  int totalTicketForSeats = 0;
+  int totalAmountForSeats = 0;
+  List<String> selectedSeatList = [];
 
   final TheMovieBookingModelImpl _theMovieBookingModelImpl =
       TheMovieBookingModelImpl();
@@ -37,13 +50,13 @@ class _MyHomePageState extends State<SeatPlanPage> {
     userToken =
         _theMovieBookingModelImpl.getUserDataFromDatabase()?.token ?? "";
     _theMovieBookingModelImpl
-        .getSeatingPlan("Bearer $userToken", widget.cinemaDayTimeSlotsId ?? "",
-            widget.bookingDate ?? "")
+        .getSeatingPlan("Bearer $userToken", widget.cinemaDayTimeSlotsId,
+            widget.bookingDate)
         .then((response) {
       setState(() {
-        seatPlan = response ?? [];
+        seatPlan = response;
         debugPrint(
-            "=============================================> SEAT ${seatPlan?[0]?[1].seatName}");
+            " init state =============================================> SEAT ${seatPlan?[0]?[1].isSelected}");
       });
     }).catchError((error) {
       debugPrint(
@@ -75,17 +88,48 @@ class _MyHomePageState extends State<SeatPlanPage> {
                     fontWeight: FontWeight.w400),
               ),
               (seatPlan != null)
-                  ? SeatPlanView(seatPlan: seatPlan ?? [], onTappedSeat: (int? listViewIndex, int? gridViewIndex) {
-                setState(() {
-                  seatPlan?[listViewIndex!]?[gridViewIndex!].isSelected =
-                  (seatPlan?[listViewIndex]?[gridViewIndex].isSelected ==
-                      false)
-                      ? true
-                      : false;
-                  totalTicket ++;
-                  totalAmount = (2500 * (totalTicket * (seatPlan?[listViewIndex ?? 0]?[gridViewIndex ?? 0].price ?? 0)));
-                });
-              },)
+                  ? InteractiveViewer(
+                      child: SeatPlanView(
+                        seatPlan: seatPlan ?? [],
+                        onTappedSeat: (int listViewIndex, int gridViewIndex) {
+                          debugPrint(
+                              '--------------------------------> listview view on tap  ${seatPlan?[listViewIndex]?[gridViewIndex].isSelected}');
+                          setState(
+                            () {
+                              if ((seatPlan?[listViewIndex]?[gridViewIndex]
+                                      .isSelected ==
+                                  false)) {
+                                seatPlan?[listViewIndex]?[gridViewIndex]
+                                    .isSelected = true;
+                                selectedSeatList.add(seatPlan?[listViewIndex]
+                                            ?[gridViewIndex]
+                                        .seatName ??
+                                    "");
+                                totalTicketForSeats++;
+                                totalAmountForSeats += (2500 *
+                                    (seatPlan?[listViewIndex]?[gridViewIndex]
+                                            .price ??
+                                        0));
+                              } else {
+                                seatPlan?[listViewIndex]?[gridViewIndex]
+                                    .isSelected = false;
+                                totalTicketForSeats--;
+                                selectedSeatList.remove(seatPlan?[listViewIndex]
+                                            ?[gridViewIndex]
+                                        .seatName ??
+                                    "");
+                                totalAmountForSeats -= (2500 *
+                                    (seatPlan?[listViewIndex]?[gridViewIndex]
+                                            .price ??
+                                        0));
+                              }
+                            },
+                          );
+                          print(
+                              "===========================> $selectedSeatList");
+                        },
+                      ),
+                    )
                   : const SizedBox(
                       height: 440,
                       child: Center(
@@ -96,116 +140,27 @@ class _MyHomePageState extends State<SeatPlanPage> {
                     ),
             ],
           ),
-
-          // ListView.builder(
-          //   shrinkWrap: true,
-          //   itemCount: 8,
-          //   itemBuilder: (context, index) {
-          //     if (index == 0) {
-          //       return const SeatTypeTextView(
-          //         text: SEAT_PLAN_PAGE_NORMAL_CLASS_TEXT,
-          //       );
-          //     } else if (index == 2) {
-          //       return const SeatTypeTextView(
-          //         text: SEAT_PLAN_PAGE_EXECUTIVE_CLASS_TEXT,
-          //       );
-          //     } else if (index == 4) {
-          //       return const SeatTypeTextView(
-          //         text: SEAT_PLAN_PAGE_PREMIUM_CLASS_TEXT,
-          //       );
-          //     } else if (index == 6) {
-          //       return const SeatTypeTextView(
-          //         text: SEAT_PLAN_PAGE_GOLD_CLASS_TEXT,
-          //       );
-          //     } else if (index == 1) {
-          //       return SeatPlanGridView(
-          //           seatList: normalSeatList,
-          //           onSelect: (index) {
-          //             if (normalSeatList[index] == 'SELECTION') {
-          //               setState(() {
-          //                 normalSeatList[index] = 'AVAILABLE';
-          //                 totalTicket -= 1;
-          //                 totalAmount -= 4500;
-          //               });
-          //             } else if (normalSeatList[index] == 'AVAILABLE') {
-          //               setState(() {
-          //                 normalSeatList[index] = 'SELECTION';
-          //                 totalTicket += 1;
-          //                 totalAmount += 4500;
-          //               });
-          //             }
-          //           });
-          //     } else if (index == 3) {
-          //       return SeatPlanGridView(
-          //           seatList: executiveSeatList,
-          //           onSelect: (index) {
-          //             if (executiveSeatList[index] == 'SELECTION') {
-          //               setState(() {
-          //                 executiveSeatList[index] = 'AVAILABLE';
-          //                 totalTicket -= 1;
-          //                 totalAmount -= 6500;
-          //               });
-          //             } else if (executiveSeatList[index] == 'AVAILABLE') {
-          //               setState(() {
-          //                 executiveSeatList[index] = 'SELECTION';
-          //                 totalTicket += 1;
-          //                 totalAmount += 6500;
-          //               });
-          //             }
-          //           });
-          //     } else if (index == 5) {
-          //       return SeatPlanGridView(
-          //           seatList: premiumSeatList,
-          //           onSelect: (index) {
-          //             if (premiumSeatList[index] == 'SELECTION') {
-          //               setState(() {
-          //                 premiumSeatList[index] = 'AVAILABLE';
-          //                 totalTicket -= 1;
-          //                 totalAmount -= 8500;
-          //               });
-          //             } else if (premiumSeatList[index] == 'AVAILABLE') {
-          //               setState(() {
-          //                 premiumSeatList[index] = 'SELECTION';
-          //                 totalTicket += 1;
-          //                 totalAmount += 8500;
-          //               });
-          //             }
-          //           });
-          //     } else if (index == 7) {
-          //       return CoupleSeatPlanGridView(
-          //           seatList: goldSeatList,
-          //           onSelect: (index) {
-          //             if (goldSeatList[index] == 'SELECTION') {
-          //               setState(() {
-          //                 goldSeatList[index] = 'AVAILABLE';
-          //                 totalTicket -= 1;
-          //                 totalAmount -= 10000;
-          //               });
-          //             } else if (goldSeatList[index] == 'AVAILABLE') {
-          //               setState(() {
-          //                 goldSeatList[index] = 'SELECTION';
-          //                 totalTicket += 1;
-          //                 totalAmount += 10000;
-          //               });
-          //             }
-          //           });
-          //     } else {
-          //       return Container();
-          //     }
-          //   },
-          // ),
           const SeatTypeView(),
           const SizedBox(
             height: MARGIN_MEDIUM_40X,
           ),
           TicketInfoView(
-            ticketCount: totalTicket,
-            amount: totalAmount,
+            ticketCount: totalTicketForSeats,
+            amount: totalAmountForSeats,
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) {
-                    return const SnackShopPage();
+                    return SnackShopPage(
+                      selectedDate: widget.selectedDate,
+                      selectedTime: widget.selectedTime,
+                      cinemaStatus: widget.cinemaStatus,
+                      cinemaName: widget.cinemaName,
+                      selectedSeatList: selectedSeatList,
+                      totalAmountForSeat: totalAmountForSeats,
+                      totalTicketsForSeat: totalTicketForSeats,
+                      movieName: widget.movieName,
+                    );
                   },
                 ),
               );
@@ -219,8 +174,10 @@ class _MyHomePageState extends State<SeatPlanPage> {
 
 class SeatPlanView extends StatefulWidget {
   final List<List<SeatVO>?>? seatPlan;
-  final Function(int? listViewIndex, int? gridViewIndex) onTappedSeat;
-  const SeatPlanView({super.key, required this.seatPlan,required this.onTappedSeat});
+  final Function(int listViewIndex, int gridViewIndex) onTappedSeat;
+
+  const SeatPlanView(
+      {super.key, required this.seatPlan, required this.onTappedSeat});
 
   @override
   State<SeatPlanView> createState() => _SeatPlanViewState();
@@ -232,7 +189,7 @@ class _SeatPlanViewState extends State<SeatPlanView> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: widget.seatPlan?.length ?? 0,
           itemBuilder: (context, index) {
@@ -240,7 +197,13 @@ class _SeatPlanViewState extends State<SeatPlanView> {
               padding: const EdgeInsets.symmetric(vertical: 2.0),
               child: SeatRowView(
                 seatPlanForEachRow: widget.seatPlan?[index] ?? [],
-                onTappedSeat: (gridIndex)=> widget.onTappedSeat(index, gridIndex),
+                onTappedSeat: (gridIndex) {
+                  print(
+                      '--------------------------------> gird view on tap  ${widget.seatPlan?[index]?[gridIndex].isSelected}');
+                  setState(() {
+                    widget.onTappedSeat(index, gridIndex);
+                  });
+                },
               ),
             );
           }),
@@ -250,7 +213,8 @@ class _SeatPlanViewState extends State<SeatPlanView> {
 
 class SeatRowView extends StatefulWidget {
   final List<SeatVO>? seatPlanForEachRow;
-  final Function(int?) onTappedSeat;
+  final Function(int) onTappedSeat;
+
   const SeatRowView(
       {Key? key, required this.seatPlanForEachRow, required this.onTappedSeat})
       : super(key: key);
@@ -289,7 +253,7 @@ class _SeatRowViewState extends State<SeatRowView> {
                 child: InkWell(
                   onTap: () => widget.onTappedSeat(index),
                   child: Image.asset(
-                    "images/whiteChair.png",
+                    WHITE_CHAIR_IMAGE,
                     fit: BoxFit.cover,
                     color:
                         (widget.seatPlanForEachRow?[index].isSelected == true)
@@ -300,7 +264,10 @@ class _SeatRowViewState extends State<SeatRowView> {
               );
             } else if (widget.seatPlanForEachRow?[index].type == "taken") {
               return SizedBox(
-                child: Image.asset("images/blackChair.png"),
+                child: Image.asset(
+                  BLACK_CHAIR_IMAGE,
+                  fit: BoxFit.cover,
+                ),
               );
             } else if (widget.seatPlanForEachRow?[index].type == "space") {
               return const SizedBox();

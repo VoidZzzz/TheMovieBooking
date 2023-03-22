@@ -10,7 +10,7 @@ import '../authentication/data/data_vos/time_slot_vo.dart';
 import '../resources/dimens.dart';
 
 class CinemaListView extends StatefulWidget {
-  final Function onTapCinema;
+  final Function(String, int, int) onTapCinema;
   final Function(int) onTapDetails;
   final Function(int) onTapExpanded;
   final List<CinemaVO>? cinemaAndShowTimeList;
@@ -32,7 +32,6 @@ class _CinemaListViewState extends State<CinemaListView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -72,10 +71,10 @@ class _CinemaListViewState extends State<CinemaListView> {
                                   crossAxisCount: 3,
                                   crossAxisSpacing: MARGIN_MEDIUM_20X,
                                   mainAxisSpacing: MARGIN_MEDIUM_20X),
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
+                          itemBuilder: (context, gridViewIndex) {
+                            return InkWell(
                               onTap: () {
-                                widget.onTapCinema();
+                                widget.onTapCinema(widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].cinemaDayTimeslotId.toString() ?? "", listViewIndex, gridViewIndex);
                               },
                               child: Container(
                                 width: MARGIN_LARGE_100X,
@@ -97,7 +96,7 @@ class _CinemaListViewState extends State<CinemaListView> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[index].startTime ?? "",
+                                      widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].startTime ?? "",
                                       style: TextStyle(color: GREY_COLOR),
                                     ),
                                     Text(
@@ -105,11 +104,11 @@ class _CinemaListViewState extends State<CinemaListView> {
                                       style: TextStyle(color: GREY_COLOR),
                                     ),
                                     Text(
-                                      'Screen ${widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[index].status}',
+                                      'Screen ${widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].status}',
                                       style: TextStyle(color: GREY_COLOR),
                                     ),
                                     Text(
-                                      '${widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[index].cinemaDayTimeslotId} Available',
+                                      '${widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].cinemaDayTimeslotId} Available',
                                       style: TextStyle(color: GREY_COLOR),
                                     ),
                                   ],

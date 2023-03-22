@@ -14,14 +14,15 @@ import '../resources/strings.dart';
 import 'package:intl/intl.dart';
 
 class CinemaSelectionPage extends StatefulWidget {
-  const CinemaSelectionPage({Key? key}) : super(key: key);
+  const CinemaSelectionPage({Key? key, required this.movieName})
+      : super(key: key);
+  final String movieName;
 
   @override
   State<CinemaSelectionPage> createState() => _CinemaSelectionPageState();
 }
 
 class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
-
   /// UI variables
   bool isExpand = false;
   List<String> cinemaList = [
@@ -80,6 +81,9 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
   TheMovieBookingModel theMovieBookingModel = TheMovieBookingModelImpl();
   String userToken = "";
   List<CinemaVO>? cinemaAndShowTimeList;
+  String? cinemaName;
+  String? cinemaStatus;
+  String? selectedTime;
   String selectedDateForApi = "";
   String defaultDateForApi =
       "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}";
@@ -175,11 +179,21 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
             (cinemaAndShowTimeList != null)
                 ? CinemaListView(
                     cinemaAndShowTimeList: cinemaAndShowTimeList ?? [],
-                    onTapCinema: () {
+                    onTapCinema: (timeSlotsId, listViewIndex, gridViewIndex) {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return SeatPlanPage(bookingDate: (selectedDateForApi.isEmpty)? defaultDateForApi : selectedDateForApi, cinemaDayTimeSlotsId: "22",);
+                            return SeatPlanPage(
+                              bookingDate: (selectedDateForApi.isEmpty)
+                                  ? defaultDateForApi
+                                  : selectedDateForApi,
+                              cinemaDayTimeSlotsId: timeSlotsId,
+                              movieName: widget.movieName,
+                              cinemaName: cinemaAndShowTimeList?[listViewIndex].cinema ?? "",
+                              cinemaStatus: cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].status.toString() ?? "",
+                              selectedDate: selectedDateForApi,
+                              selectedTime: cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].startTime ?? "",
+                            );
                           },
                         ),
                       );

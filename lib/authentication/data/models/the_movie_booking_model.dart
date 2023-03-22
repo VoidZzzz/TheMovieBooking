@@ -6,12 +6,14 @@ import 'package:the_movie_booking/authentication/network/response/get_config_res
 import 'package:the_movie_booking/authentication/network/response/get_otp_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_payment_types_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_seating_plan_by_showtime_response.dart';
+import 'package:the_movie_booking/authentication/network/response/get_snack_category_response.dart';
 import 'package:the_movie_booking/authentication/network/response/sign_in_with_phone_response.dart';
 
 import '../../network/response/get_banners_response.dart';
 import '../../network/response/get_cities_response.dart';
 import '../../network/response/get_movie_details_response.dart';
 import '../../network/response/get_movies_response.dart';
+import '../../network/response/get_snacks_response.dart';
 import '../../network/response/logout_response.dart';
 import '../data_vos/seat_vo.dart';
 
@@ -41,9 +43,13 @@ abstract class TheMovieBookingModel {
 
   Future<GetPaymentTypesResponse> getPaymentTypes(String token);
 
-  Future<GetCinemaResponse> getCinemas(String latestTime);
+  Future<GetCinemaResponse> getCinemas(String latestTime, String userToken);
 
   Future<List<List<SeatVO>?>> getSeatingPlan(String token, String cinemaDayTimeSlotId, String bookingDate);
+
+  Future<GetSnacksResponse> getSnacks(String categoryId, String token);
+
+  Future<GetSnackCategoryResponse> getSnackCategory(String token);
 
   /// Database
   UserVO? getUserDataFromDatabase();

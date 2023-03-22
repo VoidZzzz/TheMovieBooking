@@ -11,6 +11,7 @@ class LogoutResponse{
   String? message;
 
   LogoutResponse(this.code, this.message);
+
   factory LogoutResponse.fromJson(Map<String, dynamic> json) => _$LogoutResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$LogoutResponseToJson(this);

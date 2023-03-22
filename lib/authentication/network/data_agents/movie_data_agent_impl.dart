@@ -8,6 +8,8 @@ import 'package:the_movie_booking/authentication/network/response/get_movie_deta
 import 'package:the_movie_booking/authentication/network/response/get_movies_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_payment_types_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_seating_plan_by_showtime_response.dart';
+import 'package:the_movie_booking/authentication/network/response/get_snack_category_response.dart';
+import 'package:the_movie_booking/authentication/network/response/get_snacks_response.dart';
 import 'package:the_movie_booking/authentication/network/response/logout_response.dart';
 import 'package:the_movie_booking/authentication/network/the_movie_booking_api.dart';
 import 'package:the_movie_booking/authentication/network/data_agents/movie_data_agent.dart';
@@ -86,13 +88,23 @@ class MovieDataAgentImpl extends MovieDataAgent {
   }
 
   @override
-  Future<GetCinemaResponse> getCinemas(String latestTime) {
-    return mApi.getCinemas(latestTime);
+  Future<GetCinemaResponse> getCinemas(String latestTime, String userToken) {
+    return mApi.getCinemas(latestTime, userToken);
   }
 
   @override
   Future<GetSeatingPlanByShowTimeResponse> getSeatingPlan(String cinemaDayTimeSlotId, String bookingDate, String token) {
     return mApi.getSeatingPlanByShowTime(
         token, cinemaDayTimeSlotId.toString(), bookingDate);
+  }
+
+  @override
+  Future<GetSnackCategoryResponse> getSnackCategory(String token) {
+    return mApi.getSnackCategory(token);
+  }
+
+  @override
+  Future<GetSnacksResponse> getSnacks(String categoryId, String token) {
+    return mApi.getSnacks(token, categoryId);
   }
 }

@@ -6,7 +6,9 @@ import '../resources/colors.dart';
 class TicketCountView extends StatelessWidget {
   const TicketCountView({
     Key? key,
+    required this.ticketCounts
   }) : super(key: key);
+  final int ticketCounts;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class TicketCountView extends StatelessWidget {
         children: [
           const TextSpan(text: "M-Tickets("),
           TextSpan(
-              text: "2",
+              text: (ticketCounts > 0)?ticketCounts.toString() : "-",
               style: GoogleFonts.dmSans(color: APP_COLOR_SECONDARY_COLOR)),
           const TextSpan(text: ")")
         ],

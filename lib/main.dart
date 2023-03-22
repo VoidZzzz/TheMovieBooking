@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: APP_COLOR_PRIMARY_COLOR),
       debugShowCheckedModeBanner: false,
-      home: const CinemaSelectionPage()
+      home: const SplashScreenPage()
     );
   }
 }

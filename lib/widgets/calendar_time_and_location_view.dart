@@ -1,26 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:the_movie_booking/authentication/data/data_vos/cinema_details_vo.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
+import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/resources/dimens.dart';
 import 'package:the_movie_booking/widgets/voucher_page_calendar_time_location_glow_icon_view.dart';
 import 'package:the_movie_booking/widgets/voucher_page_calendar_time_location_text_view.dart';
 import '../pages/check_out_page.dart';
-class CalendarTimeAndLocationView extends StatelessWidget {
-  const CalendarTimeAndLocationView({
-    Key? key,
-  }) : super(key: key);
+
+class CalendarTimeAndLocationView extends StatefulWidget {
+  const CalendarTimeAndLocationView(
+      {Key? key,
+      required this.selectedDate,
+      required this.selectedTime,
+      required this.cinemaName})
+      : super(key: key);
+
+  final String selectedDate;
+  final String selectedTime;
+  final String cinemaName;
+
+  @override
+  State<CalendarTimeAndLocationView> createState() =>
+      _CalendarTimeAndLocationViewState();
+}
+
+class _CalendarTimeAndLocationViewState
+    extends State<CalendarTimeAndLocationView> {
+  final TheMovieBookingModel _movieBookingModel = TheMovieBookingModelImpl();
+  var today = DateTime.now();
+  List<CinemaDetailsVO>? cinemaList;
+  String? userToken;
+  late String latestTime =
+      "${today.year}-${today.month}-${today.day} ${today.hour}:${today.minute}:${today.second}";
+
+  @override
+  void initState() {
+    setState(() {
+      userToken = _movieBookingModel.getUserDataFromDatabase()?.token;
+    });
+    print("====================================== > TOKEN $userToken");
+
+    _movieBookingModel
+        .getCinemas(latestTime, "Bearer $userToken")
+        .then((response) {
+      setState(() {
+        cinemaList = response.data;
+      });
+      print("=================================> ${response.data}");
+    });
+    print("============================> ${cinemaList?[1].address}");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         SizedBox(
           width: MARGIN_LARGE_110X,
           height: MARGIN_LARGE_100X,
           child: Column(
-            children: const [
-              CalendarTimeLocationGlowIconView(Icons.calendar_month_outlined),
-              SizedBox(height: MARGIN_SMALL_10X),
-              CalendarTImeLocationTextView("SAT, 20 Feb, 2023")
+            children: [
+              const CalendarTimeLocationGlowIconView(
+                  Icons.calendar_month_outlined),
+              const SizedBox(height: MARGIN_SMALL_10X),
+              CalendarTImeLocationTextView((widget.selectedDate.isNotEmpty)
+                  ? widget.selectedDate
+                  : "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}")
             ],
           ),
         ),
@@ -28,10 +76,10 @@ class CalendarTimeAndLocationView extends StatelessWidget {
           width: MARGIN_LARGE_70X,
           height: MARGIN_LARGE_100X,
           child: Column(
-            children: const [
-              CalendarTimeLocationGlowIconView(Icons.access_time),
-              SizedBox(height: MARGIN_SMALL_10X),
-              CalendarTImeLocationTextView("3:30PM")
+            children: [
+              const CalendarTimeLocationGlowIconView(Icons.access_time),
+              const SizedBox(height: MARGIN_SMALL_10X),
+              CalendarTImeLocationTextView(widget.selectedTime)
             ],
           ),
         ),
@@ -39,11 +87,10 @@ class CalendarTimeAndLocationView extends StatelessWidget {
           width: MARGIN_LARGE_120X,
           height: MARGIN_LARGE_106X,
           child: Column(
-            children: const [
-              CalendarTimeLocationGlowIconView(Icons.location_on),
-              SizedBox(height: MARGIN_SMALL_10X),
-              CalendarTImeLocationTextView(
-                  "Q5H3+JPP, Corner of Bogyoke Lann, Yangon")
+            children: [
+              const CalendarTimeLocationGlowIconView(Icons.location_on),
+              const SizedBox(height: MARGIN_SMALL_10X),
+              CalendarTImeLocationTextView("/// Cinema Location here")
             ],
           ),
         ),

@@ -11,6 +11,8 @@ import 'package:the_movie_booking/authentication/network/response/get_movies_res
 import 'package:the_movie_booking/authentication/network/response/get_otp_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_payment_types_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_seating_plan_by_showtime_response.dart';
+import 'package:the_movie_booking/authentication/network/response/get_snack_category_response.dart';
+import 'package:the_movie_booking/authentication/network/response/get_snacks_response.dart';
 import 'package:the_movie_booking/authentication/network/response/logout_response.dart';
 import 'package:the_movie_booking/authentication/network/response/sign_in_with_phone_response.dart';
 
@@ -73,6 +75,7 @@ abstract class TheMovieBookingApi {
 
   @GET(ENDPOINT_GET_CINEMA)
   Future<GetCinemaResponse> getCinemas(
+      @Header(HEADER_KEY_AUTORIZATION) String token,
       @Query(PARAM_LATEST_TIME) String latestTime,
       );
 
@@ -81,6 +84,17 @@ abstract class TheMovieBookingApi {
       @Header(HEADER_KEY_AUTORIZATION) String token,
       @Query(PARAM_TIMESLOT_ID) String cinemaDayTimeSlotId,
       @Query(PARAM_BOOKING_DATE) String bookingDate,
-      ); 
+      );
+
+  @GET(ENDPOINT_SNACKS)
+  Future<GetSnacksResponse> getSnacks(
+      @Header(HEADER_KEY_AUTORIZATION) String token,
+      @Query(PARAM_CATEGORY_ID) String categoryId,
+      );
+
+  @GET(ENDPOINT_SNACK_CATEGORY)
+  Future<GetSnackCategoryResponse> getSnackCategory(
+      @Header(HEADER_KEY_AUTORIZATION) String token,
+      );
 
 }

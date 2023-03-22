@@ -6,6 +6,8 @@ import 'package:the_movie_booking/search_pages/cinema_search_page.dart';
 import 'package:the_movie_booking/widgets/app_bar_back_arrow.dart';
 import 'package:the_movie_booking/widgets/cinema_listview.dart';
 
+import '../authentication/data/data_vos/cinema_details_vo.dart';
+import '../authentication/data/data_vos/cinema_vo.dart';
 import '../resources/dimens.dart';
 import '../resources/images.dart';
 import '../widgets/app_bar_image_icon_view.dart';
@@ -18,14 +20,6 @@ class CinemaPage extends StatefulWidget {
 }
 
 class _CinemaPageState extends State<CinemaPage> {
-  List<String> cinemaList = [
-    'JCGV : Junction City',
-    'JCGV : City Mall',
-    'Mingalar Cinema Gold Class',
-    'Nawaday Cinema',
-    'Thamada Cinema'
-  ];
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -61,11 +55,19 @@ class _CinemaPageState extends State<CinemaPage> {
 
         /// Body
         body: CinemaListView(
-          onTapCinema: () {
+          onTapCinema: (str,listIndex,gridIndex) {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) {
-                  return const SeatPlanPage(bookingDate: '', cinemaDayTimeSlotsId: '',);
+                  return const SeatPlanPage(
+                    bookingDate: '',
+                    cinemaDayTimeSlotsId: '',
+                    movieName: 'John Wick 4',
+                    cinemaName: "JCGV : Junction",
+                    cinemaStatus: "3",
+                    selectedTime: "",
+                    selectedDate: "",
+                  );
                 },
               ),
             );

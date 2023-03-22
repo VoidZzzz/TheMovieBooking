@@ -12,6 +12,8 @@ import 'package:the_movie_booking/authentication/network/response/get_movie_deta
 import 'package:the_movie_booking/authentication/network/response/get_movies_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_otp_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_payment_types_response.dart';
+import 'package:the_movie_booking/authentication/network/response/get_snack_category_response.dart';
+import 'package:the_movie_booking/authentication/network/response/get_snacks_response.dart';
 import 'package:the_movie_booking/authentication/network/response/logout_response.dart';
 import 'package:the_movie_booking/authentication/network/response/sign_in_with_phone_response.dart';
 import 'package:the_movie_booking/authentication/persistence/daos/city_dao.dart';
@@ -107,8 +109,8 @@ class TheMovieBookingModelImpl extends TheMovieBookingModel {
   }
 
   @override
-  Future<GetCinemaResponse> getCinemas(String latestTime) {
-    return _dataAgent.getCinemas(latestTime);
+  Future<GetCinemaResponse> getCinemas(String latestTime, String userToken) {
+    return _dataAgent.getCinemas(latestTime, userToken);
   }
 
   /// Database
@@ -126,17 +128,36 @@ class TheMovieBookingModelImpl extends TheMovieBookingModel {
   @override
   Future<List<List<SeatVO>?>> getSeatingPlan(
       String token, String cinemaDayTimeSlotId, String bookingDate) {
-   return _dataAgent
+    return _dataAgent
         .getSeatingPlan(cinemaDayTimeSlotId.toString(), bookingDate, token)
         .then((seatResponse) {
       for (int i = 0; i < seatResponse.data.length; i++) {
-        seatResponse.data[i]?.insert(4, SeatVO(4, 'space', '', '', 0));
         seatResponse.data[i]?.insert(5, SeatVO(5, 'space', '', '', 0));
-        seatResponse.data[i]?.insert(10, SeatVO(10, 'space', '', '', 0));
+        seatResponse.data[i]?.insert(6, SeatVO(6, 'space', '', '', 0));
         seatResponse.data[i]?.insert(11, SeatVO(11, 'space', '', '', 0));
+        seatResponse.data[i]?.insert(12, SeatVO(12, 'space', '', '', 0));
       }
-      return seatResponse.data;
+      return seatResponse.data
+          .map((seatList) => seatList?.map((seat) {
+                seat.isSelected = false;
+                return seat;
+              }).toList())
+          .toList();
     });
+  }
 
+  @override
+  Future<GetSnackCategoryResponse> getSnackCategory(String token) {
+    return _dataAgent.getSnackCategory(token);
+  }
+
+  @override
+  Future<GetSnacksResponse> getSnacks(String categoryId, String token) {
+    return _dataAgent.getSnacks(categoryId, token).then((value) {
+      value.data?.map(
+        (e) => e.quantity = 0,
+      ).toList();
+      return value;
+    });
   }
 }
