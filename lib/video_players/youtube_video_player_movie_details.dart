@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_api_model.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_api_model_impl.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/widgets/circular_loading_view.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+import '../data/models/the_movie_api_model.dart';
+import '../data/models/the_movie_api_model_impl.dart';
 
 class YouTubeVideoPlayerMovieDetails extends StatefulWidget {
   const YouTubeVideoPlayerMovieDetails({Key? key, required this.movieID})

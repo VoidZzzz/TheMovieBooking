@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:the_movie_booking/resources/dimens.dart';
 import 'package:the_movie_booking/widgets/voucher_page_food_and_beverage_voucher_title_text.dart';
 import 'package:the_movie_booking/widgets/voucher_page_voucher_item_details_view.dart';
-
-import '../authentication/data/data_vos/snack_vo.dart';
+import '../data/data_vos/snack_vo.dart';
 import '../pages/check_out_page.dart';
 
 class FoodAndBeverageVoucherView extends StatefulWidget {

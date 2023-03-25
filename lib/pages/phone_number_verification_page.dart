@@ -1,12 +1,12 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/pages/otp_verification_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/dimens.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:the_movie_booking/resources/strings.dart';
+import '../data/models/the_movie_booking_model.dart';
+import '../data/models/the_movie_booking_model_impl.dart';
 import '../widgets/app_default_button_medium.dart';
 import '../widgets/app_logo_view.dart';
 import '../widgets/subtitle_text.dart';

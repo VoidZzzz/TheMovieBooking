@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_api_model.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
-import 'package:the_movie_booking/authentication/persistence/daos/user_data_dao.dart';
+import 'package:the_movie_booking/data/data_vos/color_vo.dart';
 import 'package:the_movie_booking/pages/bottom_navigation_bar_home_page.dart';
 import 'package:the_movie_booking/pages/home_page.dart';
 import 'package:the_movie_booking/pages/phone_number_verification_page.dart';
@@ -11,9 +8,8 @@ import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/dimens.dart';
 import 'package:the_movie_booking/resources/strings.dart';
 import 'package:the_movie_booking/widgets/app_logo_view.dart';
-
-import '../authentication/data/data_vos/color_vo.dart';
-import '../authentication/data/models/the_movie_api_model_impl.dart';
+import '../data/models/the_movie_booking_model.dart';
+import '../data/models/the_movie_booking_model_impl.dart';
 
 class SplashScreenPage extends StatefulWidget {
   const SplashScreenPage({super.key});
@@ -24,8 +20,10 @@ class SplashScreenPage extends StatefulWidget {
 
 class _SplashScreenPageState extends State<SplashScreenPage> {
   TheMovieBookingModel theMovieBookingModel = TheMovieBookingModelImpl();
-  List<dynamic>? colorList;
+  List<dynamic>? colorListdynamic;
+  List<ColorVO>? colorsList;
   String? colorHexCode;
+  ColorVO? colorVO;
 
   @override
   void initState() {
@@ -46,12 +44,11 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
 
     /// getConfig from Network
     theMovieBookingModel.getConfigurations().then((config) {
-      // debugPrint(
-      //     "=========================================> CONFIG COLOR VO ${config.data?[1].value}");
-      // setState(() {
-      // colorList = config.data?[1].value;
-      // });
-      debugPrint("${config.data?[1].value.runtimeType == List<dynamic>}");
+     // setState(() {
+      colorListdynamic = config.data?[1].value;
+     // });
+      colorsList = List<ColorVO>.from(colorListdynamic!.map((x) => ColorVO.fromJson(x)));
+      debugPrint("============================> $colorsList");
     }).catchError((error) {
       debugPrint("============================> ${error.toString()}");
     });

@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:the_movie_booking/authentication/data/data_vos/cities_vo.dart';
+
+import '../../data/data_vos/cities_vo.dart';
 
 part 'get_cities_response.g.dart';
 

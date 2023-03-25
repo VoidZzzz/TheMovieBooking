@@ -1,7 +1,10 @@
-import 'package:the_movie_booking/authentication/data/models/the_movie_api_model.dart';
-import 'package:the_movie_booking/authentication/network/data_agents/movie_api_data_agent.dart';
-import 'package:the_movie_booking/authentication/network/data_agents/movie_api_data_agent_impl.dart';
-import 'package:the_movie_booking/authentication/network/response/get_movie_trailers_response.dart';
+
+
+import 'package:the_movie_booking/data/models/the_movie_api_model.dart';
+
+import '../../network/data_agents/movie_api_data_agent.dart';
+import '../../network/data_agents/movie_api_data_agent_impl.dart';
+import '../../network/response/get_movie_trailers_response.dart';
 
 class TheMovieApiModelImpl extends TheMovieApiModel{
   static final TheMovieApiModelImpl _singleton = TheMovieApiModelImpl._internal();

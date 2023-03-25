@@ -1,27 +1,29 @@
-import 'package:the_movie_booking/authentication/data/data_vos/cities_vo.dart';
-import 'package:the_movie_booking/authentication/data/data_vos/user_vo.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
-import 'package:the_movie_booking/authentication/network/data_agents/movie_data_agent.dart';
-import 'package:the_movie_booking/authentication/network/data_agents/movie_data_agent_impl.dart';
-import 'package:the_movie_booking/authentication/network/response/checkout_request.dart';
-import 'package:the_movie_booking/authentication/network/response/checkout_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_banners_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_cinema_and_show_time_by_date_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_cinema_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_cities_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_config_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_movie_details_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_movies_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_otp_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_payment_types_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_snack_category_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_snacks_response.dart';
-import 'package:the_movie_booking/authentication/network/response/logout_response.dart';
-import 'package:the_movie_booking/authentication/network/response/sign_in_with_phone_response.dart';
-import 'package:the_movie_booking/authentication/persistence/daos/city_dao.dart';
-import 'package:the_movie_booking/authentication/persistence/daos/user_data_dao.dart';
 
+
+import 'package:the_movie_booking/data/models/the_movie_booking_model.dart';
+
+import '../../network/data_agents/movie_data_agent.dart';
+import '../../network/data_agents/movie_data_agent_impl.dart';
+import '../../network/response/checkout_request.dart';
+import '../../network/response/checkout_response.dart';
+import '../../network/response/get_banners_response.dart';
+import '../../network/response/get_cinema_and_show_time_by_date_response.dart';
+import '../../network/response/get_cinema_response.dart';
+import '../../network/response/get_cities_response.dart';
+import '../../network/response/get_config_response.dart';
+import '../../network/response/get_movie_details_response.dart';
+import '../../network/response/get_movies_response.dart';
+import '../../network/response/get_otp_response.dart';
+import '../../network/response/get_payment_types_response.dart';
+import '../../network/response/get_snack_category_response.dart';
+import '../../network/response/get_snacks_response.dart';
+import '../../network/response/logout_response.dart';
+import '../../network/response/sign_in_with_phone_response.dart';
+import '../../persistence/daos/city_dao.dart';
+import '../../persistence/daos/user_data_dao.dart';
+import '../data_vos/cities_vo.dart';
 import '../data_vos/seat_vo.dart';
+import '../data_vos/user_vo.dart';
 
 class TheMovieBookingModelImpl extends TheMovieBookingModel {
   static final TheMovieBookingModelImpl _singleton =

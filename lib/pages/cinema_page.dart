@@ -5,9 +5,6 @@ import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/search_pages/cinema_search_page.dart';
 import 'package:the_movie_booking/widgets/app_bar_back_arrow.dart';
 import 'package:the_movie_booking/widgets/cinema_listview.dart';
-
-import '../authentication/data/data_vos/cinema_details_vo.dart';
-import '../authentication/data/data_vos/cinema_vo.dart';
 import '../resources/dimens.dart';
 import '../resources/images.dart';
 import '../widgets/app_bar_image_icon_view.dart';

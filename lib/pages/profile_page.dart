@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
-import 'package:the_movie_booking/pages/bottom_navigation_bar_home_page.dart';
-import 'package:the_movie_booking/pages/phone_number_verification_page.dart';
 import 'package:the_movie_booking/pages/splash_screen_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/strings.dart';
-
-import '../authentication/data/data_vos/payment_vo.dart';
+import '../data/data_vos/payment_vo.dart';
+import '../data/models/the_movie_booking_model.dart';
+import '../data/models/the_movie_booking_model_impl.dart';
 import '../resources/dimens.dart';
 import '../resources/images.dart';
 

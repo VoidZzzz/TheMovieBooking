@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
-import 'package:the_movie_booking/authentication/data/data_vos/user_vo.dart';
-import 'package:the_movie_booking/authentication/network/response/sign_in_with_phone_response.dart';
+import '../../data/data_vos/user_vo.dart';
+import '../../network/response/sign_in_with_phone_response.dart';
 import '../hive_constants.dart';
 
 class UserDataDao{

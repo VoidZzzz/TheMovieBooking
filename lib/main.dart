@@ -1,36 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:the_movie_booking/authentication/data/data_vos/user_info_vo.dart';
-import 'package:the_movie_booking/authentication/data/data_vos/user_vo.dart';
-import 'package:the_movie_booking/authentication/persistence/hive_constants.dart';
-import 'package:the_movie_booking/pages/cinema_details_page.dart';
-import 'package:the_movie_booking/pages/cinema_page.dart';
-import 'package:the_movie_booking/pages/cinema_selection_page.dart';
-import 'package:the_movie_booking/pages/test.dart';
-import 'package:the_movie_booking/pages/unused_home_page.dart';
-import 'package:the_movie_booking/pages/location_page.dart';
-import 'package:the_movie_booking/pages/bottom_navigation_bar_home_page.dart';
-import 'package:the_movie_booking/pages/movie_details_page.dart';
-import 'package:the_movie_booking/pages/otp_verification_page.dart';
-import 'package:the_movie_booking/pages/payment_page.dart';
-import 'package:the_movie_booking/pages/phone_number_verification_page.dart';
-import 'package:the_movie_booking/pages/player.dart';
-import 'package:the_movie_booking/pages/profile_page.dart';
-import 'package:the_movie_booking/pages/seat_plan_page.dart';
-import 'package:the_movie_booking/pages/snack_shop_page.dart';
 import 'package:the_movie_booking/pages/splash_screen_page.dart';
-import 'package:the_movie_booking/pages/home_page.dart';
-import 'package:the_movie_booking/pages/ticket_confirmation_page.dart';
-import 'package:the_movie_booking/pages/ticket_details_page.dart';
-import 'package:the_movie_booking/pages/tickets_page.dart';
-import 'package:the_movie_booking/pages/check_out_page.dart';
+import 'package:the_movie_booking/persistence/hive_constants.dart';
 import 'package:the_movie_booking/resources/colors.dart';
-import 'package:the_movie_booking/search_pages/cinema_search_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
-import 'package:the_movie_booking/video_players/youtube_video_player_movie_details.dart';
-
-import 'authentication/data/data_vos/cities_vo.dart';
-import 'authentication/network/response/sign_in_with_phone_response.dart';
+import 'data/data_vos/cities_vo.dart';
+import 'data/data_vos/user_info_vo.dart';
+import 'data/data_vos/user_vo.dart';
+import 'network/response/sign_in_with_phone_response.dart';
 
 
 void main() async{

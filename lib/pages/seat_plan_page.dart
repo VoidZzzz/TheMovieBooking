@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/pages/snack_shop_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/resources/strings.dart';
-import 'package:the_movie_booking/widgets/app_secondary_button.dart';
-
-import '../authentication/data/data_vos/seat_vo.dart';
+import '../data/data_vos/seat_vo.dart';
+import '../data/models/the_movie_booking_model_impl.dart';
 import '../resources/dimens.dart';
 import '../widgets/app_bar_back_arrow.dart';
 
@@ -54,7 +52,7 @@ class _MyHomePageState extends State<SeatPlanPage> {
   @override
   void initState() {
     print(
-        "============================> TIMESLOT ID = ${widget.cinemaLocation} ${widget.cinemaName}");
+        "============================> Selected Date = ${widget.selectedDateTime} ${widget.selectedDate}");
     userToken =
         _theMovieBookingModelImpl.getUserDataFromDatabase()?.token ?? "";
     _theMovieBookingModelImpl
@@ -130,7 +128,7 @@ class _MyHomePageState extends State<SeatPlanPage> {
                               }
                             },
                           );
-                          print(
+                          debugPrint(
                               "===========================> $selectedSeatList");
                         },
                       ),
@@ -221,18 +219,18 @@ class _SeatPlanViewState extends State<SeatPlanView> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(MARGIN_SMALL_8X),
       child: ListView.builder(
           physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: widget.seatPlan?.length ?? 0,
           itemBuilder: (context, index) {
             return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2.0),
+              padding: const EdgeInsets.symmetric(vertical: MARGIN_SMALL_2X),
               child: SeatRowView(
                 seatPlanForEachRow: widget.seatPlan?[index] ?? [],
                 onTappedSeat: (gridIndex) {
-                  print(
+                  debugPrint(
                       '--------------------------------> gird view on tap  ${widget.seatPlan?[index]?[gridIndex].isSelected}');
                   setState(() {
                     widget.onTappedSeat(index, gridIndex);
@@ -307,10 +305,8 @@ class _SeatRowViewState extends State<SeatRowView> {
               return const SizedBox();
             } else {
               return Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Container(
-                  color: APP_COLOR_SECONDARY_COLOR,
-                ),
+                padding: const EdgeInsets.all(MARGIN_SMALL_2X),
+                child: Container(),
               );
             }
           }),

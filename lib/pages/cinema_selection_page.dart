@@ -6,10 +6,10 @@ import 'package:the_movie_booking/widgets/app_bar_city_name_view.dart';
 import 'package:the_movie_booking/widgets/app_bar_image_icon_view.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/widgets/cinema_listview.dart';
-import '../authentication/data/data_vos/cinema_details_vo.dart';
-import '../authentication/data/data_vos/cinema_vo.dart';
-import '../authentication/data/models/the_movie_booking_model.dart';
-import '../authentication/data/models/the_movie_booking_model_impl.dart';
+import '../data/data_vos/cinema_details_vo.dart';
+import '../data/data_vos/cinema_vo.dart';
+import '../data/models/the_movie_booking_model.dart';
+import '../data/models/the_movie_booking_model_impl.dart';
 import '../resources/dimens.dart';
 import '../resources/strings.dart';
 import 'package:intl/intl.dart';
@@ -164,6 +164,7 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
                     isSelectedDateList[i] = false;
                   }
                   selectedDateTime = twoWeeks[index];
+                  print("=========================== $index $selectedDateTime");
                   isSelectedDateList[index] = true;
                   selectedDateForApi =
                       "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
@@ -193,7 +194,7 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
                         MaterialPageRoute(
                           builder: (context) {
                             return SeatPlanPage(
-                              selectedDateTime: twoWeeks[listViewIndex],
+                              selectedDateTime: selectedDateTime ?? DateTime.now(),
                               cinemaLocation: cinemaDetailsList?[listViewIndex].address ?? "",
                               movieId: widget.movieId,
                               bookingDate: (selectedDateForApi.isEmpty)

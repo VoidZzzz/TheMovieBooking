@@ -6,7 +6,7 @@ import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/resources/strings.dart';
 import 'package:the_movie_booking/widgets/plus_minus_and_item_counts_view.dart';
 
-import '../authentication/data/data_vos/snack_vo.dart';
+import '../data/data_vos/snack_vo.dart';
 
 class SnackBoxView extends StatefulWidget {
   final Function onTapPlusButton;

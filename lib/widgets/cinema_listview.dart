@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
 import 'package:the_movie_booking/pages/seat_plan_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/resources/strings.dart';
-import '../authentication/data/data_vos/cinema_vo.dart';
-import '../authentication/data/data_vos/time_slot_vo.dart';
+import '../data/data_vos/cinema_vo.dart';
 import '../resources/dimens.dart';
 
 class CinemaListView extends StatefulWidget {

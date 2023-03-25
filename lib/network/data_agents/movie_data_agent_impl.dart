@@ -1,23 +1,23 @@
 import 'package:dio/dio.dart';
-import 'package:the_movie_booking/authentication/network/api_constants.dart';
-import 'package:the_movie_booking/authentication/network/response/checkout_request.dart';
-import 'package:the_movie_booking/authentication/network/response/checkout_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_banners_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_cinema_and_show_time_by_date_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_cinema_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_config_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_movie_details_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_movies_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_payment_types_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_seating_plan_by_showtime_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_snack_category_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_snacks_response.dart';
-import 'package:the_movie_booking/authentication/network/response/logout_response.dart';
-import 'package:the_movie_booking/authentication/network/the_movie_booking_api.dart';
-import 'package:the_movie_booking/authentication/network/data_agents/movie_data_agent.dart';
-import 'package:the_movie_booking/authentication/network/response/get_cities_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_otp_response.dart';
-import 'package:the_movie_booking/authentication/network/response/sign_in_with_phone_response.dart';
+
+import '../response/checkout_request.dart';
+import '../response/checkout_response.dart';
+import '../response/get_banners_response.dart';
+import '../response/get_cinema_and_show_time_by_date_response.dart';
+import '../response/get_cinema_response.dart';
+import '../response/get_cities_response.dart';
+import '../response/get_config_response.dart';
+import '../response/get_movie_details_response.dart';
+import '../response/get_movies_response.dart';
+import '../response/get_otp_response.dart';
+import '../response/get_payment_types_response.dart';
+import '../response/get_seating_plan_by_showtime_response.dart';
+import '../response/get_snack_category_response.dart';
+import '../response/get_snacks_response.dart';
+import '../response/logout_response.dart';
+import '../response/sign_in_with_phone_response.dart';
+import '../the_movie_booking_api.dart';
+import 'movie_data_agent.dart';
 
 class MovieDataAgentImpl extends MovieDataAgent {
   late TheMovieBookingApi mApi;

@@ -2,8 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
-import 'package:the_movie_booking/authentication/network/api_constants.dart';
 import 'package:the_movie_booking/pages/bottom_navigation_bar_home_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/images.dart';
@@ -14,12 +12,10 @@ import 'package:the_movie_booking/widgets/dotted_line_view.dart';
 import 'package:the_movie_booking/widgets/left_semi_circle_view.dart';
 import 'package:the_movie_booking/widgets/title_text_green.dart';
 import 'package:the_movie_booking/widgets/ticket_count_view.dart';
-import 'package:the_movie_booking/widgets/title_text_large.dart';
-import 'package:the_movie_booking/widgets/title_text_small.dart';
-import 'package:the_movie_booking/widgets/right_semi_circle_view.dart';
-
-import '../authentication/data/data_vos/checkout_vo.dart';
-import '../authentication/data/data_vos/movie_vo.dart';
+import '../data/data_vos/checkout_vo.dart';
+import '../data/data_vos/movie_vo.dart';
+import '../data/models/the_movie_booking_model_impl.dart';
+import '../network/api_constants.dart';
 import '../resources/dimens.dart';
 import '../widgets/ticket_information_view.dart';
 import '../widgets/title_text_xlarge.dart';
@@ -211,7 +207,10 @@ class TicketDetailsView extends StatelessWidget {
           const SizedBox(height: MARGIN_MEDIUM_35X),
           const DottedLineView(),
           const SizedBox(height: MARGIN_MEDIUM_20X),
-          CinemaDetailsView(bookingDate: bookingDate, startTime: startTime, cinemaLocation: cinemaLocation)
+          CinemaDetailsView(
+              bookingDate: bookingDate,
+              startTime: startTime,
+              cinemaLocation: cinemaLocation)
         ],
       ),
     );
@@ -389,8 +388,8 @@ class QRImageView extends StatelessWidget {
     return SizedBox(
       height: MARGIN_LARGE_100X,
       width: MARGIN_LARGE_100X,
-      child: Image.asset(
-        "images/qrImage.png",
+      child: CachedNetworkImage(
+        imageUrl: "$BASE_URL/$qrCode",
         fit: BoxFit.cover,
       ),
     );

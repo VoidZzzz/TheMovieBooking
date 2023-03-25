@@ -3,8 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/widgets/snack_shop_page_minus_button.dart';
 import 'package:the_movie_booking/widgets/snack_shopping_page_plus_button.dart';
-
-import '../authentication/data/data_vos/snack_vo.dart';
 import '../resources/colors.dart';
 import '../resources/dimens.dart';
 class PlusMinusAndItemCountsView extends StatelessWidget {

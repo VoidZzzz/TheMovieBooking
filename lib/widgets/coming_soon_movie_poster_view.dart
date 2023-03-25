@@ -1,10 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:the_movie_booking/authentication/network/api_constants.dart';
 import 'package:the_movie_booking/resources/images.dart';
-
-import '../authentication/data/data_vos/movie_vo.dart';
+import '../data/data_vos/movie_vo.dart';
+import '../network/api_constants.dart';
 import '../resources/colors.dart';
 import '../resources/dimens.dart';
 

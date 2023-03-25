@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:the_movie_booking/authentication/data/data_vos/cinema_details_vo.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/resources/strings.dart';
-import 'package:the_movie_booking/video_players/network_video_player_movie.dart';
-import 'package:the_movie_booking/widgets/app_bar_back_arrow.dart';
-import 'package:the_movie_booking/widgets/location_page_location_box.dart';
-import 'package:the_movie_booking/widgets/title_text_large.dart';
-import '../authentication/data/data_vos/cinema_vo.dart';
-import '../authentication/data/models/the_movie_booking_model.dart';
+import '../data/data_vos/cinema_details_vo.dart';
+import '../data/models/the_movie_booking_model.dart';
+import '../data/models/the_movie_booking_model_impl.dart';
 import '../resources/dimens.dart';
 import '../video_players/network_video_player_cinema.dart';
+import '../widgets/app_bar_back_arrow.dart';
 import '../widgets/play_button_view.dart';
 import '../widgets/title_text_xlarge.dart';
 

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/pages/cinema_page.dart';
-import 'package:the_movie_booking/pages/unused_home_page.dart';
 import 'package:the_movie_booking/pages/profile_page.dart';
 import 'package:the_movie_booking/pages/home_page.dart';
 import 'package:the_movie_booking/pages/tickets_page.dart';
@@ -11,7 +8,6 @@ import 'package:the_movie_booking/resources/dimens.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/resources/strings.dart';
 
-import '../authentication/data/data_vos/cinema_details_vo.dart';
 
 class BottomNaviBarHomePage extends StatefulWidget {
   const BottomNaviBarHomePage({Key? key}) : super(key: key);

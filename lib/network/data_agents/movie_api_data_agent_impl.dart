@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:the_movie_booking/authentication/network/api_constants.dart';
-import 'package:the_movie_booking/authentication/network/the_movie_api.dart';
 
+import '../api_constants.dart';
 import '../response/get_movie_trailers_response.dart';
+import '../the_movie_api.dart';
 import 'movie_api_data_agent.dart';
 
 class MovieApiDataAgentImpl extends MovieApiDataAgent{

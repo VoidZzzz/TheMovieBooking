@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:the_movie_booking/authentication/data/data_vos/time_slot_vo.dart';
+import 'package:the_movie_booking/data/data_vos/time_slot_vo.dart';
 
 part 'cinema_vo.g.dart';
 

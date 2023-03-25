@@ -1,7 +1,8 @@
 
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:the_movie_booking/authentication/persistence/hive_constants.dart';
+
+import '../../persistence/hive_constants.dart';
 
 part 'cities_vo.g.dart';
 

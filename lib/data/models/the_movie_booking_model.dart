@@ -1,23 +1,21 @@
-import 'package:the_movie_booking/authentication/data/data_vos/cities_vo.dart';
-import 'package:the_movie_booking/authentication/data/data_vos/user_vo.dart';
-import 'package:the_movie_booking/authentication/network/response/checkout_request.dart';
-import 'package:the_movie_booking/authentication/network/response/checkout_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_cinema_and_show_time_by_date_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_cinema_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_config_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_otp_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_payment_types_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_seating_plan_by_showtime_response.dart';
-import 'package:the_movie_booking/authentication/network/response/get_snack_category_response.dart';
-import 'package:the_movie_booking/authentication/network/response/sign_in_with_phone_response.dart';
-
+import '../../network/response/checkout_request.dart';
+import '../../network/response/checkout_response.dart';
 import '../../network/response/get_banners_response.dart';
+import '../../network/response/get_cinema_and_show_time_by_date_response.dart';
+import '../../network/response/get_cinema_response.dart';
 import '../../network/response/get_cities_response.dart';
+import '../../network/response/get_config_response.dart';
 import '../../network/response/get_movie_details_response.dart';
 import '../../network/response/get_movies_response.dart';
+import '../../network/response/get_otp_response.dart';
+import '../../network/response/get_payment_types_response.dart';
+import '../../network/response/get_snack_category_response.dart';
 import '../../network/response/get_snacks_response.dart';
 import '../../network/response/logout_response.dart';
+import '../../network/response/sign_in_with_phone_response.dart';
+import '../data_vos/cities_vo.dart';
 import '../data_vos/seat_vo.dart';
+import '../data_vos/user_vo.dart';
 
 abstract class TheMovieBookingModel {
   Future<GetOTPResponse> getOTP(String phone);

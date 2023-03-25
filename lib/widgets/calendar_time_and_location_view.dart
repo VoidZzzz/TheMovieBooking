@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:the_movie_booking/authentication/data/data_vos/cinema_details_vo.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/resources/dimens.dart';
 import 'package:the_movie_booking/widgets/voucher_page_calendar_time_location_glow_icon_view.dart';
 import 'package:the_movie_booking/widgets/voucher_page_calendar_time_location_text_view.dart';
+import '../data/data_vos/cinema_details_vo.dart';
+import '../data/models/the_movie_booking_model.dart';
+import '../data/models/the_movie_booking_model_impl.dart';
 import '../pages/check_out_page.dart';
 
 class CalendarTimeAndLocationView extends StatefulWidget {

@@ -1,16 +1,11 @@
-import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/pages/payment_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/widgets/app_bar_back_arrow.dart';
-import 'package:the_movie_booking/widgets/app_default_button_large.dart';
-import 'package:the_movie_booking/widgets/app_default_button_medium.dart';
 import 'package:the_movie_booking/widgets/app_secondary_button.dart';
 import 'package:the_movie_booking/widgets/title_text.dart';
-import '../authentication/data/data_vos/cinema_details_vo.dart';
-import '../authentication/data/data_vos/snack_vo.dart';
+import '../data/data_vos/snack_vo.dart';
 import '../resources/dimens.dart';
 import '../resources/strings.dart';
 import '../widgets/calendar_time_and_location_view.dart';
@@ -68,9 +63,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
   late int totalAmounts =
       500 + widget.totalAmountForSeat + widget.totalAmountForSnack;
   late String seatNames = widget.selectedSeatList.join(", ");
-  //
-  // String datetime3 = DateFormat.MMMMEEEEd().format(datetime);
-  // print(datetime3);
 
   @override
   void initState() {
@@ -186,16 +178,17 @@ class TicketDetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              VOUCHER_CONFIRMATION_PAGE_GRADIENT_COLOR_1,
-              VOUCHER_CONFIRMATION_PAGE_GRADIENT_COLOR_2,
-              VOUCHER_CONFIRMATION_PAGE_GRADIENT_COLOR_3
-            ],
-          ),
-          borderRadius: BorderRadius.circular(MARGIN_SMALL_8X)),
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            VOUCHER_CONFIRMATION_PAGE_GRADIENT_COLOR_1,
+            VOUCHER_CONFIRMATION_PAGE_GRADIENT_COLOR_2,
+            VOUCHER_CONFIRMATION_PAGE_GRADIENT_COLOR_3
+          ],
+        ),
+        borderRadius: BorderRadius.circular(MARGIN_SMALL_8X),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_20X),
         child: SingleChildScrollView(
@@ -222,7 +215,7 @@ class TicketDetailsView extends StatelessWidget {
                   cinemaLocation: cinemaLocation,
                 ),
               ),
-              const SizedBox(height: MARGIN_SMALL_10X),
+              // const SizedBox(height: MARGIN_SMALL_10X),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_20X),

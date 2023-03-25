@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/http.dart';
-import 'package:the_movie_booking/authentication/network/response/get_movie_trailers_response.dart';
+import 'package:the_movie_booking/network/response/get_movie_trailers_response.dart';
 
 import 'api_constants.dart';
 

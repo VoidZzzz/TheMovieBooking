@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:the_movie_booking/resources/dimens.dart';
 import 'package:the_movie_booking/resources/images.dart';
-
-import '../authentication/data/data_vos/snack_vo.dart';
+import '../data/data_vos/snack_vo.dart';
 import '../resources/colors.dart';
 
 class VoucherItemDetailsView extends StatefulWidget {

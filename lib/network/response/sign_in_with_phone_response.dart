@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:the_movie_booking/authentication/data/data_vos/user_info_vo.dart';
 
+import '../../data/data_vos/user_info_vo.dart';
 import '../../persistence/hive_constants.dart';
 
 part 'sign_in_with_phone_response.g.dart';

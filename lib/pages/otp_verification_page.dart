@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
 import 'package:the_movie_booking/pages/location_page.dart';
 import 'package:the_movie_booking/pages/phone_number_verification_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
@@ -13,6 +11,9 @@ import 'package:the_movie_booking/widgets/subtitle_text.dart';
 import 'package:the_movie_booking/widgets/title_text.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+
+import '../data/models/the_movie_booking_model.dart';
+import '../data/models/the_movie_booking_model_impl.dart';
 
 class OTPVerificationPage extends StatefulWidget {
   final String userPhone;
@@ -34,7 +35,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
   String? otpResponse;
 
   /// Api Variables
-  TheMovieBookingModel _movieBookingModel = TheMovieBookingModelImpl();
+  final TheMovieBookingModel _movieBookingModel = TheMovieBookingModelImpl();
 
   @override
   void initState() {

@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:the_movie_booking/authentication/data/data_vos/request_snack_vo.dart';
-import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
-import 'package:the_movie_booking/authentication/network/response/checkout_request.dart';
-import 'package:the_movie_booking/authentication/network/response/checkout_response.dart';
 import 'package:the_movie_booking/pages/ticket_confirmation_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/images.dart';
@@ -11,10 +7,13 @@ import 'package:the_movie_booking/resources/strings.dart';
 import 'package:the_movie_booking/widgets/app_bar_back_arrow.dart';
 import 'package:the_movie_booking/widgets/app_default_button_large.dart';
 import 'package:the_movie_booking/widgets/title_text.dart';
-
-import '../authentication/data/data_vos/payment_vo.dart';
-import '../authentication/data/data_vos/snack_vo.dart';
-import '../authentication/data/models/the_movie_booking_model.dart';
+import '../data/data_vos/payment_vo.dart';
+import '../data/data_vos/request_snack_vo.dart';
+import '../data/data_vos/snack_vo.dart';
+import '../data/models/the_movie_booking_model.dart';
+import '../data/models/the_movie_booking_model_impl.dart';
+import '../network/response/checkout_request.dart';
+import '../network/response/checkout_response.dart';
 import '../resources/dimens.dart';
 
 class PaymentPage extends StatefulWidget {
