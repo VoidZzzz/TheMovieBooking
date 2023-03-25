@@ -6,6 +6,7 @@ import 'package:the_movie_booking/widgets/app_bar_city_name_view.dart';
 import 'package:the_movie_booking/widgets/app_bar_image_icon_view.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/widgets/cinema_listview.dart';
+import '../authentication/data/data_vos/cinema_details_vo.dart';
 import '../authentication/data/data_vos/cinema_vo.dart';
 import '../authentication/data/models/the_movie_booking_model.dart';
 import '../authentication/data/models/the_movie_booking_model_impl.dart';
@@ -14,9 +15,11 @@ import '../resources/strings.dart';
 import 'package:intl/intl.dart';
 
 class CinemaSelectionPage extends StatefulWidget {
-  const CinemaSelectionPage({Key? key, required this.movieName})
+  const CinemaSelectionPage(
+      {Key? key, required this.movieName, required this.movieId})
       : super(key: key);
   final String movieName;
+  final int movieId;
 
   @override
   State<CinemaSelectionPage> createState() => _CinemaSelectionPageState();
@@ -85,8 +88,10 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
   String? cinemaStatus;
   String? selectedTime;
   String selectedDateForApi = "";
+  List<CinemaDetailsVO>? cinemaDetailsList;
   String defaultDateForApi =
       "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}";
+  DateTime? selectedDateTime;
 
   @override
   void initState() {
@@ -105,11 +110,20 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
         cinemaAndShowTimeList = cinemaAndShowTime.data;
       });
       debugPrint(
-          "CinemaAndShowTime===================================>${cinemaAndShowTime.data?.first.cinema}");
+          "CinemaAndShowTime===================================> IS EXPENDED = ${cinemaAndShowTime.data?.first.isExpanded}");
       debugPrint(
           "CinemaAndShowTime===================================>${cinemaAndShowTimeList?.length}");
     }).catchError((error) {
       debugPrint("Error ========================> $error");
+    });
+
+    /// get CinemaDetails
+    theMovieBookingModel
+        .getCinemas(
+            "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}",
+            userToken)
+        .then((cinemaDetails) {
+      cinemaDetailsList = cinemaDetails.data;
     });
     super.initState();
   }
@@ -149,11 +163,10 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
                   for (int i = 0; i < isSelectedDateList.length; i++) {
                     isSelectedDateList[i] = false;
                   }
+                  selectedDateTime = twoWeeks[index];
                   isSelectedDateList[index] = true;
                   selectedDateForApi =
                       "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
-                  print(
-                      '=================================> SELECTED DATE = $selectedDateForApi');
 
                   /// getCinemaAndShowTime On User Action
                   theMovieBookingModel
@@ -163,10 +176,6 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
                     setState(() {
                       cinemaAndShowTimeList = cinemaAndShowTime.data;
                     });
-                    debugPrint(
-                        "===================================> CINEMA AND SHOWTIME ON USER ACTION  ${cinemaAndShowTime.data?.first.cinema}");
-                    debugPrint(
-                        "===================================> CINEMA LENGTH ON USER ACTION   ${cinemaAndShowTimeList?.length}");
                   }).catchError((error) {
                     debugPrint("Error ========================> $error");
                   });
@@ -184,15 +193,29 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
                         MaterialPageRoute(
                           builder: (context) {
                             return SeatPlanPage(
+                              selectedDateTime: twoWeeks[listViewIndex],
+                              cinemaLocation: cinemaDetailsList?[listViewIndex].address ?? "",
+                              movieId: widget.movieId,
                               bookingDate: (selectedDateForApi.isEmpty)
                                   ? defaultDateForApi
                                   : selectedDateForApi,
                               cinemaDayTimeSlotsId: timeSlotsId,
                               movieName: widget.movieName,
-                              cinemaName: cinemaAndShowTimeList?[listViewIndex].cinema ?? "",
-                              cinemaStatus: cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].status.toString() ?? "",
+                              cinemaName: cinemaAndShowTimeList?[listViewIndex]
+                                      .cinema ??
+                                  "",
+                              cinemaStatus:
+                                  cinemaAndShowTimeList?[listViewIndex]
+                                          .timeSlots?[gridViewIndex]
+                                          .status
+                                          .toString() ??
+                                      "",
                               selectedDate: selectedDateForApi,
-                              selectedTime: cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].startTime ?? "",
+                              selectedTime:
+                                  cinemaAndShowTimeList?[listViewIndex]
+                                          .timeSlots?[gridViewIndex]
+                                          .startTime ??
+                                      "",
                             );
                           },
                         ),

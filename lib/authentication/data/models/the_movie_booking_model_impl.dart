@@ -3,6 +3,8 @@ import 'package:the_movie_booking/authentication/data/data_vos/user_vo.dart';
 import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
 import 'package:the_movie_booking/authentication/network/data_agents/movie_data_agent.dart';
 import 'package:the_movie_booking/authentication/network/data_agents/movie_data_agent_impl.dart';
+import 'package:the_movie_booking/authentication/network/response/checkout_request.dart';
+import 'package:the_movie_booking/authentication/network/response/checkout_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_banners_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_cinema_and_show_time_by_date_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_cinema_response.dart';
@@ -159,5 +161,10 @@ class TheMovieBookingModelImpl extends TheMovieBookingModel {
       ).toList();
       return value;
     });
+  }
+
+  @override
+  Future<CheckoutResponse> checkoutRequest(String token, CheckOutRequest checkOutRequest) {
+   return _dataAgent.checkoutRequest(token, checkOutRequest);
   }
 }

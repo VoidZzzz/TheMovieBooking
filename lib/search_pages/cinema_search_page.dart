@@ -131,14 +131,15 @@ class _CinemaSearchPageState extends State<CinemaSearchPage> {
                     cinemaAndShowTimeList: const [],
                     onTapCinema: (str,listIndex,gridIndex) => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const SeatPlanPage(
+                        builder: (context) => SeatPlanPage(
                           bookingDate: '',
+                          selectedDateTime: DateTime.now(),
                           cinemaDayTimeSlotsId: '',
                           movieName: "John Wick",
                           cinemaStatus: "",
                           selectedTime: '',
                           selectedDate: '',
-                          cinemaName: '',
+                          cinemaName: '', movieId: 323265,cinemaLocation: "",
                         ),
                       ),
                     ),

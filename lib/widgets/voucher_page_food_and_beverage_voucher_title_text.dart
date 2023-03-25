@@ -5,11 +5,18 @@ import 'package:the_movie_booking/resources/images.dart';
 import 'package:the_movie_booking/resources/strings.dart';
 
 import '../resources/colors.dart';
+
 class FoodAndBeverageVoucherTitleText extends StatefulWidget {
   final Function onTap;
   final bool iconSwitch;
+  final int totalAmountsForSnack;
+  final int? finalAmountForSnack;
   const FoodAndBeverageVoucherTitleText(
-      {super.key, required this.iconSwitch, required this.onTap});
+      {super.key,
+      required this.iconSwitch,
+      required this.onTap,
+      required this.totalAmountsForSnack,
+      required this.finalAmountForSnack});
 
   @override
   State<FoodAndBeverageVoucherTitleText> createState() =>
@@ -45,23 +52,31 @@ class _FoodAndBeverageVoucherTitleTextState
                 },
                 child: widget.iconSwitch
                     ? const Icon(
-                  Icons.keyboard_arrow_up,
-                  color: WHITE_COLOR,
-                  size: MARGIN_MEDIUM_25X,
-                )
+                        Icons.keyboard_arrow_up,
+                        color: WHITE_COLOR,
+                        size: MARGIN_MEDIUM_25X,
+                      )
                     : const Icon(
-                  Icons.keyboard_arrow_down,
-                  color: WHITE_COLOR,
-                  size: MARGIN_MEDIUM_25X,
-                ),
+                        Icons.keyboard_arrow_down,
+                        color: WHITE_COLOR,
+                        size: MARGIN_MEDIUM_25X,
+                      ),
               ),
             ],
           ),
         ),
         Text(
-          "2000Ks",
+          (widget.finalAmountForSnack == null)
+              ? (widget.totalAmountsForSnack > 0)
+                  ? "${widget.totalAmountsForSnack.toString()} Ks"
+                  : "-"
+              : (widget.finalAmountForSnack! > 0)
+                  ? "${widget.finalAmountForSnack.toString()} Ks"
+                  : "-",
           style: GoogleFonts.dmSans(
-              fontWeight: FontWeight.w700, fontSize: MARGIN_MEDIUM_16X, color: WHITE_COLOR),
+              fontWeight: FontWeight.w700,
+              fontSize: MARGIN_MEDIUM_16X,
+              color: WHITE_COLOR),
         )
       ],
     );

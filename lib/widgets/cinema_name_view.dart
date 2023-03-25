@@ -15,17 +15,20 @@ class CinemaNameView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        style: GoogleFonts.dmSans(
-            fontWeight: FontWeight.w400, fontSize: TEXT_LARGE_16X, color: APP_COLOR_SECONDARY_COLOR),
-        children: [
-          TextSpan(text: cinemaName),
-          TextSpan(
-            text: " (SCREEN $cinemaStatus)",
-            style: GoogleFonts.dmSans(color: WHITE_COLOR,fontSize: TEXT_MEDIUM),
-          )
-        ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_20X),
+      child: RichText(
+        text: TextSpan(
+          style: GoogleFonts.dmSans(
+              fontWeight: FontWeight.w400, fontSize: TEXT_LARGE_16X, color: APP_COLOR_SECONDARY_COLOR),
+          children: [
+            TextSpan(text: cinemaName),
+            TextSpan(
+              text: " (SCREEN $cinemaStatus)",
+              style: GoogleFonts.dmSans(color: WHITE_COLOR,fontSize: TEXT_MEDIUM),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -73,6 +73,7 @@ const SEAT_PLAN_PAGE_TAKEN_TEXT = "Taken";
 const SEAT_PLAN_PAGE_TICKET_AMOUNT_TEXT = "Tickets";
 const SEAT_PLAN_PAGE_MMK_AMOUNT_TEXT = "Kyats";
 const SEAT_PLAN_PAGE_BUY_TICKETS_TEXT = "Buy Tickets";
+const SEAT_PLAN_DIALOG_CONTENT = "No Seat has been selected!";
 
 /// Snack Shop Page
 const SNACK_SHOP_PAGE_TITLE_TEXT = "Grab a bite!";

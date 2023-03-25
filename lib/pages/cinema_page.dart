@@ -59,14 +59,15 @@ class _CinemaPageState extends State<CinemaPage> {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) {
-                  return const SeatPlanPage(
+                  return SeatPlanPage(
+                    selectedDateTime: DateTime.now(),
                     bookingDate: '',
                     cinemaDayTimeSlotsId: '',
                     movieName: 'John Wick 4',
                     cinemaName: "JCGV : Junction",
                     cinemaStatus: "3",
                     selectedTime: "",
-                    selectedDate: "",
+                    selectedDate: "", movieId: 323265,cinemaLocation: "",
                   );
                 },
               ),

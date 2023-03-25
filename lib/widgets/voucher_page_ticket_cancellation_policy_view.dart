@@ -16,29 +16,32 @@ class TicketCancellationPolicyView extends StatelessWidget {
       onTap: () {
         onTapCancellation();
       },
-      child: Container(
-        height: MARGIN_MEDIUM_30X,
-        decoration: BoxDecoration(
-          color: buttonColor,
-          borderRadius: BorderRadius.circular(MARGIN_MEDIUM_20X),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: MARGIN_SMALL_10X),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.info_outline_rounded,
-                color: WHITE_COLOR,
-                size: MARGIN_MEDIUM_20X,
-              ),
-              const SizedBox(width: MARGIN_SMALL_5X),
-              Text(
-                VOUCHER_PAGE_TICKET_CANCELLAION_POLICY_TEXT,
-                style: GoogleFonts.dmSans(
-                    color: WHITE_COLOR, fontWeight: FontWeight.w500),
-              )
-            ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_20X),
+        child: Container(
+          height: MARGIN_MEDIUM_30X,
+          decoration: BoxDecoration(
+            color: buttonColor,
+            borderRadius: BorderRadius.circular(MARGIN_MEDIUM_20X),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: MARGIN_SMALL_10X),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.info_outline_rounded,
+                  color: WHITE_COLOR,
+                  size: MARGIN_MEDIUM_20X,
+                ),
+                const SizedBox(width: MARGIN_SMALL_5X),
+                Text(
+                  VOUCHER_PAGE_TICKET_CANCELLAION_POLICY_TEXT,
+                  style: GoogleFonts.dmSans(
+                      color: WHITE_COLOR, fontWeight: FontWeight.w500),
+                )
+              ],
+            ),
           ),
         ),
       ),

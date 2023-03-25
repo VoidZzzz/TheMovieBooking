@@ -15,7 +15,7 @@ class DottedLineView extends StatelessWidget {
       child: DottedLine(
         lineThickness: 2,
         dashLength: 8,
-        lineLength: MediaQuery.of(context).size.width * MARGIN_XSMALL_2,
+        lineLength: MediaQuery.of(context).size.width * 0.76,
         dashColor:
         VOUCHER_CONFIRMATION_PAGE_DOTTED_LINE_COLOR,
       ),

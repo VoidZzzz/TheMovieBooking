@@ -51,7 +51,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
 
   @override
   void initState() {
-
     /// Get MovieDetails from Network
     theMovieBookingModel.getMovieDetails(widget.movieId).then((movieDetails) {
       setState(() {
@@ -68,7 +67,9 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
         videoList = response.results ?? [];
       });
       // debugPrint("===========================> TRAILER VIDEO KEY ${videoList?.last.key}");
-    }).catchError((error){debugPrint("==========================> TRAILER VIDEO ERROR $error");});
+    }).catchError((error) {
+      debugPrint("==========================> TRAILER VIDEO ERROR $error");
+    });
 
     super.initState();
   }
@@ -84,7 +85,8 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * MARGIN_XSMALL,
                 child: DetailsPageTopView(
-                  movieDetails: movieDetail, movieId: widget.movieId,
+                  movieDetails: movieDetail,
+                  movieId: widget.movieId,
                 ),
               ),
               Align(
@@ -97,7 +99,10 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButtonView(movieName: movieName ?? "",),
+        floatingActionButton: FloatingActionButtonView(
+          movieName: movieName ?? "",
+          movieId: widget.movieId,
+        ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
@@ -105,37 +110,44 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
 }
 
 class FloatingActionButtonView extends StatelessWidget {
-  const FloatingActionButtonView({
-    Key? key,
-    required this.movieName
-  }) : super(key: key);
+  const FloatingActionButtonView(
+      {Key? key, required this.movieName, required this.movieId})
+      : super(key: key);
   final String movieName;
+  final int movieId;
 
   @override
   Widget build(BuildContext context) {
-    return AppSecondaryButton(
-      buttonText: MOVIE_DETAILS_PAGE_BUTTON_TEXT,
-      buttonColor: APP_COLOR_SECONDARY_COLOR,
-      buttonTextColor: SECONDARY_BUTTON_TEXT_COLOR,
+    return InkWell(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {
-              return CinemaSelectionPage(movieName: movieName,);
+              return CinemaSelectionPage(
+                movieName: movieName,
+                movieId: movieId,
+              );
             },
           ),
         );
       },
+      child: SizedBox(
+        height: MARGIN_MEDIUM_45X,
+        child: Image.asset(
+          "images/booking.png",
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 }
 
 class DetailsPageTopView extends StatelessWidget {
-  final List<String> genreList = ["Action", "Adventure", "Thriller"];
   final MovieVO? movieDetails;
   final int? movieId;
 
-  DetailsPageTopView({super.key, required this.movieDetails, required this.movieId});
+  const DetailsPageTopView(
+      {super.key, required this.movieDetails, required this.movieId});
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +155,9 @@ class DetailsPageTopView extends StatelessWidget {
       children: [
         Align(
           alignment: Alignment.topCenter,
-          child: MovieTrailerVideoView(movieId: movieId,),
+          child: MovieTrailerVideoView(
+            movieId: movieId,
+          ),
         ),
         Positioned(
           left: MARGIN_MEDIUM_15X,
@@ -292,10 +306,8 @@ class DetailsPageBottomView extends StatelessWidget {
 }
 
 class MovieTrailerVideoView extends StatelessWidget {
-  const MovieTrailerVideoView({
-    Key? key,
-    required this.movieId
-  }) : super(key: key);
+  const MovieTrailerVideoView({Key? key, required this.movieId})
+      : super(key: key);
 
   final int? movieId;
 
@@ -306,7 +318,9 @@ class MovieTrailerVideoView extends StatelessWidget {
       width: double.maxFinite,
       child: Stack(
         children: [
-          YouTubeVideoPlayerMovieDetails(movieID: movieId,),
+          YouTubeVideoPlayerMovieDetails(
+            movieID: movieId,
+          ),
           const Positioned(
             left: MARGIN_SMALL_5X,
             top: MARGIN_SMALL_10X,
@@ -332,7 +346,9 @@ class MoviePosterView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(MARGIN_SMALL_4X),),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(MARGIN_SMALL_4X),
+      ),
       height: MARGIN_XLARGE_200X,
       width: MARGIN_LARGE_140X,
       child: (movieDetails != null)

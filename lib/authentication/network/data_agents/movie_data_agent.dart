@@ -1,3 +1,5 @@
+import 'package:the_movie_booking/authentication/network/response/checkout_request.dart';
+import 'package:the_movie_booking/authentication/network/response/checkout_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_snack_category_response.dart';
 
 import '../response/get_banners_response.dart';
@@ -47,5 +49,7 @@ abstract class MovieDataAgent {
   Future<GetSnacksResponse> getSnacks(String categoryId, String token);
 
   Future<GetSnackCategoryResponse> getSnackCategory(String token);
+
+  Future<CheckoutResponse> checkoutRequest(String token, CheckOutRequest checkOutRequest);
 
 }

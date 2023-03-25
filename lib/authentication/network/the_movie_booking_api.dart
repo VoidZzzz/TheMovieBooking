@@ -1,6 +1,8 @@
 import 'package:the_movie_booking/authentication/network/api_constants.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
+import 'package:the_movie_booking/authentication/network/response/checkout_request.dart';
+import 'package:the_movie_booking/authentication/network/response/checkout_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_banners_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_cinema_and_show_time_by_date_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_cinema_response.dart';
@@ -95,6 +97,12 @@ abstract class TheMovieBookingApi {
   @GET(ENDPOINT_SNACK_CATEGORY)
   Future<GetSnackCategoryResponse> getSnackCategory(
       @Header(HEADER_KEY_AUTORIZATION) String token,
+      );
+
+  @POST(ENDPOINT_CHECKOUT_REQUEST)
+  Future<CheckoutResponse> checkOutRequest(
+      @Header(HEADER_KEY_AUTORIZATION) String token,
+      @Body() CheckOutRequest checkOutRequest,
       );
 
 }

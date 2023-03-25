@@ -36,7 +36,17 @@ class TicketPage extends StatelessWidget {
                     builder: (context) => const TicketDetailsPage(),
                   ),
                 ),
-                child: const TicketInformationView(),
+                child: const TicketInformationView(
+                  ticketCounts: 2,
+                  bookingDate: "2023-02-25",
+                  startTime: "9:30 AM",
+                  selectedSeats: "A-8",
+                  movieName: "Avatar",
+                  moviePoster:
+                      "https://www.themoviedb.org/t/p/original/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg",
+                  cinemaName: "JCTV",
+                  cinemaLocation: "/// Cinema Location Here",
+                ),
               ),
               const SizedBox(height: MARGIN_MEDIUM_25X),
               GestureDetector(
@@ -45,7 +55,17 @@ class TicketPage extends StatelessWidget {
                     builder: (context) => const TicketDetailsPage(),
                   ),
                 ),
-                child: const TicketInformationView(),
+                child: const TicketInformationView(
+                  ticketCounts: 2,
+                  bookingDate: "2023-02-25",
+                  startTime: "9:30 AM",
+                  selectedSeats: "A-8",
+                  movieName: "Avatar",
+                  moviePoster:
+                      "https://www.themoviedb.org/t/p/original/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg",
+                  cinemaName: "JCTV",
+                  cinemaLocation: "/// Cinema Location Here",
+                ),
               ),
               const SizedBox(height: MARGIN_MEDIUM_25X),
               GestureDetector(
@@ -54,7 +74,17 @@ class TicketPage extends StatelessWidget {
                     builder: (context) => const TicketDetailsPage(),
                   ),
                 ),
-                child: const TicketInformationView(),
+                child: const TicketInformationView(
+                  ticketCounts: 2,
+                  bookingDate: "2023-02-25",
+                  startTime: "9:30 AM",
+                  selectedSeats: "A-8",
+                  movieName: "Avatar",
+                  moviePoster:
+                      "https://www.themoviedb.org/t/p/original/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg",
+                  cinemaName: "JCTV",
+                  cinemaLocation: "/// Cinema Location Here",
+                ),
               ),
             ],
           ),

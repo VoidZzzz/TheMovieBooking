@@ -13,14 +13,12 @@ class SnackBoxView extends StatefulWidget {
   final Function onTapMinusButton;
   final Function onTapAddButton;
   final int selectedItemCounts;
-  final bool isShow;
   final SnackVO? snack;
   final int? itemCounts;
 
   const SnackBoxView(
       {super.key,
       required this.onTapPlusButton,
-      required this.isShow,
       required this.onTapMinusButton,
       required this.selectedItemCounts,
       required this.snack,

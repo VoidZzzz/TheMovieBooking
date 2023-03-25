@@ -11,31 +11,34 @@ class ConvenienceFeeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Text(
-              CHECKOUT_PAGE_CONVENIENCE_FEE_TEXT,
-              style: GoogleFonts.dmSans(
-                  fontWeight: FontWeight.w500,
-                  fontSize: TEXT_LARGE_16X,
-                  color: WHITE_COLOR),
-            ),
-            const Icon(
-              Icons.keyboard_arrow_down,
-              size: MARGIN_MEDIUM_20X,
-              color: WHITE_COLOR,
-            )
-          ],
-        ),
-        Text(
-          "500Ks",
-          style: GoogleFonts.dmSans(
-              fontWeight: FontWeight.w500, fontSize: TEXT_LARGE_16X, color: WHITE_COLOR),
-        )
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_20X),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Text(
+                CHECKOUT_PAGE_CONVENIENCE_FEE_TEXT,
+                style: GoogleFonts.dmSans(
+                    fontWeight: FontWeight.w500,
+                    fontSize: TEXT_LARGE_16X,
+                    color: WHITE_COLOR),
+              ),
+              const Icon(
+                Icons.keyboard_arrow_down,
+                size: MARGIN_MEDIUM_20X,
+                color: WHITE_COLOR,
+              )
+            ],
+          ),
+          Text(
+            "500Ks",
+            style: GoogleFonts.dmSans(
+                fontWeight: FontWeight.w500, fontSize: TEXT_LARGE_16X, color: WHITE_COLOR),
+          )
+        ],
+      ),
     );
   }
 }

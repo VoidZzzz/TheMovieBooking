@@ -18,6 +18,7 @@ const String ENDPOINT_GET_CINEMA = "/api/v2/cinemas";
 const String ENDPOINT_SEATING_PLAN = "/api/v2/seat-plan";
 const String ENDPOINT_SNACKS = "/api/v2/snacks";
 const String ENDPOINT_SNACK_CATEGORY = "/api/v2/snack-categories";
+const String ENDPOINT_CHECKOUT_REQUEST = "/api/v2/checkout";
 
 /// Parameters
 const String PARAM_STATUS = "status";

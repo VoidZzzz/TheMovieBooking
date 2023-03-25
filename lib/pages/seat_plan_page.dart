@@ -20,7 +20,10 @@ class SeatPlanPage extends StatefulWidget {
       required this.selectedTime,
       required this.selectedDate,
       required this.cinemaStatus,
-      required this.cinemaName})
+      required this.cinemaName,
+      required this.movieId,
+      required this.cinemaLocation,
+      required this.selectedDateTime})
       : super(key: key);
 
   final String bookingDate;
@@ -30,6 +33,9 @@ class SeatPlanPage extends StatefulWidget {
   final String cinemaStatus;
   final String selectedDate;
   final String selectedTime;
+  final int movieId;
+  final String cinemaLocation;
+  final DateTime selectedDateTime;
 
   @override
   State<SeatPlanPage> createState() => _MyHomePageState();
@@ -47,6 +53,8 @@ class _MyHomePageState extends State<SeatPlanPage> {
 
   @override
   void initState() {
+    print(
+        "============================> TIMESLOT ID = ${widget.cinemaLocation} ${widget.cinemaName}");
     userToken =
         _theMovieBookingModelImpl.getUserDataFromDatabase()?.token ?? "";
     _theMovieBookingModelImpl
@@ -58,9 +66,6 @@ class _MyHomePageState extends State<SeatPlanPage> {
         debugPrint(
             " init state =============================================> SEAT ${seatPlan?[0]?[1].isSelected}");
       });
-    }).catchError((error) {
-      debugPrint(
-          "Error======================================> ${error.toString()}");
     });
     super.initState();
   }
@@ -131,7 +136,7 @@ class _MyHomePageState extends State<SeatPlanPage> {
                       ),
                     )
                   : const SizedBox(
-                      height: 440,
+                      height: MARGIN_XLARGE_500X,
                       child: Center(
                         child: CircularProgressIndicator(
                           color: APP_COLOR_SECONDARY_COLOR,
@@ -142,28 +147,57 @@ class _MyHomePageState extends State<SeatPlanPage> {
           ),
           const SeatTypeView(),
           const SizedBox(
-            height: MARGIN_MEDIUM_40X,
+            height: MARGIN_MEDIUM_30X,
           ),
           TicketInfoView(
             ticketCount: totalTicketForSeats,
             amount: totalAmountForSeats,
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return SnackShopPage(
-                      selectedDate: widget.selectedDate,
-                      selectedTime: widget.selectedTime,
-                      cinemaStatus: widget.cinemaStatus,
-                      cinemaName: widget.cinemaName,
-                      selectedSeatList: selectedSeatList,
-                      totalAmountForSeat: totalAmountForSeats,
-                      totalTicketsForSeat: totalTicketForSeats,
-                      movieName: widget.movieName,
-                    );
-                  },
-                ),
-              );
+              if (totalAmountForSeats > 0) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return SnackShopPage(
+                        selectedDateTime: widget.selectedDateTime,
+                        cinemaLocation: widget.cinemaLocation,
+                        selectedDate: widget.selectedDate,
+                        selectedTime: widget.selectedTime,
+                        cinemaStatus: widget.cinemaStatus,
+                        cinemaName: widget.cinemaName,
+                        selectedSeatList: selectedSeatList,
+                        totalAmountForSeat: totalAmountForSeats,
+                        totalTicketsForSeat: totalTicketForSeats,
+                        movieName: widget.movieName,
+                        cinemaDaysTimeslotId:
+                            int.parse(widget.cinemaDayTimeSlotsId),
+                        movieId: widget.movieId,
+                      );
+                    },
+                  ),
+                );
+              } else {
+                showDialog(
+                  context: (context),
+                  builder: (BuildContext context) => AlertDialog(
+                    contentPadding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(MARGIN_SMALL_5X),
+                    ),
+                    content: SizedBox(
+                      height: MARGIN_MEDIUM_50X,
+                      child: Center(
+                        child: Text(
+                          SEAT_PLAN_DIALOG_CONTENT,
+                          style: GoogleFonts.dmSans(
+                              fontSize: TEXT_LARGE_16X,
+                              color: Colors.red,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }
             },
           ),
         ],
@@ -314,14 +348,18 @@ class TicketInfoView extends StatelessWidget {
             ),
           ],
         ),
-        AppSecondaryButton(
-          buttonText: SEAT_PLAN_PAGE_BUY_TICKETS_TEXT,
-          buttonColor: APP_COLOR_SECONDARY_COLOR,
-          buttonTextColor: SECONDARY_BUTTON_TEXT_COLOR,
+        InkWell(
           onTap: () {
             onTap();
           },
-        )
+          child: SizedBox(
+            height: MARGIN_MEDIUM_50X,
+            child: Image.asset(
+              BUY_TICKET,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -357,15 +395,15 @@ class SeatTypeView extends StatelessWidget {
             ],
           ),
           Row(
-            children: const [
+            children: [
               CircleAvatar(
-                backgroundColor: GREY_COLOR,
+                backgroundColor: Colors.grey[800],
                 radius: MARGIN_SMALL_5X,
               ),
-              SizedBox(
+              const SizedBox(
                 width: MARGIN_SMALL_8X,
               ),
-              Text(
+              const Text(
                 SEAT_PLAN_PAGE_TAKEN_TEXT,
                 style: TextStyle(color: GREY_COLOR),
               ),
@@ -392,158 +430,158 @@ class SeatTypeView extends StatelessWidget {
   }
 }
 
-class CoupleSeatPlanGridView extends StatelessWidget {
-  final List<String> seatList;
-  final Function(int) onSelect;
-
-  const CoupleSeatPlanGridView(
-      {Key? key, required this.seatList, required this.onSelect})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_15X),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: 22,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 11,
-            crossAxisSpacing: MARGIN_SMALL_2X,
-            mainAxisSpacing: MARGIN_SMALL_4X),
-        itemBuilder: (context, index) {
-          if (index == 0 || index == 10 || index == 11 || index == 21) {
-            return SeatTypeTextView(
-              text: seatList[index],
-            );
-          } else if (seatList[index] == '') {
-            return Container();
-          } else if (index == 1 || index == 9 || index == 12 || index == 20) {
-            return GestureDetector(
-              onTap: () {
-                onSelect(index);
-              },
-              child: seatList[index] == 'AVAILABLE'
-                  ? Image.asset(
-                      COUPLE_SEAT_IMAGE,
-                    )
-                  : seatList[index] == 'TAKEN'
-                      ? Image.asset(
-                          COUPLE_SEAT_IMAGE,
-                          color: GREY_COLOR,
-                        )
-                      : seatList[index] == 'SELECTION'
-                          ? Image.asset(
-                              COUPLE_SEAT_IMAGE,
-                              color: APP_COLOR_SECONDARY_COLOR,
-                            )
-                          : Container(),
-            );
-          } else {
-            return GestureDetector(
-              onTap: () {
-                onSelect(index);
-              },
-              child: seatList[index] == 'AVAILABLE'
-                  ? const SeatImageView(image: WHITE_CHAIR_IMAGE)
-                  : seatList[index] == 'TAKEN'
-                      ? const SeatImageView(image: BLACK_CHAIR_IMAGE)
-                      : seatList[index] == 'SELECTION'
-                          ? const SeatImageView(
-                              image: WHITE_CHAIR_IMAGE,
-                              isGreen: true,
-                            )
-                          : Container(),
-            );
-          }
-        },
-      ),
-    );
-  }
-}
-
-class SeatPlanGridView extends StatelessWidget {
-  final List<String> seatList;
-  final Function(int) onSelect;
-
-  const SeatPlanGridView(
-      {Key? key, required this.seatList, required this.onSelect})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_15X),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: 24,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 12,
-            crossAxisSpacing: MARGIN_SMALL_2X,
-            mainAxisSpacing: MARGIN_SMALL_4X),
-        itemBuilder: (context, index) {
-          if (index == 0 || index == 11 || index == 12 || index == 23) {
-            return SeatTypeTextView(text: seatList[index]);
-          } else if (seatList[index] == '') {
-            return Container();
-          } else {
-            return GestureDetector(
-              onTap: () {
-                onSelect(index);
-              },
-              child: seatList[index] == 'AVAILABLE'
-                  ? const SeatImageView(image: WHITE_CHAIR_IMAGE)
-                  : seatList[index] == 'TAKEN'
-                      ? const SeatImageView(image: BLACK_CHAIR_IMAGE)
-                      : seatList[index] == 'SELECTION'
-                          ? const SeatImageView(
-                              image: WHITE_CHAIR_IMAGE,
-                              isGreen: true,
-                            )
-                          : Container(),
-            );
-          }
-        },
-      ),
-    );
-  }
-}
-
-class SeatImageView extends StatelessWidget {
-  final String image;
-  final bool isGreen;
-
-  const SeatImageView({Key? key, required this.image, this.isGreen = false})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Image.asset(
-      image,
-      color: isGreen ? APP_COLOR_SECONDARY_COLOR : null,
-    );
-  }
-}
-
-class SeatTypeTextView extends StatelessWidget {
-  final String text;
-
-  const SeatTypeTextView({
-    Key? key,
-    required this.text,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(color: GREY_COLOR),
-      textAlign: TextAlign.center,
-    );
-  }
-}
+// class CoupleSeatPlanGridView extends StatelessWidget {
+//   final List<String> seatList;
+//   final Function(int) onSelect;
+//
+//   const CoupleSeatPlanGridView(
+//       {Key? key, required this.seatList, required this.onSelect})
+//       : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_15X),
+//       child: GridView.builder(
+//         shrinkWrap: true,
+//         physics: const NeverScrollableScrollPhysics(),
+//         itemCount: 22,
+//         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+//             crossAxisCount: 11,
+//             crossAxisSpacing: MARGIN_SMALL_2X,
+//             mainAxisSpacing: MARGIN_SMALL_4X),
+//         itemBuilder: (context, index) {
+//           if (index == 0 || index == 10 || index == 11 || index == 21) {
+//             return SeatTypeTextView(
+//               text: seatList[index],
+//             );
+//           } else if (seatList[index] == '') {
+//             return Container();
+//           } else if (index == 1 || index == 9 || index == 12 || index == 20) {
+//             return GestureDetector(
+//               onTap: () {
+//                 onSelect(index);
+//               },
+//               child: seatList[index] == 'AVAILABLE'
+//                   ? Image.asset(
+//                       COUPLE_SEAT_IMAGE,
+//                     )
+//                   : seatList[index] == 'TAKEN'
+//                       ? Image.asset(
+//                           COUPLE_SEAT_IMAGE,
+//                           color: GREY_COLOR,
+//                         )
+//                       : seatList[index] == 'SELECTION'
+//                           ? Image.asset(
+//                               COUPLE_SEAT_IMAGE,
+//                               color: APP_COLOR_SECONDARY_COLOR,
+//                             )
+//                           : Container(),
+//             );
+//           } else {
+//             return GestureDetector(
+//               onTap: () {
+//                 onSelect(index);
+//               },
+//               child: seatList[index] == 'AVAILABLE'
+//                   ? const SeatImageView(image: WHITE_CHAIR_IMAGE)
+//                   : seatList[index] == 'TAKEN'
+//                       ? const SeatImageView(image: BLACK_CHAIR_IMAGE)
+//                       : seatList[index] == 'SELECTION'
+//                           ? const SeatImageView(
+//                               image: WHITE_CHAIR_IMAGE,
+//                               isGreen: true,
+//                             )
+//                           : Container(),
+//             );
+//           }
+//         },
+//       ),
+//     );
+//   }
+// }
+//
+// class SeatPlanGridView extends StatelessWidget {
+//   final List<String> seatList;
+//   final Function(int) onSelect;
+//
+//   const SeatPlanGridView(
+//       {Key? key, required this.seatList, required this.onSelect})
+//       : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_15X),
+//       child: GridView.builder(
+//         shrinkWrap: true,
+//         physics: const NeverScrollableScrollPhysics(),
+//         itemCount: 24,
+//         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+//             crossAxisCount: 12,
+//             crossAxisSpacing: MARGIN_SMALL_2X,
+//             mainAxisSpacing: MARGIN_SMALL_4X),
+//         itemBuilder: (context, index) {
+//           if (index == 0 || index == 11 || index == 12 || index == 23) {
+//             return SeatTypeTextView(text: seatList[index]);
+//           } else if (seatList[index] == '') {
+//             return Container();
+//           } else {
+//             return GestureDetector(
+//               onTap: () {
+//                 onSelect(index);
+//               },
+//               child: seatList[index] == 'AVAILABLE'
+//                   ? const SeatImageView(image: WHITE_CHAIR_IMAGE)
+//                   : seatList[index] == 'TAKEN'
+//                       ? const SeatImageView(image: BLACK_CHAIR_IMAGE)
+//                       : seatList[index] == 'SELECTION'
+//                           ? const SeatImageView(
+//                               image: WHITE_CHAIR_IMAGE,
+//                               isGreen: true,
+//                             )
+//                           : Container(),
+//             );
+//           }
+//         },
+//       ),
+//     );
+//   }
+// }
+//
+// class SeatImageView extends StatelessWidget {
+//   final String image;
+//   final bool isGreen;
+//
+//   const SeatImageView({Key? key, required this.image, this.isGreen = false})
+//       : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Image.asset(
+//       image,
+//       color: isGreen ? APP_COLOR_SECONDARY_COLOR : null,
+//     );
+//   }
+// }
+//
+// class SeatTypeTextView extends StatelessWidget {
+//   final String text;
+//
+//   const SeatTypeTextView({
+//     Key? key,
+//     required this.text,
+//   }) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Text(
+//       text,
+//       style: const TextStyle(color: GREY_COLOR),
+//       textAlign: TextAlign.center,
+//     );
+//   }
+// }
 
 class AppBarLeadingView extends StatelessWidget {
   const AppBarLeadingView({

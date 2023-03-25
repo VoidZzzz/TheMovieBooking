@@ -12,12 +12,15 @@ class MovieTitleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      "$movieName (3D) (U/A)",
-      style: GoogleFonts.dmSans(
-          color: WHITE_COLOR,
-          fontWeight: FontWeight.w700,
-          fontSize: TEXT_LARGE_18X),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_20X),
+      child: Text(
+        "$movieName (3D) (U/A)",
+        style: GoogleFonts.dmSans(
+            color: WHITE_COLOR,
+            fontWeight: FontWeight.w700,
+            fontSize: TEXT_LARGE_18X),
+      ),
     );
   }
 }

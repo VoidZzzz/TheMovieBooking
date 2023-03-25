@@ -144,11 +144,9 @@ class _ProfilePageState extends State<ProfilePage> {
               onTap: () {
                 setState(() {
                   _movieBookingModel.userLogout("Bearer $userToken").then((logOutResponse) {
-                    if(logOutResponse.code == 200){
                       _movieBookingModel.clearUserData();
                       _navigateToSplashScreen(context);
-                    }
-                  }).catchError((error) {debugPrint("===========================================> Error Message $error");});
+                  });
                 });
               },
               child: SizedBox(

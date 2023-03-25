@@ -15,7 +15,7 @@ import '../widgets/ticket_count_view.dart';
 import '../widgets/title_text.dart';
 import '../widgets/voucher_page_alert_dialog_view.dart';
 import '../widgets/voucher_page_convenience_fee_view.dart';
-import '../widgets/voucher_page_food_and_beverage_voucher_view.dart';
+import '../widgets/food_and_beverage_voucher_view.dart';
 import '../widgets/voucher_page_ticket_cancellation_policy_view.dart';
 import '../widgets/voucher_page_ticket_name_and_amount_view.dart';
 import '../widgets/movie_title_View.dart';
@@ -91,7 +91,7 @@ class TicketDetailsView extends StatelessWidget {
             const SizedBox(height: MARGIN_SMALL_10X),
             const CinemaNameView(cinemaName: 'MingalarTime', cinemaStatus: '2',),
             const SizedBox(height: MARGIN_MEDIUM_20X),
-            const CalendarTimeAndLocationView(selectedDate: 'SAT, June, 2023', selectedTime: '3:30PM',cinemaName: '',),
+            CalendarTimeAndLocationView(selectedDate: 'SAT, June, 2023', selectedTime: '3:30PM',cinemaLocation: "ThiriMyaing 3rd Street, 16th Hlaing, Yangon",selectedDateTime: DateTime.now(),),
             const SizedBox(height: MARGIN_SMALL_10X),
             const TicketCountView(ticketCounts: 2,),
             const SizedBox(height: MARGIN_SMALL_10X),
@@ -99,7 +99,7 @@ class TicketDetailsView extends StatelessWidget {
             const SizedBox(height: MARGIN_SMALL_10X),
             const Divider(color: LIGHT_GREY_COLOR, thickness: MARGIN_XSMALL),
             const SizedBox(height: MARGIN_MEDIUM_20X),
-            const FoodAndBeverageVoucherView(),
+            FoodAndBeverageVoucherView(totalAmountsForSnack: 200000,addedSnackList: const [],onRemoveSnack: (finalAmount){},),
             const SizedBox(height: MARGIN_MEDIUM_30X),
             const DottedLineView(),
             const SizedBox(height: MARGIN_MEDIUM_30X),

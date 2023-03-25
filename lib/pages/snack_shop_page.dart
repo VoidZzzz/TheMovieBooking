@@ -29,7 +29,11 @@ class SnackShopPage extends StatefulWidget {
       required this.selectedTime,
       required this.cinemaStatus,
       required this.cinemaName,
-      required this.selectedDate})
+      required this.selectedDate,
+      required this.cinemaDaysTimeslotId,
+      required this.movieId,
+      required this.cinemaLocation,
+      required this.selectedDateTime})
       : super(key: key);
   final List<String> selectedSeatList;
   final int totalTicketsForSeat;
@@ -39,6 +43,10 @@ class SnackShopPage extends StatefulWidget {
   final String cinemaStatus;
   final String selectedDate;
   final String selectedTime;
+  final int cinemaDaysTimeslotId;
+  final int movieId;
+  final String cinemaLocation;
+  final DateTime selectedDateTime;
 
   @override
   State<SnackShopPage> createState() => _SnackShopPageState();
@@ -51,15 +59,20 @@ class _SnackShopPageState extends State<SnackShopPage>
   int cartItemCounts = 0;
   int selectedItemCounts = 0;
   bool isShow = false;
-  List<bool> snackList = List.filled(20, false);
+
+
   int currentIndex = 0;
   int totalAmountForSnacks = 0;
+  List<SnackVO?> addedSnackList = [];
 
   /// Network Variables
   final TheMovieBookingModel _movieBookingModel = TheMovieBookingModelImpl();
   String userToken = "";
   List<SnackVO>? allSnackList;
-  List<SnackVO>? otherSnackList;
+  List<SnackVO>? comboSnackList;
+  List<SnackVO>? snackList;
+  List<SnackVO>? popCornSnackList;
+  List<SnackVO>? beverageSnackList;
   List<SnackCategoryVO>? snackCategoryList;
 
   @override
@@ -122,6 +135,12 @@ class _SnackShopPageState extends State<SnackShopPage>
         backgroundColor: APP_COLOR_PRIMARY_COLOR,
         leading: const AppBarLeadingView(),
         title: AppBarTitleView(
+          selectedDateTime: widget.selectedDateTime,
+          cinemaLocation: widget.cinemaLocation,
+          cinemaDaysTimeslotId: widget.cinemaDaysTimeslotId,
+          movieId: widget.movieId,
+          addedSnackList: addedSnackList,
+          totalAmountsForSnack: totalAmountForSnacks,
           cinemaName: widget.cinemaName,
           cinemaStatus: widget.cinemaStatus,
           selectedDate: widget.selectedDate,
@@ -144,16 +163,59 @@ class _SnackShopPageState extends State<SnackShopPage>
                       controller: _controller,
                       onTapTabBarTitle: (tabBarIndex) {
                         /// get Snacks from Network
-                        _movieBookingModel
-                            .getSnacks(
-                                tabBarIndex.toString(), "Bearer $userToken")
-                            .then((snackResponse) {
-                          setState(() {
-                            otherSnackList = snackResponse.data ?? [];
-                          });
-                          print(
-                              "===============================================> ALL OTHER SNACK LIST = ${allSnackList?.length}");
-                        });
+                        if (tabBarIndex == 1) {
+                          if (comboSnackList == null) {
+                            _movieBookingModel
+                                .getSnacks(
+                                    tabBarIndex.toString(), "Bearer $userToken")
+                                .then((snackResponse) {
+                              setState(() {
+                                comboSnackList = snackResponse.data ?? [];
+                              });
+                              print(
+                                  "===============================================> ALL OTHER SNACK LIST = ${allSnackList?.length}");
+                            });
+                          }
+                        } else if (tabBarIndex == 2) {
+                          if (snackList == null) {
+                            _movieBookingModel
+                                .getSnacks(
+                                    tabBarIndex.toString(), "Bearer $userToken")
+                                .then((snackResponse) {
+                              setState(() {
+                                snackList = snackResponse.data ?? [];
+                              });
+                              print(
+                                  "===============================================> ALL OTHER SNACK LIST = ${allSnackList?.length}");
+                            });
+                          }
+                        } else if (tabBarIndex == 3) {
+                          if (popCornSnackList == null) {
+                            _movieBookingModel
+                                .getSnacks(
+                                    tabBarIndex.toString(), "Bearer $userToken")
+                                .then((snackResponse) {
+                              setState(() {
+                                popCornSnackList = snackResponse.data ?? [];
+                              });
+                              print(
+                                  "===============================================> ALL OTHER SNACK LIST = ${allSnackList?.length}");
+                            });
+                          }
+                        } else if (tabBarIndex == 4) {
+                          if (beverageSnackList == null) {
+                            _movieBookingModel
+                                .getSnacks(
+                                    tabBarIndex.toString(), "Bearer $userToken")
+                                .then((snackResponse) {
+                              setState(() {
+                                beverageSnackList = snackResponse.data ?? [];
+                              });
+                              print(
+                                  "===============================================> ALL OTHER SNACK LIST = ${allSnackList?.length}");
+                            });
+                          }
+                        }
                       },
                     ),
                     SizedBox(
@@ -177,13 +239,19 @@ class _SnackShopPageState extends State<SnackShopPage>
                                     allSnackList![index].quantity! - 1;
                                 totalAmountForSnacks -=
                                     allSnackList![index].price! * 1000;
+                                if (allSnackList![index].quantity == 0) {
+                                  addedSnackList.remove(allSnackList?[index]);
+                                }
                               });
                             },
-                            list: snackList,
                             selectedItemCounts: selectedItemCounts,
                             allSnackList: allSnackList,
                             onTapAddButton: (index) {
                               setState(() {
+                                if (!(addedSnackList
+                                    .contains(allSnackList?[index]))) {
+                                  addedSnackList.add(allSnackList?[index]);
+                                }
                                 allSnackList![index].quantity =
                                     allSnackList![index].quantity! + 1;
                                 totalAmountForSnacks +=
@@ -196,92 +264,146 @@ class _SnackShopPageState extends State<SnackShopPage>
                           ComboItemsTabBarView(
                             onTapPlusButton: (index) {
                               setState(() {
-                                otherSnackList![index].quantity =
-                                    otherSnackList![index].quantity! + 1;
+                                totalAmountForSnacks +=
+                                    comboSnackList![index].price! * 1000;
+                                comboSnackList![index].quantity =
+                                    comboSnackList![index].quantity! + 1;
                               });
                             },
                             isShow: isShow,
                             onTapMinusButton: (index) {
                               setState(() {
-                                otherSnackList![index].quantity =
-                                    otherSnackList![index].quantity! - 1;
+                                totalAmountForSnacks -=
+                                    comboSnackList![index].price! * 1000;
+                                comboSnackList![index].quantity =
+                                    comboSnackList![index].quantity! - 1;
+                                if (comboSnackList![index].quantity == 0) {
+                                  addedSnackList.remove(comboSnackList?[index]);
+                                }
                               });
                             },
                             selectedItemCounts: selectedItemCounts,
-                            snackList: otherSnackList,
+                            snackList: comboSnackList,
                             onTapAddButton: (index) {
                               setState(() {
-                                otherSnackList?[index].quantity =
-                                    otherSnackList![index].quantity! + 1;
+                                if (!(addedSnackList
+                                    .contains(comboSnackList?[index]))) {
+                                  addedSnackList.add(comboSnackList?[index]);
+                                }
+                                totalAmountForSnacks +=
+                                    comboSnackList![index].price! * 1000;
+                                comboSnackList?[index].quantity =
+                                    comboSnackList![index].quantity! + 1;
                               });
                             },
                           ),
                           SnackItemsTabBarView(
                             onTapPlusButton: (index) {
                               setState(() {
-                                otherSnackList?[index].quantity =
-                                    otherSnackList![index].quantity! + 1;
+                                totalAmountForSnacks +=
+                                    snackList![index].price! * 1000;
+                                snackList?[index].quantity =
+                                    snackList![index].quantity! + 1;
                               });
                             },
                             isShow: isShow,
                             onTapMinusButton: (index) {
                               setState(() {
-                                otherSnackList?[index].quantity =
-                                    otherSnackList![index].quantity! - 1;
+                                totalAmountForSnacks -=
+                                    snackList![index].price! * 1000;
+                                snackList?[index].quantity =
+                                    snackList![index].quantity! - 1;
+                                if (snackList![index].quantity == 0) {
+                                  addedSnackList.remove(snackList?[index]);
+                                }
                               });
                             },
                             selectedItemCounts: selectedItemCounts,
-                            snackList: otherSnackList,
+                            snackList: snackList,
                             onTapAddButton: (index) {
                               setState(() {
-                                otherSnackList?[index].quantity =
-                                    otherSnackList![index].quantity! + 1;
+                                if (!(addedSnackList
+                                    .contains(snackList?[index]))) {
+                                  addedSnackList.add(snackList?[index]);
+                                }
+                                totalAmountForSnacks +=
+                                    snackList![index].price! * 1000;
+                                snackList?[index].quantity =
+                                    snackList![index].quantity! + 1;
                               });
                             },
                           ),
                           PopCornItemsTabBarView(
                             onTapPlusButton: (index) {
                               setState(() {
-                                otherSnackList?[index].quantity =
-                                    otherSnackList![index].quantity! + 1;
+                                totalAmountForSnacks +=
+                                    popCornSnackList![index].price! * 1000;
+                                popCornSnackList?[index].quantity =
+                                    popCornSnackList![index].quantity! + 1;
                               });
                             },
                             isShow: isShow,
                             onTapMinusButton: (index) {
                               setState(() {
-                                otherSnackList?[index].quantity =
-                                    otherSnackList![index].quantity! - 1;
+                                totalAmountForSnacks -=
+                                    popCornSnackList![index].price! * 1000;
+                                popCornSnackList?[index].quantity =
+                                    popCornSnackList![index].quantity! - 1;
+                                if (popCornSnackList![index].quantity == 0) {
+                                  addedSnackList
+                                      .remove(popCornSnackList?[index]);
+                                }
                               });
                             },
                             selectedItemCounts: selectedItemCounts,
-                            snackList: otherSnackList,
+                            snackList: popCornSnackList,
                             onTapAddButton: (index) {
                               setState(() {
-                                otherSnackList?[index].quantity =
-                                    otherSnackList![index].quantity! + 1;
+                                if (!(addedSnackList
+                                    .contains(popCornSnackList?[index]))) {
+                                  addedSnackList.add(popCornSnackList?[index]);
+                                }
+                                totalAmountForSnacks +=
+                                    popCornSnackList![index].price! * 1000;
+                                popCornSnackList?[index].quantity =
+                                    popCornSnackList![index].quantity! + 1;
                               });
                             },
                           ),
                           BeverageItemsTabBarView(
                             onTapPlusButton: (index) {
                               setState(() {
-                                otherSnackList?[index].quantity =
-                                    otherSnackList![index].quantity! + 1;
+                                totalAmountForSnacks +=
+                                    beverageSnackList![index].price! * 1000;
+                                beverageSnackList?[index].quantity =
+                                    beverageSnackList![index].quantity! + 1;
                               });
                             },
                             isShow: isShow,
                             onTapMinusButton: (index) {
                               setState(() {
-                                otherSnackList?[index].quantity =
-                                    otherSnackList![index].quantity! - 1;
+                                totalAmountForSnacks -=
+                                    beverageSnackList![index].price! * 1000;
+                                beverageSnackList?[index].quantity =
+                                    beverageSnackList![index].quantity! - 1;
+                                if (beverageSnackList![index].quantity == 0) {
+                                  addedSnackList
+                                      .remove(beverageSnackList?[index]);
+                                }
                               });
                             },
                             selectedItemCounts: selectedItemCounts,
-                            snackList: otherSnackList,
+                            snackList: beverageSnackList,
                             onTapAddButton: (index) {
                               setState(() {
-                                otherSnackList?[index].quantity =
-                                    otherSnackList![index].quantity! + 1;
+                                if (!(addedSnackList
+                                    .contains(beverageSnackList?[index]))) {
+                                  addedSnackList.add(beverageSnackList?[index]);
+                                }
+                                totalAmountForSnacks +=
+                                    beverageSnackList![index].price! * 1000;
+                                beverageSnackList?[index].quantity =
+                                    beverageSnackList![index].quantity! + 1;
                               });
                             },
                           ),
@@ -317,48 +439,47 @@ class _SnackShopPageState extends State<SnackShopPage>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     iconSwitch
-                        ? Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              LargeColaDetailsBar(
+                        ? ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: addedSnackList.length,
+                            itemBuilder: (context, index) {
+                              return AddedSnackItem(
+                                snackItem: addedSnackList[index],
                                 onTapPlusButton: () {
                                   setState(
                                     () {
-                                      cartItemCounts++;
+                                      totalAmountForSnacks +=
+                                          addedSnackList[index]!.price! * 1000;
+                                      addedSnackList[index]!.quantity =
+                                          addedSnackList[index]!.quantity! + 1;
                                     },
                                   );
                                 },
                                 onTapMinusButton: () {
                                   setState(
                                     () {
-                                      cartItemCounts--;
+                                      totalAmountForSnacks -=
+                                          addedSnackList[index]!.price! * 1000;
+                                      if (addedSnackList[index]!.quantity! ==
+                                          1) {
+                                        addedSnackList[index]!.quantity =
+                                            addedSnackList[index]!.quantity! -
+                                                1;
+                                        addedSnackList.removeAt(index);
+                                      } else {
+                                        addedSnackList[index]!.quantity =
+                                            addedSnackList[index]!.quantity! -
+                                                1;
+                                      }
                                     },
                                   );
                                 },
-                                selectedItemCounts: selectedItemCounts,
-                                itemCounts: 1,
-                              ),
-                              const SizedBox(height: MARGIN_MEDIUM_20X),
-                              PotatoeChipsDetailsBar(
-                                onTapPlusButton: () {
-                                  setState(
-                                    () {
-                                      cartItemCounts++;
-                                    },
-                                  );
-                                },
-                                onTapMinusButton: () {
-                                  setState(
-                                    () {
-                                      cartItemCounts--;
-                                    },
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: MARGIN_MEDIUM_15X),
-                            ],
-                          )
+                              );
+                            })
                         : Container(),
+                    const SizedBox(
+                      height: MARGIN_SMALL_5X,
+                    ),
 
                     /// Shopping Cart Bottom Bar
                     Container(
@@ -382,7 +503,7 @@ class _SnackShopPageState extends State<SnackShopPage>
                                   ),
                                   Badge(
                                     badgeContent: Text(
-                                      cartItemCounts.toString(),
+                                      addedSnackList.length.toString(),
                                       style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: TEXT_SMALLEST,
@@ -390,8 +511,9 @@ class _SnackShopPageState extends State<SnackShopPage>
                                     ),
                                     badgeStyle: const BadgeStyle(
                                         badgeColor: Colors.deepOrange),
-                                    showBadge:
-                                        cartItemCounts > 0 ? true : false,
+                                    showBadge: addedSnackList.isNotEmpty
+                                        ? true
+                                        : false,
                                     child: SizedBox(
                                       height: MARGIN_MEDIUM_30X,
                                       width: MARGIN_MEDIUM_30X,
@@ -429,6 +551,12 @@ class _SnackShopPageState extends State<SnackShopPage>
                                   MaterialPageRoute(
                                     builder: (context) {
                                       return CheckOutPage(
+                                        selectedDateTime: widget.selectedDateTime,
+                                        cinemaLocation: widget.cinemaLocation,
+                                        cinemaDaysTimeslotId: widget.cinemaDaysTimeslotId,
+                                        movieId: widget.movieId,
+                                        addedSnackList: addedSnackList,
+                                        totalAmountForSnack: totalAmountForSnacks,
                                         cinemaName: widget.cinemaName,
                                         cinemaStatus: widget.cinemaStatus,
                                         selectedDate: widget.selectedDate,
@@ -544,7 +672,13 @@ class AppBarTitleView extends StatelessWidget {
       required this.selectedTime,
       required this.selectedDate,
       required this.cinemaStatus,
-      required this.cinemaName})
+      required this.cinemaName,
+      required this.totalAmountsForSnack,
+      required this.addedSnackList,
+      required this.movieId,
+      required this.cinemaDaysTimeslotId,
+      required this.cinemaLocation,
+      required this.selectedDateTime})
       : super(key: key);
   final int totalAmountsForSeat;
   final int totalTicketsForSeat;
@@ -554,6 +688,12 @@ class AppBarTitleView extends StatelessWidget {
   final String cinemaStatus;
   final String selectedDate;
   final String selectedTime;
+  final int totalAmountsForSnack;
+  final List<SnackVO?> addedSnackList;
+  final int movieId;
+  final int cinemaDaysTimeslotId;
+  final String cinemaLocation;
+  final DateTime selectedDateTime;
 
   @override
   Widget build(BuildContext context) {
@@ -570,6 +710,12 @@ class AppBarTitleView extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) {
                   return CheckOutPage(
+                    selectedDateTime: selectedDateTime,
+                    cinemaLocation: cinemaLocation,
+                    cinemaDaysTimeslotId: cinemaDaysTimeslotId,
+                      movieId: movieId,
+                    addedSnackList: addedSnackList,
+                    totalAmountForSnack: totalAmountsForSnack,
                     cinemaName: cinemaName,
                     cinemaStatus: cinemaStatus,
                     selectedTime: selectedTime,
@@ -623,7 +769,6 @@ class BeverageItemsTabBarView extends StatelessWidget {
               onTapPlusButton: () {
                 onTapPlusButton(index);
               },
-              isShow: isShow,
               onTapMinusButton: () => onTapMinusButton(index),
               selectedItemCounts: selectedItemCounts,
               snack: snackList?[index],
@@ -668,7 +813,6 @@ class PopCornItemsTabBarView extends StatelessWidget {
             onTapPlusButton: () {
               onTapPlusButton(index);
             },
-            isShow: isShow,
             onTapMinusButton: () => onTapMinusButton(index),
             selectedItemCounts: selectedItemCounts,
             snack: snackList?[index],
@@ -714,7 +858,6 @@ class SnackItemsTabBarView extends StatelessWidget {
               onTapPlusButton: () {
                 onTapPlusButton(index);
               },
-              isShow: isShow,
               onTapMinusButton: () => onTapMinusButton(index),
               selectedItemCounts: selectedItemCounts,
               snack: snackList?[index],
@@ -757,7 +900,6 @@ class ComboItemsTabBarView extends StatelessWidget {
           itemBuilder: (context, index) {
             return SnackBoxView(
               onTapPlusButton: () => onTapPlusButton(index),
-              isShow: isShow,
               onTapMinusButton: () => onTapMinusButton(index),
               selectedItemCounts: selectedItemCounts,
               snack: snackList?[index],
@@ -773,7 +915,6 @@ class AlItemsTabBarView extends StatelessWidget {
   final Function(int) onTapPlusButton;
   final Function(int) onTapMinusButton;
   final int selectedItemCounts;
-  final List<bool> list;
   final List<SnackVO>? allSnackList;
   final Function(int) onTapAddButton;
 
@@ -781,7 +922,6 @@ class AlItemsTabBarView extends StatelessWidget {
       {Key? key,
       required this.onTapPlusButton,
       required this.onTapMinusButton,
-      required this.list,
       required this.selectedItemCounts,
       required this.allSnackList,
       required this.onTapAddButton})
@@ -803,7 +943,6 @@ class AlItemsTabBarView extends StatelessWidget {
               onTapPlusButton: () {
                 onTapPlusButton(index);
               },
-              isShow: list[index],
               onTapMinusButton: () => onTapMinusButton(index),
               selectedItemCounts: selectedItemCounts,
               snack: allSnackList?[index],
@@ -815,70 +954,76 @@ class AlItemsTabBarView extends StatelessWidget {
   }
 }
 
-class PotatoeChipsDetailsBar extends StatelessWidget {
+class AddedSnackItem extends StatelessWidget {
   final Function onTapPlusButton;
   final Function onTapMinusButton;
+  final SnackVO? snackItem;
 
-  const PotatoeChipsDetailsBar(
-      {super.key,
-      required this.onTapPlusButton,
-      required this.onTapMinusButton});
+  const AddedSnackItem({
+    super.key,
+    required this.onTapPlusButton,
+    required this.onTapMinusButton,
+    required this.snackItem,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        SizedBox(
-            width: MARGIN_LARGE_100X + MARGIN_SMALL_10X,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: MARGIN_SMALL_8X),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          SizedBox(
+              width: MARGIN_LARGE_100X + MARGIN_SMALL_10X,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "${snackItem?.name}",
+                  style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w600,
+                      fontSize: TEXT_MEDIUM,
+                      color: WHITE_COLOR),
+                ),
+              )),
+          SizedBox(
+            width: MARGIN_LARGE_100X,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SnackShoppingPagePlusButton(
+                    imageURL: PLUS_IMAGE, onTapPlusButton: onTapPlusButton),
+                const SizedBox(width: MARGIN_MEDIUM_15X),
+                Text(
+                  "${snackItem?.quantity}",
+                  style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w700,
+                      fontSize: TEXT_MEDIUM,
+                      color: APP_COLOR_SECONDARY_COLOR),
+                ),
+                const SizedBox(width: MARGIN_MEDIUM_15X),
+                SnackShoppingPageMinusButton(
+                    imageURL: MINUS_IMAGE, onTapMinusButton: onTapMinusButton),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: MARGIN_LARGE_110X,
             child: Align(
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.centerRight,
               child: Text(
-                "Potatoe Chips",
+                "${snackItem!.price! * 1000 * snackItem!.quantity!} Ks",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.inter(
                     fontWeight: FontWeight.w600,
                     fontSize: TEXT_MEDIUM,
                     color: WHITE_COLOR),
               ),
-            )),
-        SizedBox(
-          width: MARGIN_LARGE_100X,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SnackShoppingPagePlusButton(
-                  imageURL: PLUS_IMAGE, onTapPlusButton: onTapPlusButton),
-              const SizedBox(width: MARGIN_MEDIUM_15X),
-              Text(
-                "1",
-                style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700,
-                    fontSize: TEXT_MEDIUM,
-                    color: APP_COLOR_SECONDARY_COLOR),
-              ),
-              const SizedBox(width: MARGIN_MEDIUM_15X),
-              SnackShoppingPageMinusButton(
-                  imageURL: MINUS_IMAGE, onTapMinusButton: onTapMinusButton),
-            ],
-          ),
-        ),
-        SizedBox(
-          width: MARGIN_LARGE_110X,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              "1000Ks",
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.inter(
-                  fontWeight: FontWeight.w600,
-                  fontSize: TEXT_MEDIUM,
-                  color: WHITE_COLOR),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

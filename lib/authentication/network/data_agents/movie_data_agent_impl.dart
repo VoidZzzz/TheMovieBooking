@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:the_movie_booking/authentication/network/api_constants.dart';
+import 'package:the_movie_booking/authentication/network/response/checkout_request.dart';
+import 'package:the_movie_booking/authentication/network/response/checkout_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_banners_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_cinema_and_show_time_by_date_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_cinema_response.dart';
@@ -106,5 +108,10 @@ class MovieDataAgentImpl extends MovieDataAgent {
   @override
   Future<GetSnacksResponse> getSnacks(String categoryId, String token) {
     return mApi.getSnacks(token, categoryId);
+  }
+
+  @override
+  Future<CheckoutResponse> checkoutRequest(String token, CheckOutRequest checkOutRequest) {
+    return mApi.checkOutRequest(token, checkOutRequest);
   }
 }

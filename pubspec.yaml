@@ -58,6 +58,7 @@ dependencies:
   awesome_dialog: ^3.0.2
   cached_network_image: ^3.2.3
   youtube_player_flutter: ^8.1.2
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:

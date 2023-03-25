@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:the_movie_booking/authentication/data/data_vos/cinema_details_vo.dart';
 import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model.dart';
 import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
@@ -12,12 +13,14 @@ class CalendarTimeAndLocationView extends StatefulWidget {
       {Key? key,
       required this.selectedDate,
       required this.selectedTime,
-      required this.cinemaName})
+      required this.cinemaLocation,
+      required this.selectedDateTime})
       : super(key: key);
 
   final String selectedDate;
   final String selectedTime;
-  final String cinemaName;
+  final String cinemaLocation;
+  final DateTime selectedDateTime;
 
   @override
   State<CalendarTimeAndLocationView> createState() =>
@@ -38,7 +41,6 @@ class _CalendarTimeAndLocationViewState
     setState(() {
       userToken = _movieBookingModel.getUserDataFromDatabase()?.token;
     });
-    print("====================================== > TOKEN $userToken");
 
     _movieBookingModel
         .getCinemas(latestTime, "Bearer $userToken")
@@ -46,9 +48,7 @@ class _CalendarTimeAndLocationViewState
       setState(() {
         cinemaList = response.data;
       });
-      print("=================================> ${response.data}");
     });
-    print("============================> ${cinemaList?[1].address}");
     super.initState();
   }
 
@@ -66,9 +66,11 @@ class _CalendarTimeAndLocationViewState
               const CalendarTimeLocationGlowIconView(
                   Icons.calendar_month_outlined),
               const SizedBox(height: MARGIN_SMALL_10X),
-              CalendarTImeLocationTextView((widget.selectedDate.isNotEmpty)
-                  ? widget.selectedDate
-                  : "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}")
+              CalendarTImeLocationTextView(
+                (widget.selectedDate.isNotEmpty)
+                    ? DateFormat('E, MMM d, yyyy').format(widget.selectedDateTime)
+                    : DateFormat('E, MMM d, yyyy').format(DateTime.now()),
+              )
             ],
           ),
         ),
@@ -90,7 +92,7 @@ class _CalendarTimeAndLocationViewState
             children: [
               const CalendarTimeLocationGlowIconView(Icons.location_on),
               const SizedBox(height: MARGIN_SMALL_10X),
-              CalendarTImeLocationTextView("/// Cinema Location here")
+              CalendarTImeLocationTextView(widget.cinemaLocation)
             ],
           ),
         ),

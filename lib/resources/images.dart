@@ -52,3 +52,6 @@ const TICKET_CONFIRMATION_GRADIENT_IMAGE = "images/ticketConfirmGradientImage.pn
 const VISA_CARD__IMAGE = "images/visaCard.png";
 const WHEEL_CHAIR_IMAGE = "images/wheelChair.png";
 const WHITE_CHAIR_IMAGE = "images/whiteChair.png";
+const BOOKING_IMAGE = "images/booking.png";
+const BUY_TICKET = "images/buyTickets.png";
+const CONTINUE = "images/continue.png";

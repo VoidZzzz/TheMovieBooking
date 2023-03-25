@@ -1,5 +1,7 @@
 import 'package:the_movie_booking/authentication/data/data_vos/cities_vo.dart';
 import 'package:the_movie_booking/authentication/data/data_vos/user_vo.dart';
+import 'package:the_movie_booking/authentication/network/response/checkout_request.dart';
+import 'package:the_movie_booking/authentication/network/response/checkout_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_cinema_and_show_time_by_date_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_cinema_response.dart';
 import 'package:the_movie_booking/authentication/network/response/get_config_response.dart';
@@ -50,6 +52,8 @@ abstract class TheMovieBookingModel {
   Future<GetSnacksResponse> getSnacks(String categoryId, String token);
 
   Future<GetSnackCategoryResponse> getSnackCategory(String token);
+
+  Future<CheckoutResponse> checkoutRequest(String token, CheckOutRequest checkOutRequest);
 
   /// Database
   UserVO? getUserDataFromDatabase();

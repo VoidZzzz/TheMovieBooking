@@ -18,6 +18,7 @@ class AppSecondaryButton extends StatelessWidget {
         onTap();
       },
       child: Container(
+        padding: EdgeInsets.zero,
         decoration: BoxDecoration(
             color: buttonColor,
             borderRadius: BorderRadius.circular(MARGIN_SMALL_10X),),
@@ -47,8 +48,9 @@ class AppSecondaryButton extends StatelessWidget {
                 ),
               ),
             ),
-            Positioned(left: -MARGIN_SMALL_1X,top: MARGIN_MEDIUM_15X,
+            Positioned(left: -1,top: MARGIN_MEDIUM_15X,
               child: Container(
+                padding: EdgeInsets.zero,
                 height: MARGIN_MEDIUM_20X,
                 width: MARGIN_MEDIUM_15X,
                 decoration: const BoxDecoration(

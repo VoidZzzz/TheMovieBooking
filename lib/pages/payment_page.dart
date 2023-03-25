@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:the_movie_booking/authentication/data/data_vos/request_snack_vo.dart';
 import 'package:the_movie_booking/authentication/data/models/the_movie_booking_model_impl.dart';
+import 'package:the_movie_booking/authentication/network/response/checkout_request.dart';
+import 'package:the_movie_booking/authentication/network/response/checkout_response.dart';
 import 'package:the_movie_booking/pages/ticket_confirmation_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
 import 'package:the_movie_booking/resources/images.dart';
@@ -10,11 +13,31 @@ import 'package:the_movie_booking/widgets/app_default_button_large.dart';
 import 'package:the_movie_booking/widgets/title_text.dart';
 
 import '../authentication/data/data_vos/payment_vo.dart';
+import '../authentication/data/data_vos/snack_vo.dart';
 import '../authentication/data/models/the_movie_booking_model.dart';
 import '../resources/dimens.dart';
 
 class PaymentPage extends StatefulWidget {
-  const PaymentPage({Key? key}) : super(key: key);
+  const PaymentPage(
+      {Key? key,
+      required this.bookingDate,
+      required this.seatList,
+      required this.movieId,
+      required this.addedSnackList,
+      required this.cinemaDaysTimeslotsId,
+      required this.cinemaName,
+      required this.bookingDateTime,
+      required this.cinemaLocation})
+      : super(key: key);
+
+  final int? cinemaDaysTimeslotsId;
+  final List<SnackVO?> addedSnackList;
+  final List<String>? seatList;
+  final String? bookingDate;
+  final DateTime? bookingDateTime;
+  final int? movieId;
+  final String cinemaName;
+  final String cinemaLocation;
 
   @override
   State<PaymentPage> createState() => _PaymentPageState();
@@ -25,9 +48,14 @@ class _PaymentPageState extends State<PaymentPage> {
   final TheMovieBookingModel _movieBookingModel = TheMovieBookingModelImpl();
   List<PaymentVO>? paymentList;
   String? userToken;
+  CheckoutResponse? checkoutResponse;
+  late String? selectedSeats = widget.seatList?.join(",");
 
   @override
   void initState() {
+    debugPrint(
+        "========================================> SLOT ID = ${widget.cinemaDaysTimeslotsId} ID = ${widget.movieId} SNACK LENGTH = ${widget.addedSnackList.length} BOOKING DATE = ${widget.bookingDate} SEAT LIST = ${widget.seatList}");
+
     /// get userToken from Network
     setState(() {
       userToken = _movieBookingModel.getUserDataFromDatabase()?.token;
@@ -41,6 +69,7 @@ class _PaymentPageState extends State<PaymentPage> {
         paymentList = paymentResponse.data;
       });
     });
+
     super.initState();
   }
 
@@ -73,11 +102,42 @@ class _PaymentPageState extends State<PaymentPage> {
                 const PaymentTitleText(),
                 const SizedBox(height: MARGIN_SMALL_10X),
                 PaymentListView(
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const TicketConfirmationPage(),
-                    ),
-                  ),
+                  onTap: (index) {
+                    _movieBookingModel
+                        .checkoutRequest(
+                      "Bearer $userToken",
+                      CheckOutRequest(
+                        widget.cinemaDaysTimeslotsId,
+                        selectedSeats,
+                        (widget.bookingDate!.isNotEmpty)
+                            ? widget.bookingDateTime.toString()
+                            : DateTime.now().toString(),
+                        widget.movieId,
+                        paymentList?[index].id,
+                        [
+                          RequestSnackVO(1, 2),
+                        ],
+                      ),
+                    )
+                        .then((value) {
+                      setState(() {
+                        checkoutResponse = value;
+                      });
+                      debugPrint(
+                          '---------------------------------------------------> $value');
+                      if (checkoutResponse?.code == 200) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => TicketConfirmationPage(
+                              cinemaLocation: widget.cinemaLocation,
+                              checkoutList: checkoutResponse?.data,
+                              cinemaName: widget.cinemaName,
+                            ),
+                          ),
+                        );
+                      }
+                    });
+                  },
                   paymentList: paymentList,
                 )
               ],
@@ -221,7 +281,7 @@ class PaymentTitleText extends StatelessWidget {
 }
 
 class PaymentListView extends StatelessWidget {
-  final Function onTap;
+  final Function(int) onTap;
   final List<PaymentVO>? paymentList;
 
   const PaymentListView(
@@ -230,64 +290,65 @@ class PaymentListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      // color: Colors.white,
-      height: MARGIN_XLARGE_400X + MARGIN_MEDIUM_50X,
-      child: (paymentList != null)
-          ? ListView.builder(
-              itemCount: paymentList?.length ?? 0,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    onTap();
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: MARGIN_SMALL_6X, horizontal: MARGIN_SMALL_2X),
-                    child: Container(
-                        height: MARGIN_MEDIUM_50X,
-                        width: MARGIN_XLARGE_250X,
-                        decoration: BoxDecoration(
-                          color: APP_COLOR_PRIMARY_COLOR,
-                          borderRadius: BorderRadius.circular(MARGIN_SMALL_8X),
-                          boxShadow: const [
-                            BoxShadow(
-                                color: PAYMENT_METHODS_BORDER_COLOR,
-                                spreadRadius: MARGIN_SMALL_2X,
-                                blurRadius: MARGIN_SMALL_1X)
-                          ],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: MARGIN_SMALL_10X),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                height: MARGIN_MEDIUM_30X,
-                                width: MARGIN_MEDIUM_30X,
-                                child: (paymentList?[index].icon != null)
-                                    ? Image.network(
-                                        paymentList?[index].icon ?? "")
-                                    : const LoadingView(),
-                              ),
-                              const SizedBox(width: MARGIN_SMALL_10X),
-                              Text(paymentList?[index].title ?? "",
-                                  style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.w700,
-                                      color: WHITE_COLOR)),
-                              const Spacer(),
-                              const Icon(
-                                Icons.keyboard_arrow_right,
-                                color: WHITE_COLOR,
-                                size: MARGIN_MEDIUM_25X,
-                              )
+        // color: Colors.white,
+        height: MARGIN_XLARGE_400X + MARGIN_MEDIUM_50X,
+        child: (paymentList != null)
+            ? ListView.builder(
+                itemCount: paymentList?.length ?? 0,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      onTap(index);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: MARGIN_SMALL_6X,
+                          horizontal: MARGIN_SMALL_2X),
+                      child: Container(
+                          height: MARGIN_MEDIUM_50X,
+                          width: MARGIN_XLARGE_250X,
+                          decoration: BoxDecoration(
+                            color: APP_COLOR_PRIMARY_COLOR,
+                            borderRadius:
+                                BorderRadius.circular(MARGIN_SMALL_8X),
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: PAYMENT_METHODS_BORDER_COLOR,
+                                  spreadRadius: MARGIN_SMALL_2X,
+                                  blurRadius: MARGIN_SMALL_1X)
                             ],
                           ),
-                        )),
-                  ),
-                );
-              })
-          : const LoadingView()
-    );
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: MARGIN_SMALL_10X),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  height: MARGIN_MEDIUM_30X,
+                                  width: MARGIN_MEDIUM_30X,
+                                  child: (paymentList?[index].icon != null)
+                                      ? Image.network(
+                                          paymentList?[index].icon ?? "")
+                                      : const LoadingView(),
+                                ),
+                                const SizedBox(width: MARGIN_SMALL_10X),
+                                Text(paymentList?[index].title ?? "",
+                                    style: GoogleFonts.inter(
+                                        fontWeight: FontWeight.w700,
+                                        color: WHITE_COLOR)),
+                                const Spacer(),
+                                const Icon(
+                                  Icons.keyboard_arrow_right,
+                                  color: WHITE_COLOR,
+                                  size: MARGIN_MEDIUM_25X,
+                                )
+                              ],
+                            ),
+                          )),
+                    ),
+                  );
+                })
+            : const LoadingView());
   }
 }
 
@@ -299,9 +360,9 @@ class LoadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-        child: CircularProgressIndicator(
-          color: APP_COLOR_SECONDARY_COLOR,
-        ),
-      );
+      child: CircularProgressIndicator(
+        color: APP_COLOR_SECONDARY_COLOR,
+      ),
+    );
   }
 }

@@ -15,20 +15,26 @@ class TicketNameAndAmountView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          (seatNames.isNotEmpty)?  seatNames: "-",
-          style: GoogleFonts.dmSans(
-              fontWeight: FontWeight.w700, fontSize: TEXT_LARGE_16X, color: WHITE_COLOR),
-        ),
-        Text(
-          (totalAmountsForTickets > 0)? "${totalAmountsForTickets.toString() } Ks": "-",
-          style: GoogleFonts.dmSans(
-              fontWeight: FontWeight.w700, fontSize: TEXT_LARGE_16X, color: WHITE_COLOR),
-        )
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_20X),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(width: MARGIN_XLARGE_220X,
+            child: Text(
+              (seatNames.isNotEmpty)?  "Normal ($seatNames)": "-",
+              textAlign: TextAlign.start,
+              style: GoogleFonts.dmSans(
+                  fontWeight: FontWeight.w700, fontSize: TEXT_LARGE_16X, color: WHITE_COLOR),
+            ),
+          ),
+          Text(
+            (totalAmountsForTickets > 0)? "${totalAmountsForTickets.toString() } Ks": "-",
+            style: GoogleFonts.dmSans(
+                fontWeight: FontWeight.w700, fontSize: TEXT_LARGE_16X, color: WHITE_COLOR),
+          )
+        ],
+      ),
     );
   }
 }

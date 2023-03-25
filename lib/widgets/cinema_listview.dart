@@ -97,19 +97,19 @@ class _CinemaListViewState extends State<CinemaListView> {
                                   children: [
                                     Text(
                                       widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].startTime ?? "",
-                                      style: TextStyle(color: GREY_COLOR),
+                                      style: const TextStyle(color: GREY_COLOR),
                                     ),
-                                    Text(
+                                    const Text(
                                       '3D',
                                       style: TextStyle(color: GREY_COLOR),
                                     ),
                                     Text(
                                       'Screen ${widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].status}',
-                                      style: TextStyle(color: GREY_COLOR),
+                                      style: const TextStyle(color: GREY_COLOR),
                                     ),
                                     Text(
                                       '${widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].cinemaDayTimeslotId} Available',
-                                      style: TextStyle(color: GREY_COLOR),
+                                      style: const TextStyle(color: GREY_COLOR),
                                     ),
                                   ],
                                 ),
