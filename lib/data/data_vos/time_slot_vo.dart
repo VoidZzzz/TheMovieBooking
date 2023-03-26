@@ -14,7 +14,9 @@ class TimeSlotsVO{
   @JsonKey(name: "status")
   int? status;
 
-  TimeSlotsVO(this.cinemaDayTimeslotId, this.startTime, this.status);
+  String? color;
+
+  TimeSlotsVO(this.cinemaDayTimeslotId, this.startTime, this.status,this.color,);
 
   factory TimeSlotsVO.fromJson(Map<String, dynamic> json) => _$TimeSlotsVOFromJson(json);
 

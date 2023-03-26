@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_movie_booking/data/data_vos/color_vo.dart';
 import 'package:the_movie_booking/pages/splash_screen_page.dart';
 import 'package:the_movie_booking/persistence/hive_constants.dart';
 import 'package:the_movie_booking/resources/colors.dart';
@@ -17,11 +18,13 @@ void main() async{
   Hive.registerAdapter(UserVOAdapter());
   Hive.registerAdapter(CitiesVOAdapter());
   Hive.registerAdapter(UserInfoVOAdapter());
+  Hive.registerAdapter(ColorVOAdapter());
 
   await Hive.openBox<SignInWithPhoneResponse>(BOX_NAME_SIGN_WITH_PHONE_RESPONSE);
   await Hive.openBox<UserVO>(BOX_NAME_USER_VO);
   await Hive.openBox<CitiesVO>(BOX_NAME_CITIES_VO);
   await Hive.openBox<UserInfoVO>(BOX_NAME_USER_INFO_VO);
+  await Hive.openBox<ColorVO>(BOX_NAME_COLOR_VO);
 
   runApp(const MyApp());
 }

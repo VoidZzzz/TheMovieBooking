@@ -426,7 +426,7 @@ class HomeScreenBannerDotsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DotsIndicator(
-      dotsCount: (bannerList.isNotEmpty) ? bannerList.length ?? 1 : 1,
+      dotsCount: (bannerList.isNotEmpty) ? bannerList.length : 1,
       position: activeDots.toDouble(),
       decorator: const DotsDecorator(
           color: HOME_SCREEN_BANNER_DOTS_INACTIVE_COLOR,

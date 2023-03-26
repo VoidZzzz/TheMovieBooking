@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../data/data_vos/cinema_color_config_vo.dart';
 import '../response/checkout_request.dart';
 import '../response/checkout_response.dart';
 import '../response/get_banners_response.dart';
@@ -75,8 +76,10 @@ class MovieDataAgentImpl extends MovieDataAgent {
   }
 
   @override
-  Future<GetConfigResponse> getConfigurations() {
-    return mApi.getConfigurations();
+  Future<List<CinemaColorConfigVO>?> getConfigurations() {
+    return mApi.getConfigurations().then((value) {
+      return value.data;
+    });
   }
 
   @override

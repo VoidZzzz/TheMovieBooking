@@ -48,10 +48,15 @@ class _MyHomePageState extends State<SeatPlanPage> {
       TheMovieBookingModelImpl();
   late String userToken;
   List<List<SeatVO>?>? seatPlan;
+  double _sliderValue = 1;
+  late TransformationController _zoomController;
 
   @override
   void initState() {
-    print(
+    /// Assign Zoom Controller
+    _zoomController = TransformationController();
+
+    debugPrint(
         "============================> Selected Date = ${widget.selectedDateTime} ${widget.selectedDate}");
     userToken =
         _theMovieBookingModelImpl.getUserDataFromDatabase()?.token ?? "";
@@ -66,6 +71,12 @@ class _MyHomePageState extends State<SeatPlanPage> {
       });
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _zoomController.dispose();
+    super.dispose();
   }
 
   @override
@@ -92,6 +103,7 @@ class _MyHomePageState extends State<SeatPlanPage> {
               ),
               (seatPlan != null)
                   ? InteractiveViewer(
+                      transformationController: _zoomController,
                       child: SeatPlanView(
                         seatPlan: seatPlan ?? [],
                         onTappedSeat: (int listViewIndex, int gridViewIndex) {
@@ -134,7 +146,7 @@ class _MyHomePageState extends State<SeatPlanPage> {
                       ),
                     )
                   : const SizedBox(
-                      height: MARGIN_XLARGE_500X,
+                      height: MARGIN_XLARGE_400X + MARGIN_LARGE_80X,
                       child: Center(
                         child: CircularProgressIndicator(
                           color: APP_COLOR_SECONDARY_COLOR,
@@ -144,9 +156,7 @@ class _MyHomePageState extends State<SeatPlanPage> {
             ],
           ),
           const SeatTypeView(),
-          const SizedBox(
-            height: MARGIN_MEDIUM_30X,
-          ),
+          zoomSlider(),
           TicketInfoView(
             ticketCount: totalTicketForSeats,
             amount: totalAmountForSeats,
@@ -199,6 +209,50 @@ class _MyHomePageState extends State<SeatPlanPage> {
             },
           ),
         ],
+      ),
+    );
+  }
+
+  SliderTheme zoomSlider() {
+    return SliderTheme(
+      data: const SliderThemeData(
+        activeTickMarkColor: Colors.transparent,
+        inactiveTickMarkColor: Colors.transparent,
+        activeTrackColor: GREY_COLOR,
+        inactiveTrackColor: GREY_COLOR,
+        thumbColor: WHITE_COLOR,
+        trackHeight: MARGIN_SMALL_1X,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_30X),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "-",
+              style: TextStyle(color: GREY_COLOR, fontSize: TEXT_LARGE_22X),
+            ),
+            SizedBox(
+              width: MARGIN_XLARGE_250X,
+              child: Slider(
+                  max: 3,
+                  min: 1,
+                  divisions: 5,
+                  value: _sliderValue,
+                  onChanged: (value) {
+                    setState(() {
+                      _sliderValue = value;
+                      _zoomController.value = Matrix4.identity()
+                        ..scale(_sliderValue);
+                    });
+                  }),
+            ),
+            const Text(
+              "+",
+              style: TextStyle(color: GREY_COLOR, fontSize: TEXT_LARGE_22X),
+            )
+          ],
+        ),
       ),
     );
   }

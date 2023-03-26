@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:the_movie_booking/resources/images.dart';
 import '../data/data_vos/movie_vo.dart';
 import '../network/api_constants.dart';
@@ -92,15 +93,17 @@ class ComingSoonMoviePosterView extends StatelessWidget {
                       width: MARGIN_MEDIUM_25X + MARGIN_SMALL_8X,
                       decoration: BoxDecoration(
                         color: APP_COLOR_SECONDARY_COLOR,
-                        borderRadius: BorderRadius.circular(MARGIN_SMALL_8X),
+                        borderRadius: BorderRadius.circular(MARGIN_SMALL_6X),
                       ),
-                      child: Text(
-                        "9th AUG",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.dmSans(
-                            fontWeight: FontWeight.w700,
-                            color: SHALLOW_GREY_COLOR,
-                            fontSize: TEXT_SMALLEST),
+                      child: Center(
+                        child: Text(
+                          DateFormat.MMMd().format(DateTime.parse(comingSoonMoviesList?[index].releaseDate ?? "")),
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.dmSans(
+                              fontWeight: FontWeight.w700,
+                              color: SHALLOW_GREY_COLOR,
+                              fontSize: TEXT_SMALL_12X),
+                        ),
                       ),
                     ))
               ],

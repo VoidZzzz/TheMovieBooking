@@ -32,7 +32,7 @@ class PlusMinusAndItemCountsView extends StatelessWidget {
           ),
           const SizedBox(width: MARGIN_MEDIUM_15X),
           Text(
-            itemCount.toString() ?? "",
+            itemCount.toString(),
             style: GoogleFonts.inter(
                 fontWeight: FontWeight.w700,
                 fontSize: TEXT_MEDIUM,

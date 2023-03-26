@@ -17,7 +17,7 @@ class CinemaListView extends StatefulWidget {
     Key? key,
     required this.onTapCinema,
     required this.onTapDetails,
-    required  this.cinemaAndShowTimeList,
+    required this.cinemaAndShowTimeList,
     required this.onTapExpanded,
   }) : super(key: key);
 
@@ -50,10 +50,13 @@ class _CinemaListViewState extends State<CinemaListView> {
               CinemaOverView(
                 onTapExpanded: () => widget.onTapExpanded(listViewIndex),
                 onTapSeeDetails: () => widget.onTapDetails(listViewIndex),
-                cinemaName: widget.cinemaAndShowTimeList?[listViewIndex].cinema ?? "",
+                cinemaName:
+                    widget.cinemaAndShowTimeList?[listViewIndex].cinema ?? "",
               ),
               Visibility(
-                visible: widget.cinemaAndShowTimeList?[listViewIndex].isExpanded == true,
+                visible:
+                    widget.cinemaAndShowTimeList?[listViewIndex].isExpanded ==
+                        true,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: MARGIN_MEDIUM_15X,
@@ -63,7 +66,10 @@ class _CinemaListViewState extends State<CinemaListView> {
                       GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?.length,
+                          itemCount: widget
+                              .cinemaAndShowTimeList?[listViewIndex]
+                              .timeSlots
+                              ?.length,
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 3,
@@ -72,20 +78,42 @@ class _CinemaListViewState extends State<CinemaListView> {
                           itemBuilder: (context, gridViewIndex) {
                             return InkWell(
                               onTap: () {
-                                widget.onTapCinema(widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].cinemaDayTimeslotId.toString() ?? "", listViewIndex, gridViewIndex);
+                                widget.onTapCinema(
+                                    widget
+                                            .cinemaAndShowTimeList?[
+                                                listViewIndex]
+                                            .timeSlots?[gridViewIndex]
+                                            .cinemaDayTimeslotId
+                                            .toString() ??
+                                        "",
+                                    listViewIndex,
+                                    gridViewIndex);
                               },
                               child: Container(
                                 width: MARGIN_LARGE_100X,
                                 height: MARGIN_LARGE_100X,
-                                padding:
-                                    const EdgeInsets.all(MARGIN_SMALL_5X),
+                                padding: const EdgeInsets.all(MARGIN_SMALL_5X),
                                 decoration: BoxDecoration(
-                                  color: DARK_GREY_COLOR,
+                                  color: Color(int.parse(widget
+                                              .cinemaAndShowTimeList?[
+                                                  listViewIndex]
+                                              .timeSlots?[gridViewIndex]
+                                              .color
+                                              ?.replaceAll('#', '0xFF') ??
+                                          ''))
+                                      .withOpacity(0.1),
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(MARGIN_SMALL_5X),
                                   ),
                                   border: Border.all(
-                                    color: Colors.grey,
+                                    // color: widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].color,
+                                    color: Color(int.parse(widget
+                                            .cinemaAndShowTimeList?[
+                                                listViewIndex]
+                                            .timeSlots?[gridViewIndex]
+                                            .color
+                                            ?.replaceAll('#', '0xFF') ??
+                                        '')),
                                     width: MARGIN_SMALL_1X,
                                   ),
                                 ),
@@ -94,20 +122,36 @@ class _CinemaListViewState extends State<CinemaListView> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].startTime ?? "",
-                                      style: const TextStyle(color: GREY_COLOR),
+                                      widget
+                                              .cinemaAndShowTimeList?[
+                                                  listViewIndex]
+                                              .timeSlots?[gridViewIndex]
+                                              .startTime ??
+                                          "",
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          color: WHITE_COLOR),
                                     ),
-                                    const Text(
+                                    Text(
                                       '3D',
-                                      style: TextStyle(color: GREY_COLOR),
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          color: WHITE_COLOR,
+                                          fontSize: TEXT_SMALL_12X),
                                     ),
                                     Text(
                                       'Screen ${widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].status}',
-                                      style: const TextStyle(color: GREY_COLOR),
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          color: WHITE_COLOR,
+                                          fontSize: TEXT_SMALL_12X),
                                     ),
                                     Text(
                                       '${widget.cinemaAndShowTimeList?[listViewIndex].timeSlots?[gridViewIndex].cinemaDayTimeslotId} Available',
-                                      style: const TextStyle(color: GREY_COLOR),
+                                      style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          color: WHITE_COLOR,
+                                          fontSize: TEXT_SMALL_12X),
                                     ),
                                   ],
                                 ),
@@ -258,12 +302,12 @@ class LongPressView extends StatelessWidget {
 }
 
 class CinemaOverView extends StatelessWidget {
-  const CinemaOverView({
-    Key? key,
-    required this.cinemaName,
-    required this.onTapExpanded,
-    required this.onTapSeeDetails
-  }) : super(key: key);
+  const CinemaOverView(
+      {Key? key,
+      required this.cinemaName,
+      required this.onTapExpanded,
+      required this.onTapSeeDetails})
+      : super(key: key);
 
   final String cinemaName;
   final Function onTapSeeDetails;
@@ -289,7 +333,7 @@ class CinemaOverView extends StatelessWidget {
                     cinemaName,
                     style: GoogleFonts.inter(
                       color: WHITE_COLOR,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       fontSize: TEXT_LARGE_16X,
                     ),
                   ),

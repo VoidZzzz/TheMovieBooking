@@ -10,6 +10,7 @@ TimeSlotsVO _$TimeSlotsVOFromJson(Map<String, dynamic> json) => TimeSlotsVO(
       json['cinema_day_timeslot_id'] as int?,
       json['start_time'] as String?,
       json['status'] as int?,
+      json['color'] as String?,
     );
 
 Map<String, dynamic> _$TimeSlotsVOToJson(TimeSlotsVO instance) =>
@@ -17,4 +18,5 @@ Map<String, dynamic> _$TimeSlotsVOToJson(TimeSlotsVO instance) =>
       'cinema_day_timeslot_id': instance.cinemaDayTimeslotId,
       'start_time': instance.startTime,
       'status': instance.status,
+      'color': instance.color,
     };

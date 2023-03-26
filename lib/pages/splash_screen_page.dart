@@ -20,10 +20,7 @@ class SplashScreenPage extends StatefulWidget {
 
 class _SplashScreenPageState extends State<SplashScreenPage> {
   TheMovieBookingModel theMovieBookingModel = TheMovieBookingModelImpl();
-  List<dynamic>? colorListdynamic;
-  List<ColorVO>? colorsList;
   String? colorHexCode;
-  ColorVO? colorVO;
 
   @override
   void initState() {
@@ -44,11 +41,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
 
     /// getConfig from Network
     theMovieBookingModel.getConfigurations().then((config) {
-     // setState(() {
-      colorListdynamic = config.data?[1].value;
-     // });
-      colorsList = List<ColorVO>.from(colorListdynamic!.map((x) => ColorVO.fromJson(x)));
-      debugPrint("============================> $colorsList");
+      //
     }).catchError((error) {
       debugPrint("============================> ${error.toString()}");
     });

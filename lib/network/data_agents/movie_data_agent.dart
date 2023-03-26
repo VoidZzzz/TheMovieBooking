@@ -1,5 +1,7 @@
 
 
+import 'package:the_movie_booking/data/data_vos/cinema_color_config_vo.dart';
+
 import '../response/checkout_request.dart';
 import '../response/checkout_response.dart';
 import '../response/get_banners_response.dart';
@@ -37,7 +39,7 @@ abstract class MovieDataAgent {
 
   Future<GetCinemaAndShowTimeByDateResponse> getCinemaAndShowTimeByDate(String date, String token);
 
-  Future<GetConfigResponse> getConfigurations();
+  Future<List<CinemaColorConfigVO>?> getConfigurations();
 
   Future<LogoutResponse> userLogout(String token);
 

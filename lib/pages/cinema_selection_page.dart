@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:the_movie_booking/pages/cinema_details_page.dart';
 import 'package:the_movie_booking/pages/seat_plan_page.dart';
 import 'package:the_movie_booking/resources/colors.dart';
@@ -194,8 +195,11 @@ class _CinemaSelectionPageState extends State<CinemaSelectionPage> {
                         MaterialPageRoute(
                           builder: (context) {
                             return SeatPlanPage(
-                              selectedDateTime: selectedDateTime ?? DateTime.now(),
-                              cinemaLocation: cinemaDetailsList?[listViewIndex].address ?? "",
+                              selectedDateTime:
+                                  selectedDateTime ?? DateTime.now(),
+                              cinemaLocation:
+                                  cinemaDetailsList?[listViewIndex].address ??
+                                      "",
                               movieId: widget.movieId,
                               bookingDate: (selectedDateForApi.isEmpty)
                                   ? defaultDateForApi
@@ -299,7 +303,7 @@ class CinemaTypeView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                     vertical: MARGIN_SMALL_4X, horizontal: MARGIN_MEDIUM_15X),
                 decoration: BoxDecoration(
-                  color: APP_COLOR_PRIMARY_COLOR,
+                  color: DARK_GREY_COLOR,
                   borderRadius:
                       const BorderRadius.all(Radius.circular(MARGIN_SMALL_5X)),
                   border: Border.all(
@@ -387,26 +391,38 @@ class _DateListViewState extends State<DateListView> {
                   children: [
                     const TopContainerView(),
                     index == 0
-                        ? const Text(
+                        ? Text(
                             'Today',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w700,
+                                color: BLACK_COLOR),
                           )
                         : index == 1
-                            ? const Text('Tomorrow',
-                                style: TextStyle(fontWeight: FontWeight.bold))
-                            : Text(widget.weekday[widget.list[index].weekday],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold)),
-                    Text(widget.months[widget.list[index].month],
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                            ? Text(
+                                'Tomorrow',
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w700,
+                                    color: BLACK_COLOR),
+                              )
+                            : Text(
+                                widget.weekday[widget.list[index].weekday],
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w700,
+                                    color: BLACK_COLOR),
+                              ),
+                    Text(
+                      widget.months[widget.list[index].month],
+                      style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w700, color: BLACK_COLOR),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const LeftSmallSemiCircle(),
                         Text(
                           '${widget.list[index].day}',
-                          style: const TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w700, color: BLACK_COLOR),
                         ),
                         const RightSmallSemiCircle(),
                       ],
@@ -493,17 +509,17 @@ class CinemaAvailabilityBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
-            children: const [
-              CircleAvatar(
+            children: [
+              const CircleAvatar(
                 backgroundColor: APP_COLOR_SECONDARY_COLOR,
                 radius: MARGIN_SMALL_5X,
               ),
-              SizedBox(
+              const SizedBox(
                 width: MARGIN_SMALL_8X,
               ),
               Text(
                 CINEMA_SELECTION_PAGE_AVAILABLE_TEXT,
-                style: TextStyle(color: APP_COLOR_SECONDARY_COLOR),
+                style: GoogleFonts.inter(fontWeight: FontWeight.w500,color: APP_COLOR_SECONDARY_COLOR),
               ),
             ],
           ),
@@ -523,17 +539,17 @@ class FillingFastBarView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: const [
-        CircleAvatar(
+      children: [
+        const CircleAvatar(
           backgroundColor: CINEMA_PAGE_FILLING_FAST_COLOR,
           radius: MARGIN_SMALL_5X,
         ),
-        SizedBox(
+        const SizedBox(
           width: MARGIN_SMALL_8X,
         ),
         Text(
           CINEMA_SELECTION_PAGE_FILLING_FAST_TEXT,
-          style: TextStyle(color: CINEMA_PAGE_FILLING_FAST_COLOR),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w500,color: CINEMA_PAGE_FILLING_FAST_COLOR),
         ),
       ],
     );
@@ -548,17 +564,17 @@ class AlmostFullBarView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: const [
-        CircleAvatar(
+      children: [
+        const CircleAvatar(
           backgroundColor: CINEMA_PAGE_ALMOST_FULL_COLOR,
           radius: MARGIN_SMALL_5X,
         ),
-        SizedBox(
+        const SizedBox(
           width: MARGIN_SMALL_8X,
         ),
         Text(
           CINEMA_SELECTION_PAGE_ALMOST_FULL_TEXT,
-          style: TextStyle(color: CINEMA_PAGE_ALMOST_FULL_COLOR),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w500,color: CINEMA_PAGE_ALMOST_FULL_COLOR),
         ),
       ],
     );

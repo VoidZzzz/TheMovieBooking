@@ -1,6 +1,9 @@
-
-
+import 'package:the_movie_booking/data/data_vos/cinema_color_config_vo.dart';
+import 'package:the_movie_booking/data/data_vos/cinema_vo.dart';
+import 'package:the_movie_booking/data/data_vos/color_vo.dart';
+import 'package:the_movie_booking/data/data_vos/time_slot_vo.dart';
 import 'package:the_movie_booking/data/models/the_movie_booking_model.dart';
+import 'package:the_movie_booking/persistence/daos/color_dao.dart';
 
 import '../../network/data_agents/movie_data_agent.dart';
 import '../../network/data_agents/movie_data_agent_impl.dart';
@@ -38,6 +41,7 @@ class TheMovieBookingModelImpl extends TheMovieBookingModel {
   final MovieDataAgent _dataAgent = MovieDataAgentImpl();
   final UserDataDao _userDataDao = UserDataDao();
   final CityDao _cityDao = CityDao();
+  final ColorDao _colorDao = ColorDao();
 
   @override
   Future<GetOTPResponse> getOTP(String phone) {
@@ -89,7 +93,21 @@ class TheMovieBookingModelImpl extends TheMovieBookingModel {
   @override
   Future<GetCinemaAndShowTimeByDateResponse> getCinemaAndShowTimeByDate(
       String date, String token) {
-    return _dataAgent.getCinemaAndShowTimeByDate(date, token);
+    return _dataAgent.getCinemaAndShowTimeByDate(date, token).then((response) {
+      List<CinemaVO>? cinemaList = response.data;
+      List<ColorVO>? colorList = _colorDao.getAllColors();
+      for (int c = 0; c < cinemaList!.length; c++) {
+        List<TimeSlotsVO>? timeList = cinemaList[c].timeSlots!;
+        for (int t = 0; t < timeList.length; t++) {
+          for (int cc = 0; cc < colorList.length; cc++) {
+            if (timeList[t].status == colorList[cc].id) {
+              timeList[t].color = colorList[cc].color;
+            }
+          }
+        }
+      }
+      return response;
+    });
   }
 
   @override
@@ -98,8 +116,13 @@ class TheMovieBookingModelImpl extends TheMovieBookingModel {
   }
 
   @override
-  Future<GetConfigResponse> getConfigurations() {
-    return _dataAgent.getConfigurations();
+  Future<void> getConfigurations() async {
+    _dataAgent.getConfigurations().then((value) {
+      List<ColorVO>? colorList;
+      colorList =
+          List<ColorVO>.from(value![1].value.map((x) => ColorVO.fromJson(x)));
+      _colorDao.saveAllColors(colorList);
+    });
   }
 
   @override
@@ -158,15 +181,18 @@ class TheMovieBookingModelImpl extends TheMovieBookingModel {
   @override
   Future<GetSnacksResponse> getSnacks(String categoryId, String token) {
     return _dataAgent.getSnacks(categoryId, token).then((value) {
-      value.data?.map(
-        (e) => e.quantity = 0,
-      ).toList();
+      value.data
+          ?.map(
+            (e) => e.quantity = 0,
+          )
+          .toList();
       return value;
     });
   }
 
   @override
-  Future<CheckoutResponse> checkoutRequest(String token, CheckOutRequest checkOutRequest) {
-   return _dataAgent.checkoutRequest(token, checkOutRequest);
+  Future<CheckoutResponse> checkoutRequest(
+      String token, CheckOutRequest checkOutRequest) {
+    return _dataAgent.checkoutRequest(token, checkOutRequest);
   }
 }
